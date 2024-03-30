@@ -1,10 +1,11 @@
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const { Client, GatewayIntentBits, SlashCommandBuilder, EmbedBuilder, PermissionsBitField, Permissions } = require("discord.js");
 const fs = require("fs");
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]});
+const database = require("./database.js");
 
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]});
 client.login(process.env.TOKEN);
 
 // const ready = require('./events/ready');
@@ -23,33 +24,5 @@ client.on('messageCreate', async message => {
   }
 });
 
-
-// import pg from "pg";
-const pg = require('pg');
-
-const pgClient = new pg.Client({
-    host:     "db.alydpmfevxaablumncyj.supabase.co",
-    port:     process.env.DBPORT,
-    database: process.env.DBNAME,
-    user:     process.env.DBNAME,
-    password: process.env.DBPASS
-});
-
-pgClient.connect();
-
-const boosterID = 382524802491219969;
-
-(async () => {
-  await pgClient.query(`
-      INSERT INTO boosters (discord_id, days_boosted)
-      VALUES (
-          ($1, 0)
-      )
-      ON CONFLICT DO NOTHING;
-  
-      UPDATE boosters
-      SET days_boosted = days_boosted + 1
-      WHERE boosters.discord_id = $1;
-  `,
-  boosterID);
-})();
+// put this where you want
+database.incBoostingDay(382524802491219969);
