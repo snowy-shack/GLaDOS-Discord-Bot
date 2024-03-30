@@ -22,3 +22,34 @@ client.on('messageCreate', async message => {
     message.reply(boosters.toString());
   }
 });
+
+
+// import pg from "pg";
+const pg = require('pg');
+
+const pgClient = new pg.Client({
+    host:     "db.alydpmfevxaablumncyj.supabase.co",
+    port:     process.env.DBPORT,
+    database: process.env.DBNAME,
+    user:     process.env.DBNAME,
+    password: process.env.DBPASS
+});
+
+pgClient.connect();
+
+const boosterID = 382524802491219969;
+
+(async () => {
+  await pgClient.query(`
+      INSERT INTO boosters (discord_id, days_boosted)
+      VALUES (
+          ($1, 0)
+      )
+      ON CONFLICT DO NOTHING;
+  
+      UPDATE boosters
+      SET days_boosted = days_boosted + 1
+      WHERE boosters.discord_id = $1;
+  `,
+  boosterID);
+})();
