@@ -39,4 +39,4 @@ cron.schedule('00 00 12 * * 0-6', () => {
   })();
   }, {
   timezone: "Europe/Amsterdam"
-});
+}); // TEST
