@@ -1,15 +1,11 @@
-async function getBoosters(client) {
+async function getBoosters(client, phGuild) {
+  await phGuild.members.fetch(); // Fetch and cache server members
 
-const phGuildID = '704266427577663548';
-const phGuild = client.guilds.cache.get(phGuildID); // Get Phanty's Home server
+  const boosterRoleID = '852838462469308428';
+  const boosterRole = await phGuild.roles.fetch(boosterRoleID); // Get Booster role
+  const boosters = await boosterRole.members.map(m=>m.user.id); // Get IDs of all Boosters
 
-await phGuild.members.fetch(); // Fetch and cache server members
-
-const boosterRoleID = '852838462469308428';
-const boosterRole = phGuild.roles.cache.get(boosterRoleID); // Get Booster role
-const boosters = boosterRole.members.map(m=>m.user.id); // Get IDs of all Boosters
-
-return boosters;
+  return boosters;
 }
 
 module.exports = {

@@ -5,7 +5,7 @@ const pgClient = new pg.Client({
     port:     process.env.DBPORT,
     database: process.env.DBNAME,
     user:     process.env.DBUSER,
-    password: process.env.DBPASS
+    password: process.env.DBPASS,
 });
 
 pgClient.connect();
