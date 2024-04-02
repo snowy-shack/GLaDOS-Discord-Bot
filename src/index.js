@@ -14,10 +14,8 @@ client.once(onReady.name, (...args) => onReady.execute(...args));
 
 
 client.on('messageCreate', async message => {
-  if (message.author.id == '382524802491219969' && message.content == 't') {
-
-    console.log(boosters.toString());
-    message.reply(boosters.toString());
+  if (message.content == 'gl.ping') {
+    message.reply('pong!');
   }
 });
 
@@ -39,4 +37,4 @@ cron.schedule('00 00 12 * * 0-6', () => {
   })();
   }, {
   timezone: "Europe/Amsterdam"
-}); // secrets!!! :o
+});
