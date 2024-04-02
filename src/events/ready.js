@@ -14,5 +14,10 @@ module.exports = {
             }]
         })
         console.log(`Ready! As ${client.user.tag}`)
+        
+        const phGuild = await client.guilds.fetch('704266427577663548');
+
+        const logChannel = await phGuild.channels.fetch('1223785821157462086');
+        logChannel.send(`> \`🤖 Online!\``);
     }
 };
