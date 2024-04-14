@@ -12,18 +12,34 @@ pgClient.connect();
 
 async function incBoostingDay(boosterId) {
     await pgClient.query(`
-        INSERT INTO boosters (discord_id, days_boosted)
+        INSERT INTO boosters_test (discord_id, days_boosted)
         VALUES ($1, 0)
         ON CONFLICT DO NOTHING;
     `,
     [ boosterId ]);
     
     await pgClient.query(`
-        UPDATE boosters
+        UPDATE boosters_test
         SET days_boosted = days_boosted + 1
         WHERE boosters.discord_id = $1;
     `,
     [ boosterId ]);
 }
 
-module.exports = { incBoostingDay };
+const gunSkins = {
+    booster: "2ba60975-4f3f-47c7-981b-e0d938115288",
+    donator: "",
+    colour: "169752be-2bf6-4ce2-9653-03098354505e"
+}
+
+async function addGunSkin(discordId, minecraftUuid, skinType) {
+    
+    await pgClient.query(`
+        INSERT INTO players_skins_test (player_id, skin_id)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING;
+    `,
+    [ minecraftUuid, gunSkins.skinType ]);
+}
+
+module.exports = { incBoostingDay, addGunSkin };

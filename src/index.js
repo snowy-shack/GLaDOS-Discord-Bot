@@ -61,13 +61,13 @@ async function formHandler(previousField, fieldValue) {
     
     In order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.`
   )
-  .setFooter({text: "field 0/2"})
+  .setFooter({text: "field 1/2"})
   .setTimestamp();
 
   if (previousField == -1) {
     return form_1; // Send first form message if there hasn't been prior form messages.
 
-  } else if (previousField == 0) {
+  } else if (previousField == 1) {
 
     uuid = (await minecraft.getUuid(fieldValue))[0];
     username = (await minecraft.getUuid(fieldValue))[1];
@@ -77,7 +77,7 @@ async function formHandler(previousField, fieldValue) {
       const form_1_error_1 = new EmbedBuilder().setColor("db4b4b")
         .setTitle(formTitle)
         .setDescription("I didn't quite catch that. Please enter your Minecraft: Java Edition username in plain text.")
-        .setFooter({text: "field 0/2 - syntax error"})
+        .setFooter({text: "field 1/2 - syntax error"})
         .setTimestamp();
       return [form_1_error_1];
 
@@ -89,7 +89,7 @@ async function formHandler(previousField, fieldValue) {
         .setDescription(
           `Great! Please confirm that the Minecraft account below is your account by sending '**confirm**'. Otherwise send '**change**' to change it.`
         )
-        .setFooter({text: "field 1/2"})
+        .setFooter({text: "field 2/2"})
         .setTimestamp();
       const form_profile = new EmbedBuilder().setColor("d9b69e")
         .setThumbnail(link)
@@ -103,19 +103,19 @@ async function formHandler(previousField, fieldValue) {
       const form_1_error_2 = new EmbedBuilder().setColor("db4b4b")
         .setTitle(formTitle)
         .setDescription(`I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.`)
-        .setFooter({text: "field 0/2 - not found"})
+        .setFooter({text: "field 1/2 - not found"})
         .setTimestamp();
       return [form_1_error_2];
     }
-  } else if (previousField == 1) {
+  } else if (previousField == 2) {
     if (fieldValue == "confirm") {
       const form_3 = new EmbedBuilder().setColor("b068a8")
         .setTitle(formTitle)
         // .setThumbnail(link)
         .setDescription(
-          `Perfect! A Booster portal gun skin has been linked to the Minecraft account **${username}**. Thank you for your support!!`
+          `Perfect! A Booster portal gun skin has been linked to this Minecraft account. Thank you for your support!!`
         )
-        .setFooter({text: "field 2/2"})
+        .setFooter({text: "form complete"})
         .setTimestamp();
       return [form_3];
       
@@ -123,7 +123,7 @@ async function formHandler(previousField, fieldValue) {
       const form_2_reset = new EmbedBuilder().setColor("b068a8")
         .setTitle(formTitle)
         .setDescription("Alright, what is the username of the account you would like to change it to?")
-        .setFooter({text: "field 0/2 - reset"})
+        .setFooter({text: "field 1/2 - reset"})
         .setTimestamp();
       return [form_2_reset];
 
@@ -131,7 +131,7 @@ async function formHandler(previousField, fieldValue) {
       const form_2_error_1 = new EmbedBuilder().setColor("db4b4b")
         .setTitle(formTitle)
         .setDescription(`I don't understand that answer. Please reply with either '**confirm**' or '**change**' to confirm or change your submitted username.`)
-        .setFooter({text: "field 1/2 - syntax error"})
+        .setFooter({text: "field 2/2 - syntax error"})
         .setTimestamp();
       return [form_2_error_1];
     }
@@ -145,32 +145,48 @@ client.on("messageCreate", async (message) => {
   console.log("isDm: ", isDm);
 
   if (isDm) {
-    // message.reply("stop DM'ing me!")
     message.channel.messages.fetch({ limit: 10 }).then(async scanMessages => {
-      // console.log(messages)
       previousField = -1;
-      console.log(scanMessages.length)
       scanMessages.reverse().forEach(scannedMessage => {
-        console.log('message contents: ', scannedMessage.content)
         try {
           footerText = (typeof scannedMessage.embeds[0] != 'undefined') ? scannedMessage.embeds[0].footer.text : '';
           if (scannedMessage.author.id == client.application.id) {
-            // console.log(footerText, footerText.startsWith('field 0/2'));
 
-            if (footerText.startsWith('field 0/2')) { previousField = 0 }
-            if (footerText.startsWith('field 1/2')) { previousField = 1 }
-
-            console.log(previousField);
+            const fieldIndex = parseInt(footerText.split(' ')[1].split('/')[0]) || 3;
+            previousField = Math.min(fieldIndex, 3);
+            try {
+              const match = /UUID: (.+?)\`/.exec(scannedMessage.embeds[1].description);
+              uuidGot = match ? match[1] : null;
+            } catch (error) {};
+            
           } else {fieldValue = scannedMessage.content}
         } catch (error) { console.log(error) };
       })
       console.log('previousField: ', previousField, 'fieldValue: ', fieldValue)
-      message.author.send({ embeds: await formHandler(previousField, fieldValue) });
+      if (previousField == 2 && fieldValue == 'confirm') {
+
+        // update database here
+
+        logChannel.send(
+          `> \`💎 Added booster skin to uuid '${uuidGot}'.\``
+        );
+
+        previousField == -2; //Throw error message
+      }
+
+      formMessageEmbeds = await formHandler(previousField, fieldValue.toLowerCase());
+      if (typeof formMessageEmbeds != 'undefined') {
+        message.author.send({ embeds: formMessageEmbeds });
+      }
     })
   }
 
   if (message.content == 'sf') {
     message.author.send({ embeds: [await formHandler(-1, '') ] });
+    
+    logChannel.send(
+      `> \`❓ Asking \`<@${message.author.id}>\` about their Minecraft UUID.\``
+    );
   }
 });
 
