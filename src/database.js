@@ -42,4 +42,14 @@ async function addGunSkin(discordId, minecraftUuid, skinType) {
     [ minecraftUuid, gunSkins.skinType ]);
 }
 
-module.exports = { incBoostingDay, addGunSkin };
+async function getBoosted() {
+    boosted = await pgClient.query(`
+        SELECT discord_id
+        FROM boosters_test
+        WHERE days_boosted > $1
+        AND messaged = FALSE;
+    `,
+    [ 90 ]);
+    return boosted.rows.map(row => row.discord_id);
+}
+module.exports = { incBoostingDay, addGunSkin, getBoosted };

@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const { ActivityType } = require('discord.js');
+const logs = require('../logs');
 
 module.exports = {
     name: Events.ClientReady,
@@ -13,7 +14,7 @@ module.exports = {
                 state: 'Overlooking Phanty\'s Home'
             }]
         })
-        console.log(`Ready! As ${client.user.tag}`)
-        logChannel.send(`> \`💫 Online!\``);
+        console.log(`Ready! As ${client.user.tag}`);
+        logs.logMessage('💫 Online!');
     }
 };
