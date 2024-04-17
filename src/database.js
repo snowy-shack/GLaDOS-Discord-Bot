@@ -47,7 +47,7 @@ async function getBoosted() {
         SELECT discord_id
         FROM boosters_test
         WHERE days_boosted > $1
-        AND messaged = FALSE;
+        AND messaged IS FALSE;
     `,
     [ 90 ]);
     return boosted.rows.map(row => row.discord_id);
