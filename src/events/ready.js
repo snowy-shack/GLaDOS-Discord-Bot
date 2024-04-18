@@ -1,5 +1,7 @@
-const { Events } = require('discord.js');
-const { ActivityType } = require('discord.js');
+const { 
+    Events, 
+    ActivityType 
+} = require('discord.js');
 const logs = require('../logs');
 
 module.exports = {

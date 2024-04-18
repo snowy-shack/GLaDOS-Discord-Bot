@@ -39,7 +39,7 @@ async function addGunSkin(discordId, minecraftUuid, skinType) {
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING;
     `,
-    [ minecraftUuid, gunSkins.skinType ]);
+    [ minecraftUuid, gunSkins[skinType] ]);
 
     await pgClient.query(`
         UPDATE users

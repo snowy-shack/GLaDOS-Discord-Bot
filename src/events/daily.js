@@ -12,6 +12,8 @@ async function run(client) {
     database.incBoostingDay(boosterId);
   });
 
+  logs.logMessage(`✅ Updated database for ${boosters.length} boosters.`);
+
   boosted = await database.getBoosted();
   for(let i = 0; i < boosted.length; i++) {
     console.log(boosted[i])

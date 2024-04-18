@@ -1,6 +1,9 @@
+const phGuild = require("./guild");
+
 async function logMessage(message) {
+  logChannel = await phGuild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
   logChannel.send(`> \`` + message + `\``
-  ); //✅ Updated database for ${boosters.length} boosters.
+  ); 
 }
 
 async function directReply(message, response) {

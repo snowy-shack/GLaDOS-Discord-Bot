@@ -5,15 +5,18 @@ const minecraft = require("../commands/minecraft");
 const emSupporter = process.env.EMOJI_SUPPORTER
 const emBooster   = process.env.EMOJI_BOOSTER
 
-async function respond(previousField, fieldValue) {
-  const formTitle = "PortalMod Booster skin form";
+const messages = {
+  booster: `It seems like you've**${emBooster}boosted** Phanty's Home for **3 months**! Thank you so much!`
+}
+
+async function respond(previousField, fieldValue, type) {
+  const formTitle = "PortalMod Portal Gun skin form";
   const form_1 = new EmbedBuilder().setColor("b068a8")
-  // .setAuthor({ name: username, iconURL: link, url: `https://namemc.com/${username}` })
-  .setTitle(formTitle)
+	.setAuthor({ name: formTitle, iconURL: 'https://portalmod.net/images/logo/mark.png' })
   .setDescription(
     `Hi!
     
-    It seems like you've**${emBooster}boosted** Phanty's Home for **3 months**! Thank you so much!
+    ${messages[type]}
     
     In order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.`
   )
@@ -95,6 +98,6 @@ async function respond(previousField, fieldValue) {
 }
 
 async function sendFormMessage(targetUser, previousField, fieldValue) {
-  targetUser.send({ embeds: [await this.respond(previousField, fieldValue) ] });
+  targetUser.send({ embeds: [await this.respond(previousField, fieldValue, 'booster') ] });
 }
 module.exports = { respond, sendFormMessage };
