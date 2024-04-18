@@ -1,4 +1,6 @@
 const boosterForm = require("./boosterFormHandler");
+const client = require("../client");
+const logs = require("../logs");
 // const client 
 function handleDM(message) {
   message.channel.messages.fetch({ limit: 10 }).then(async scanMessages => {

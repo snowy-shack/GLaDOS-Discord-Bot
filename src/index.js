@@ -15,12 +15,19 @@ const onReady = require("./events/ready");
 client.once(onReady.name, (...args) => onReady.execute(...args));
 const prefix = 'ph!';
 
-const phGuild = require("./guild");
+// const phGuild = require("./guild");
 
 function isAdmin(message) {
   return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.adm);
 }
 // daily.run(client);
+
+let phGuild;
+(async () => {
+  phGuildId = (process.env.GUILDID).toString();
+  phGuild = await client.guilds.fetch(phGuildId); // Get Phanty's Home server
+  logChannel = await phGuild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
+})(); // Define important variables
 
 client.on("messageCreate", async (message) => {
   // try {
@@ -33,10 +40,10 @@ client.on("messageCreate", async (message) => {
     }
 
     if (isDm) {
-      console.log('oka')
+      console.log('dm')
       dmMessageHandler.handleDM(message);
     } else {
-      console.log('oki')
+      console.log('not dm')
       messageHandler.handleMessage(prefix, message);
     }
 

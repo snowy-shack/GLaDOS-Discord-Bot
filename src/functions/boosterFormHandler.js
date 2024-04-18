@@ -10,9 +10,9 @@ const messages = {
 }
 
 async function respond(previousField, fieldValue, type) {
-  const formTitle = "PortalMod Portal Gun skin form";
+  const formTitle = { name: "PortalMod Portal Gun skin form", iconURL: 'https://portalmod.net/images/logo/mark.png' };
   const form_1 = new EmbedBuilder().setColor("b068a8")
-	.setAuthor({ name: formTitle, iconURL: 'https://portalmod.net/images/logo/mark.png' })
+	.setAuthor(formTitle)
   .setDescription(
     `Hi!
     
@@ -34,7 +34,7 @@ async function respond(previousField, fieldValue, type) {
     // console.log(uuid);
     if (!(/^\w+$/.test(fieldValue)) || !(2 < fieldValue.length < 17)) {
       const form_1_error_1 = new EmbedBuilder().setColor("db4b4b")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         .setDescription("I didn't quite catch that. Please enter your Minecraft: Java Edition username in plain text.")
         .setFooter({text: "field 1/2 - syntax error"})
         .setTimestamp();
@@ -44,7 +44,7 @@ async function respond(previousField, fieldValue, type) {
       const link = await minecraft.getSkin(uuid);
       // console.log(link);
       const form_2 = new EmbedBuilder().setColor("b068a8")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         .setDescription(
           `Great! Please confirm that the Minecraft account below is your account by sending '**confirm**'. Otherwise send '**change**' to change it.`
         )
@@ -60,7 +60,7 @@ async function respond(previousField, fieldValue, type) {
       return [form_2, form_profile];
     } else {
       const form_1_error_2 = new EmbedBuilder().setColor("db4b4b")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         .setDescription(`I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.`)
         .setFooter({text: "field 1/2 - not found"})
         .setTimestamp();
@@ -69,7 +69,7 @@ async function respond(previousField, fieldValue, type) {
   } else if (previousField == 2) {
     if (fieldValue == "confirm") {
       const form_3 = new EmbedBuilder().setColor("b068a8")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         // .setThumbnail(link)
         .setDescription(
           `Perfect! A Booster portal gun skin has been linked to this Minecraft account. Thank you for your support!!`
@@ -80,7 +80,7 @@ async function respond(previousField, fieldValue, type) {
       
     } else if (fieldValue == "change") {
       const form_2_reset = new EmbedBuilder().setColor("b068a8")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         .setDescription("Alright, what is the username of the account you would like to change it to?")
         .setFooter({text: "field 1/2 - reset"})
         .setTimestamp();
@@ -88,7 +88,7 @@ async function respond(previousField, fieldValue, type) {
 
     } else {
       const form_2_error_1 = new EmbedBuilder().setColor("db4b4b")
-        .setTitle(formTitle)
+        .setAuthor(formTitle)
         .setDescription(`I don't understand that answer. Please reply with either '**confirm**' or '**change**' to confirm or change your submitted username.`)
         .setFooter({text: "field 2/2 - syntax error"})
         .setTimestamp();
