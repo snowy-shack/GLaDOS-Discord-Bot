@@ -1,11 +1,14 @@
 async function logMessage(message) {
+  const phGuild = await require("./guild");
+  logChannel = await phGuild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
   logChannel.send(`> \`` + message + `\``
-  ); //✅ Updated database for ${boosters.length} boosters.
+  );
 }
 
 async function directReply(message, response) {
-  message.reply(`> \`` + response.replace(/\n/g, " ") + `\``);
+  message.reply(`> **\`` + response.replace(/\n/g, " ") + `\`**`);
 }
+
 module.exports = { 
   logMessage, 
   directReply 

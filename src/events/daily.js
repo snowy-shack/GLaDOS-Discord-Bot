@@ -1,5 +1,5 @@
 const database = require("../database");
-const boosterForm = require("../functions/boosterFormHandler");
+const skinForm = require("../functions/skinFormHandler");
 const trackBoosters = require("../functions/trackBoosters");
 
 async function run(client) {
@@ -19,7 +19,7 @@ async function run(client) {
     console.log(boosted[i])
 
     targetBooster = await phGuild.members.fetch(boosted[i]);
-    boosterForm.sendFormMessage(targetBooster, -1, '');
+    skinForm.sendFormMessage(targetBooster, -1, '');
   }
 }
 module.exports = { run };

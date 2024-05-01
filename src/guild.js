@@ -1,10 +1,9 @@
-const client = require("./client");
-
 async function getGuild() {
-  phGuildId = (process.env.GUILDID).toString();
-  phGuild = await client.guilds.fetch(phGuildId); // Get Phanty's Home server
+    const client = await require("./client");
 
-  return phGuild; 
+    const phGuildId = (process.env.GUILDID).toString();
+    const phGuild = await client.guilds.fetch(phGuildId); // Get Phanty's Home server
+    return phGuild;
 }
 
-module.exports = { getGuild }
+module.exports = getGuild();

@@ -1,4 +1,4 @@
-const boosterForm = require("./boosterFormHandler");
+const skinForm = require("./skinFormHandler");
 const client = require("../client");
 const logs = require("../logs");
 // const client 
@@ -30,9 +30,9 @@ function handleDM(message) {
       previousField == -2; //Throw error message
     }
 
-    formMessageEmbeds = await boosterForm.respond(previousField, fieldValue.toLowerCase(), 'booster');
+    formMessageEmbeds = await skinForm.respond(previousField, fieldValue.toLowerCase(), 'booster');
     if (typeof formMessageEmbeds != 'undefined') {
-      // boosterForm.sendFormMessage(message.author, previousField, fieldValue.toLowerCase());
+      // skinForm.sendFormMessage(message.author, previousField, fieldValue.toLowerCase());
       message.author.send({ embeds: formMessageEmbeds });
     }
   })

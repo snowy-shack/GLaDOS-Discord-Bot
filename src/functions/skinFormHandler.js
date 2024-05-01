@@ -1,12 +1,14 @@
 const { EmbedBuilder } = require("discord.js");
 const minecraft = require("../commands/minecraft");
 
-// EMOJIS:
-const emSupporter = process.env.EMOJI_SUPPORTER
-const emBooster   = process.env.EMOJI_BOOSTER
+const emojis = {
+  booster: process.env.EMOJI_BOOSTER,
+  donator: process.env.EMOJI_SUPPORTER
+}
 
 const messages = {
-  booster: `It seems like you've**${emBooster}boosted** Phanty's Home for **3 months**! Thank you so much!`
+  booster: `It seems like you've**${emojis.booster}boosted** Phanty's Home for **3 months**! Thank you so much!`,
+  translator: `It seems like you've**${emojis.booster}boosted** Phanty's Home for **3 months**! Thank you so much!`
 }
 
 async function respond(previousField, fieldValue, type) {
@@ -20,7 +22,7 @@ async function respond(previousField, fieldValue, type) {
     
     In order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.`
   )
-  .setFooter({text: "field 1/2"})
+  .setFooter({text: `field 1/2 • skin.${type}`})
   .setTimestamp();
 
   if (previousField == -1) {
@@ -36,7 +38,7 @@ async function respond(previousField, fieldValue, type) {
       const form_1_error_1 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
         .setDescription("I didn't quite catch that. Please enter your Minecraft: Java Edition username in plain text.")
-        .setFooter({text: "field 1/2 - syntax error"})
+        .setFooter({text: `field 1/2 • skin.${type} • syntax error`})
         .setTimestamp();
       return [form_1_error_1];
 
@@ -48,7 +50,7 @@ async function respond(previousField, fieldValue, type) {
         .setDescription(
           `Great! Please confirm that the Minecraft account below is your account by sending '**confirm**'. Otherwise send '**change**' to change it.`
         )
-        .setFooter({text: "field 2/2"})
+        .setFooter({text: `field 2/2 • skin.${type}`})
         .setTimestamp();
       const form_profile = new EmbedBuilder().setColor("d9b69e")
         .setThumbnail(link)
@@ -62,7 +64,7 @@ async function respond(previousField, fieldValue, type) {
       const form_1_error_2 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
         .setDescription(`I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.`)
-        .setFooter({text: "field 1/2 - not found"})
+        .setFooter({text: `field 1/2 • skin.${type} • not found`})
         .setTimestamp();
       return [form_1_error_2];
     }
@@ -82,7 +84,7 @@ async function respond(previousField, fieldValue, type) {
       const form_2_reset = new EmbedBuilder().setColor("b068a8")
         .setAuthor(formTitle)
         .setDescription("Alright, what is the username of the account you would like to change it to?")
-        .setFooter({text: "field 1/2 - reset"})
+        .setFooter({text: `field 1/2 • skin.${type} • reset`})
         .setTimestamp();
       return [form_2_reset];
 
@@ -90,7 +92,7 @@ async function respond(previousField, fieldValue, type) {
       const form_2_error_1 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
         .setDescription(`I don't understand that answer. Please reply with either '**confirm**' or '**change**' to confirm or change your submitted username.`)
-        .setFooter({text: "field 2/2 - syntax error"})
+        .setFooter({text: `field 2/2 • skin.${type} • syntax error`})
         .setTimestamp();
       return [form_2_error_1];
     }

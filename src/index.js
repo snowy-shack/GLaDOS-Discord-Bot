@@ -1,67 +1,60 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { PermissionFlagsBits } = require("discord.js");
 
 const cron = require("node-cron");
 
 const logs = require("./logs");
-const boosterForm = require("./functions/boosterFormHandler");
 const messageHandler = require("./functions/messageHandler");
 const dmMessageHandler = require("./functions/dmMessageHandler");
+const faqHandler = require("./functions/faqHandler");
 const daily = require("./events/daily");
 
-const client = require("./client");
 const onReady = require("./events/ready");
-client.once(onReady.name, (...args) => onReady.execute(...args));
 const prefix = 'ph!';
 
-// const phGuild = require("./guild");
+(async () => {
+  const client = await require("./client");
+  client.once(onReady.name, (...args) => onReady.execute(...args));
 
-function isAdmin(message) {
-  return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.adm);
-}
+  client.on("messageCreate", async (message) => {
+    try {
+      if (message.author.bot) return; // Ensure the bot doesn't reply to itself (or automated bot messages)
+      var isDm = !message.guild; 
+  
+      if (message.content == "ph!ping") {
+        message.reply("pong!");
+        return;
+      }
+  
+      if (isDm) {
+        console.log('dm')
+        dmMessageHandler.handleDM(message);
+      } else {
+        console.log('not dm')
+        messageHandler.handleMessage(prefix, message);
+      }
+    } catch (error) {
+      logs.logMessage(`❌ An error occured: ${error}`);
+    }
+  });
+  
+  client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+    
+    const { commandName } = interaction;
+    const faqId = interaction.options.getString('id');
+
+    if (commandName === 'faq') {
+        await interaction.reply(await faqHandler.getFaqReply(faqId));
+        // await logs.directReply(interaction, await faqHandler.getFaqReply(faqId))
+    }
+  });
+
+})();
+
 // daily.run(client);
 
-let phGuild;
-(async () => {
-  phGuildId = (process.env.GUILDID).toString();
-  phGuild = await client.guilds.fetch(phGuildId); // Get Phanty's Home server
-  logChannel = await phGuild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
-})(); // Define important variables
 
-client.on("messageCreate", async (message) => {
-  // try {
-    if (message.author.bot) return; // Ensure the bot doesn't reply to itself (or automated bot messages)
-    var isDm = !message.guild; 
-
-    if (message.content == "ph!ping") {
-      message.reply("pong!");
-      return;
-    }
-
-    if (isDm) {
-      console.log('dm')
-      dmMessageHandler.handleDM(message);
-    } else {
-      console.log('not dm')
-      messageHandler.handleMessage(prefix, message);
-    }
-
-    if (message.content.startsWith('ph!formDM ') && isAdmin(message)) {
-      // message.author.send({ embeds: [await boosterForm.respond(-1, '') ] });
-      try {
-        targetUser = await phGuild.members.fetch(message.content.split(' ')[1]);
-        boosterForm.sendFormMessage(targetUser, -1, '');
-        
-        logs.logMessage(`❓ Asking \`<@${message.author.id}>\` about their Minecraft UUID.`);
-      } catch (error) {
-        logs.directReply(message, `❌ An error occured: ${error}`)
-      }
-    }
-  // } catch (error) {
-  //   logs.logMessage(`❌ An error occured: ${error}`);
-  // }
-});
 
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(

@@ -4,7 +4,7 @@ const {
   Client
 } = require("discord.js");
 
-function createClient() {
+async function createClient() {
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -18,7 +18,7 @@ function createClient() {
     ]
   });
 
-  client.login(process.env.TOKEN);
+  await client.login(process.env.TOKEN);
   
   return client;
 }
