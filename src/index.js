@@ -10,7 +10,10 @@ const faqHandler = require("./functions/faqHandler");
 const daily = require("./events/daily");
 
 const onReady = require("./events/ready");
+const registerSlashCommands = require("./registerSlashCommands");
 const prefix = 'ph!';
+
+registerSlashCommands.register();
 
 (async () => {
   const client = await require("./client");
@@ -41,9 +44,21 @@ const prefix = 'ph!';
   client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
     
-    const { commandName } = interaction;
-    const faqId = interaction.options.getString('id');
+    // interactionHandler.reply
 
+    const { commandName } = interaction;
+    const faqId = interaction.options.getString('question');
+
+    if (commandName === 'ping') {
+      console.log(new Date());
+      console.log(interaction.createdTimestamp);
+      await interaction.reply(`> \`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms\``);
+    }
+    if (commandName === 'reboot') {
+      await interaction.reply('> `💀 Shutting down`');
+      console.log('Shutting down after command request');
+      process.exit();
+    }
     if (commandName === 'faq') {
         await interaction.reply(await faqHandler.getFaqReply(faqId));
         // await logs.directReply(interaction, await faqHandler.getFaqReply(faqId))
