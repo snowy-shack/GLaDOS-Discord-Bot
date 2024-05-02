@@ -1,8 +1,8 @@
 const skinForm = require("./skinFormHandler");
-const client = require("../client");
 const logs = require("../logs");
 // const client 
-function handleDM(message) {
+async function handleDM(message) {
+  const client = await require("../client");
   message.channel.messages.fetch({ limit: 10 }).then(async scanMessages => {
     previousField = -1;
     scanMessages.reverse().forEach(scannedMessage => {
