@@ -23,4 +23,4 @@ async function createClient() {
   return client;
 }
 
-module.exports = await createClient();
+module.exports = createClient();
