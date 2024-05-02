@@ -4,7 +4,7 @@ async function react(interaction) {
   await interaction.reply('> `🪢 Pulling`');
   console.log('Attempting to GIT pull');
 
-  // exec('');
+  // exec('git pull origin master');
 }
 
 module.exports = { react };
