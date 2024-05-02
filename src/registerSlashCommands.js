@@ -22,6 +22,10 @@ const commands = [
   new SlashCommandBuilder().setName('reboot')
     .setDescription('Reboots GLaDOS')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+  
+  new SlashCommandBuilder().setName('refresh_faqs')
+    .setDescription('Refreshes The FAQ channel')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     
 ].map(command => command.toJSON());
 
