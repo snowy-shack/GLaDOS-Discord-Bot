@@ -26,12 +26,12 @@
   },
   {
     "id": "denied_suggestions",
-    "question": "Why won't you add ***?",
+    "question": "Why won't you add ___?",
     "answer": "One of the main reasons we don't add a lot of things, is because of the concept of quality over quantity. We want to make sure that everything we add into the game feels polished and has a purpose. We want to focus on adding things to the game in such a way, that they can be used in multiple ways when playing the game. This also goes for characters like cores and GLaDOS."
   },
   {
     "id": "mod_compatibility",
-    "question": "Will you add support for the *** mod?",
+    "question": "Will you add support for the ___ mod?",
     "answer": "Making this mod is a lot of work, so unfortunately we currently can't focus on adding support for any mods. This includes mods like Create, shader mods and others. That doesn't mean they won't be compatible, we just can't (for the moment) ensure that they will."
   },
   {
