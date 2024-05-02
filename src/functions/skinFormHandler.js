@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const minecraft = require("../commands/minecraft");
+const minecraft = require("../functions/minecraftAPIhandler");
 
 const emojis = {
   booster: process.env.EMOJI_BOOSTER,

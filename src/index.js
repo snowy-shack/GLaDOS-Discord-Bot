@@ -6,7 +6,7 @@ const cron = require("node-cron");
 const logs = require("./logs");
 const messageHandler = require("./functions/messageHandler");
 const dmMessageHandler = require("./functions/dmMessageHandler");
-const faqHandler = require("./functions/faqHandler");
+const interactionHandler = require("./functions/interactionHandler");
 const daily = require("./events/daily");
 
 const onReady = require("./events/ready");
@@ -19,57 +19,27 @@ registerSlashCommands.register();
   const client = await require("./client");
   client.once(onReady.name, (...args) => onReady.execute(...args));
 
-  client.on("messageCreate", async (message) => {
+  client.on("messageCreate", async (message) => { // DM messages
     try {
-      if (message.author.bot) return; // Ensure the bot doesn't reply to itself (or automated bot messages)
-      var isDm = !message.guild; 
-  
-      if (message.content == "ph!ping") {
-        message.reply("pong!");
-        return;
-      }
-  
-      if (isDm) {
-        console.log('dm')
-        dmMessageHandler.handleDM(message);
-      } else {
-        console.log('not dm')
-        messageHandler.handleMessage(prefix, message);
-      }
+      if (message.author.bot || message.guild) return; // Ensure the bot doesn't reply to bots, or server messages
+      messageHandler.handleMessage(prefix, message);
     } catch (error) {
-      logs.logMessage(`❌ An error occured: ${error}`);
+      logs.logError(error);
     }
   });
   
-  client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
-    
-    // interactionHandler.reply
-
-    const { commandName } = interaction;
-    const faqId = interaction.options.getString('question');
-
-    if (commandName === 'ping') {
-      console.log(new Date());
-      console.log(interaction.createdTimestamp);
-      await interaction.reply(`> \`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms\``);
-    }
-    if (commandName === 'reboot') {
-      await interaction.reply('> `💀 Shutting down`');
-      console.log('Shutting down after command request');
-      process.exit();
-    }
-    if (commandName === 'faq') {
-        await interaction.reply(await faqHandler.getFaqReply(faqId));
-        // await logs.directReply(interaction, await faqHandler.getFaqReply(faqId))
+  client.on('interactionCreate', async interaction => { // Slash commands
+    try {
+      if (!interaction.isCommand()) return;
+      interactionHandler.reply(interaction);
+    } catch (error) {
+      logs.logError(error);
     }
   });
 
 })();
 
 // daily.run(client);
-
-
 
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(
