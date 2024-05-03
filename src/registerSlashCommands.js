@@ -8,10 +8,10 @@ const options = faqsJSON.map(object => ({name: object.question, value: object.id
 // Define the commands
 const commands = [
   new SlashCommandBuilder().setName('faq')
-    .setDescription('Sends FAQ replies')
+    .setDescription('Sends FAQ Replies')
     .addStringOption( option =>
       option.setName('question')
-        .setDescription('The FAQ message')
+        .setDescription('The FAQ Message')
         .setRequired(true)
         .addChoices(...options)
     ),
@@ -24,8 +24,17 @@ const commands = [
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   
   new SlashCommandBuilder().setName('refresh_faqs')
-    .setDescription('Refreshes The FAQ channel')
+    .setDescription('Refreshes the FAQ Channel')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+  
+  new SlashCommandBuilder().setName('babble')
+    .setDescription('Be a good Genetic Lifeform')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addStringOption(option =>
+      option.setName('message')
+        .setDescription('The Message')
+        .setRequired(true)
+    ),
     
 ].map(command => command.toJSON());
 
