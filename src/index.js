@@ -30,8 +30,8 @@ registerSlashCommands.register();
   });
 
   reactionChannels = [
-    '1235600733093761156',
-    '1235600701602791455',
+    '1235600733093761156', // Dev announcements
+    '1235600701602791455', // Dev art
 
     '878221699844309033', // #News
     '876132326101360670', // #Announcements

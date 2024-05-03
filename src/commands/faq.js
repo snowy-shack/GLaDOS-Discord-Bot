@@ -5,7 +5,7 @@ async function react(interaction) {
   
   object = faqsJSON.find(object => object.id == faqId)
   if (object) {
-    await interaction.reply('# ' + object.question + '\n' + object.answer)
+    await interaction.reply('# ' + object.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + object.answer)
   } else {
     await interaction.reply('> ❌ `Unknown faq ID!`')
   };
