@@ -1,9 +1,11 @@
-const faqsJSON = require("../../faqs.json");
 const logs = require("../../logs");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
+const emojis = require("../../emojis.js");
+
 async function react(interaction) {
+  const faqsJSON = require("../../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
   const client = await require("../../client");
   await interaction.reply(logs.formatMessage('🔄️ Updating FAQ'));
   logs.logMessage('🔄️ Updating FAQ');
@@ -28,7 +30,7 @@ async function react(interaction) {
     setTimeout(() => {
       channel.send(logs.formatMessage(`Last FAQ update: ${formattedDate}`))
       for (faq of faqsJSON) {
-        channel.send('# <:portalmod:1235976680481488957> ' + faq.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + faq.answer + '\n** **');
+        channel.send(`# ${emojis.portalmod} ` + faq.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + faq.answer + '\n** **');
       }
     }, 5000);
 }

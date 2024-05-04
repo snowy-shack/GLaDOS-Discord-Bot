@@ -3,6 +3,8 @@ imageChannels = [
   '981527027142262824' // #Art
 ]
 
+const emojis = require("../emojis.js");
+
 function react(message) {
   hasImage = false;
   message.attachments.forEach((attachment => {
@@ -11,8 +13,8 @@ function react(message) {
   }));
 
   if (!imageChannels.includes(message.channelId)) {
-    message.react('1235590078064234537');
-  } else if (hasImage) message.react('1235590078064234537');
+    message.react(emojis.like);
+  } else if (hasImage) message.react(emojis.like);
 }
 
 module.exports = { react }

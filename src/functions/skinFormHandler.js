@@ -1,10 +1,7 @@
 const { EmbedBuilder } = require("discord.js");
 const minecraft = require("../functions/minecraftAPIhandler");
 
-const emojis = {
-  booster: process.env.EMOJI_BOOSTER,
-  donator: process.env.EMOJI_SUPPORTER
-}
+const emojis = require("../emojis.js");
 
 const messages = {
   booster: `It seems like you've**${emojis.booster}boosted** Phanty's Home for **3 months**! Thank you so much!`,

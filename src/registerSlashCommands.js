@@ -1,4 +1,4 @@
-const { REST, Routes, SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { REST, Routes, SlashCommandBuilder, PermissionFlagsBits, PermissionsBitField } = require("discord.js");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
@@ -37,6 +37,21 @@ const commands = [
         .setDescription('The Message')
         .setRequired(true)
     ),
+  
+  new SlashCommandBuilder().setName('skin_prompt')
+    .setDescription('DM user a skin form')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    // .addUserOption(option => option
+    //   .setName('user')
+    //   .setRequired(true)
+    // )
+    // .addStringOption(option => option
+    //   .setName('skin_type')
+    //   .setRequired(true)
+    //   .addChoices(
+    //     {name: 'Booster Skin', value: 'booster'}
+    //   )
+    // )
     
 ].map(command => command.toJSON());
 
