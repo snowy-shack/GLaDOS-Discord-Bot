@@ -11,12 +11,21 @@ const logs = require("./logs");
 const commands = [
   new SlashCommandBuilder().setName('faq')
     .setDescription('Sends FAQ Replies')
-    .addStringOption( option =>
+    .addStringOption(option =>
       option.setName('question')
         .setDescription('The FAQ Message')
         .setRequired(true)
         .addChoices(...options)
+    )
+    .addStringOption(option =>
+      option.setName('message_id')
+        .setDescription('Will reply to a specific message (by ID)')
+    )
+    .addUserOption(option => 
+      option.setName('reply_user')
+        .setDescription('Will reply to the last message sent by a user')
     ),
+
   new SlashCommandBuilder().setName('ping')
     .setDescription('Ping GLaDOS'),
   
@@ -41,17 +50,19 @@ const commands = [
   new SlashCommandBuilder().setName('skin_prompt')
     .setDescription('DM user a skin form')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    // .addUserOption(option => option
-    //   .setName('user')
-    //   .setRequired(true)
-    // )
-    // .addStringOption(option => option
-    //   .setName('skin_type')
-    //   .setRequired(true)
-    //   .addChoices(
-    //     {name: 'Booster Skin', value: 'booster'}
-    //   )
-    // )
+    .addUserOption(option =>
+      option.setName('user')
+        .setRequired(true)
+        .setDescription('User to DM the Portal Gun skin form')
+    )
+    .addStringOption(option => 
+      option.setName('skin_type')
+        .setDescription('The Portal Gun skin to give')
+        .setRequired(true)
+        .addChoices(
+          {name: 'Booster Skin', value: 'booster'}
+        )
+    )
     
 ].map(command => command.toJSON());
 

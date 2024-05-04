@@ -13,7 +13,7 @@ module.exports = {
             activities: [{
                 type: ActivityType.Custom,
                 name: 'activity',
-                state: 'Overlooking Phanty\'s Home'
+                state: 'Overseeing Phanty\'s Home'
             }]
         })
         console.log(`Ready! As ${client.user.tag}`);

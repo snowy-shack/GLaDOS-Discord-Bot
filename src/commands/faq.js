@@ -1,14 +1,61 @@
-const emojis = require("../emojis.js");
+const emojis = require("../emojis");
+const logs = require("../logs");
 
 async function react(interaction) {
   const faqsJSON = require("../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
   const faqId = interaction.options.getString('question');
-  
+  const targetMessage = interaction.options.getString('message_id');
+  const targetUser = interaction.options.getUser('reply_user');
+
   object = faqsJSON.find(object => object.id == faqId)
+
+  faqBlock = `# ${emojis.portalmod} ` + object.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + object.answer;
+
+  if (targetUser && targetMessage) {
+    interaction.reply({content: logs.formatMessage('❌ Please provide either a user or a message ID'), ephemeral: true});
+    return;
+  }
+  
+  if (targetUser) {
+    replied = false;
+    interaction.channel.messages.fetch({ limit: 50 }).then(async messageScan => {
+      messageScan.forEach(async scannedMessage => {
+        if (scannedMessage.author == targetUser) {
+          if (replied == false) {
+            scannedMessage.reply(faqBlock);
+            replied = true;
+            interaction.reply({content: logs.formatMessage('✅ Succesfully replied to user\'s latest message!'), ephemeral: true});
+          }
+        }
+      });
+    });
+    if (replied == false) {
+      interaction.reply({content: logs.formatMessage('❌ Couldn\'t find recent message by user!'), ephemeral: true});
+      return;
+    }
+    return;
+  }
+
+  if (targetMessage) {
+    try {
+      const message = await interaction.channel.messages.fetch(targetMessage);
+      if (message) {
+        message.reply(faqBlock);
+        interaction.reply({content: logs.formatMessage('✅ Succesfully replied to their message!'), ephemeral: true});
+        return;
+      } else {
+        throw new Error('Message could not be found');
+      }
+    } catch (error) {
+      interaction.reply({content: logs.formatMessage('❌ Unknown message ID!'), ephemeral: true});
+      return;
+    }
+  };
+
   if (object) {
-    await interaction.reply(`# ${emojis.portalmod} ` + object.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + object.answer)
+    await interaction.reply(faqBlock)
   } else {
-    await interaction.reply('> ❌ `Unknown faq ID!`')
+    await interaction.reply(logs.formatMessage('❌ Unknown faq ID!'));
   };
 }
 

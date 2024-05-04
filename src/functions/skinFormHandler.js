@@ -13,11 +13,11 @@ async function respond(previousField, fieldValue, type) {
   const form_1 = new EmbedBuilder().setColor("b068a8")
 	.setAuthor(formTitle)
   .setDescription(
-    `Hi!
-    
-    ${messages[type]}
-    
-    In order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.`
+`Hi!
+
+${messages[type]}
+
+In order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.`
   )
   .setFooter({text: `field 1/2 • skin.${type}`})
   .setTimestamp();
@@ -44,23 +44,21 @@ async function respond(previousField, fieldValue, type) {
       // console.log(link);
       const form_2 = new EmbedBuilder().setColor("b068a8")
         .setAuthor(formTitle)
-        .setDescription(
-          `Great! Please confirm that the Minecraft account below is your account by sending '**confirm**'. Otherwise send '**change**' to change it.`
-        )
+        .setDescription("Great! Please confirm that the Minecraft account below is your account by sending '**confirm**'. Otherwise send '**change**' to change it.")
         .setFooter({text: `field 2/2 • skin.${type}`})
         .setTimestamp();
       const form_profile = new EmbedBuilder().setColor("d9b69e")
         .setThumbnail(link)
         .setDescription(
-          `# ${username}
-          (\`UUID: ${uuid}\`)`
+`# ${username}
+(\`UUID: ${uuid}\`)`
         );
 
       return [form_2, form_profile];
     } else {
       const form_1_error_2 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
-        .setDescription(`I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.`)
+        .setDescription("I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.")
         .setFooter({text: `field 1/2 • skin.${type} • not found`})
         .setTimestamp();
       return [form_1_error_2];
@@ -70,9 +68,7 @@ async function respond(previousField, fieldValue, type) {
       const form_3 = new EmbedBuilder().setColor("b068a8")
         .setAuthor(formTitle)
         // .setThumbnail(link)
-        .setDescription(
-          `Perfect! A Booster portal gun skin has been linked to this Minecraft account. Thank you for your support!!`
-        )
+        .setDescription("Perfect! A Booster portal gun skin has been linked to this Minecraft account. Thank you for your support!!")
         .setFooter({text: "form complete"})
         .setTimestamp();
       return [form_3];
@@ -88,7 +84,7 @@ async function respond(previousField, fieldValue, type) {
     } else {
       const form_2_error_1 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
-        .setDescription(`I don't understand that answer. Please reply with either '**confirm**' or '**change**' to confirm or change your submitted username.`)
+        .setDescription("I don't understand that answer. Please reply with either '**confirm**' or '**change**' to confirm or change your submitted username.")
         .setFooter({text: `field 2/2 • skin.${type} • syntax error`})
         .setTimestamp();
       return [form_2_error_1];
