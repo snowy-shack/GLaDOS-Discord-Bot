@@ -31,6 +31,7 @@ async function react(interaction) {
   const targetMessage = interaction.options.getString('message_id');
   const targetUser = interaction.options.getUser('reply_user');
 
+  // console.log(`FAQ requested by ${interaction.user}`);
   object = faqsJSON.find(object => object.id == faqId)
 
   faqBlock = `# ${emojis.portalmod} ` + object.question.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + object.answer;

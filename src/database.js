@@ -12,16 +12,16 @@ pgClient.connect();
 
 async function incBoostingDay(boosterId) {
     await pgClient.query(`
-        INSERT INTO boosters_test (discord_id, days_boosted)
+        INSERT INTO boosters (discord_id, days_boosted)
         VALUES ($1, 0)
         ON CONFLICT DO NOTHING;
     `,
     [ boosterId ]);
     
     await pgClient.query(`
-        UPDATE boosters_test
+        UPDATE boosters
         SET days_boosted = days_boosted + 1
-        WHERE boosters_test.discord_id = $1;
+        WHERE boosters.discord_id = $1;
     `,
     [ boosterId ]);
 }
@@ -33,7 +33,6 @@ const gunSkins = {
 }
 
 async function addGunSkin(discordId, minecraftUuid, skinType) {
-    
     await pgClient.query(`
         INSERT INTO players_skins_new (player_id, skin_id)
         VALUES ($1, $2)
@@ -51,17 +50,18 @@ async function addGunSkin(discordId, minecraftUuid, skinType) {
 async function getBoosted() {
     boosted = await pgClient.query(`
         SELECT discord_id
-        FROM boosters_test
+        FROM boosters
         WHERE days_boosted >= $1
         AND messaged IS FALSE;
     `,
     [ 90 ]);
     await pgClient.query(`
-        UPDATE boosters_test
+        UPDATE boosters
         SET messaged = TRUE;
     `); // Ensure the same person doesn't get messaged multiple times
     return boosted.rows.map(row => row.discord_id);
 }
+
 module.exports = { 
     incBoostingDay, 
     addGunSkin, 
