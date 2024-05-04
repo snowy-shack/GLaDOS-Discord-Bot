@@ -4,6 +4,14 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const emojis = require("../../emojis.js");
 
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+
+function init() {
+  return new SlashCommandBuilder().setName('refresh_faqs')
+  .setDescription('Refreshes the FAQ Channel')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+}
+
 async function react(interaction) {
   const faqsJSON = require("../../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
   const client = await require("../../client");
@@ -35,4 +43,4 @@ async function react(interaction) {
     }, 5000);
 }
 
-module.exports = { react };
+module.exports = { react, init };

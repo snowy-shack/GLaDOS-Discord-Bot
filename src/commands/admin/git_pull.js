@@ -1,4 +1,11 @@
 const { exec } = require('child_process');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+
+function init() {
+  return new SlashCommandBuilder().setName('git_pull')
+  .setDescription('Pulls the latest version of GLaDOS')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+}
 
 async function react(interaction) {
   await interaction.reply('> `🪢 Pulling`');
@@ -7,4 +14,4 @@ async function react(interaction) {
   // exec('git pull origin master');
 }
 
-module.exports = { react };
+module.exports = { react, init };

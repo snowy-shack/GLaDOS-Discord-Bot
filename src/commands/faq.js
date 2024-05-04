@@ -1,6 +1,30 @@
 const emojis = require("../emojis");
 const logs = require("../logs");
 
+const { SlashCommandBuilder } = require('discord.js');
+
+const faqsJSON = require("../faqs.json");
+const options = faqsJSON.map(object => ({name: object.question, value: object.id})); // Get a list of FAQ questions for the FAQ command
+
+function init() {
+  return new SlashCommandBuilder().setName('faq')
+  .setDescription('Sends FAQ Replies')
+  .addStringOption(option =>
+    option.setName('question')
+      .setDescription('The FAQ Message')
+      .setRequired(true)
+      .addChoices(...options)
+  )
+  .addStringOption(option =>
+    option.setName('message_id')
+      .setDescription('Will reply to a specific message (by ID)')
+  )
+  .addUserOption(option => 
+    option.setName('reply_user')
+      .setDescription('Will reply to the last message sent by a user')
+  );
+}
+
 async function react(interaction) {
   const faqsJSON = require("../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
   const faqId = interaction.options.getString('question');
@@ -59,4 +83,4 @@ async function react(interaction) {
   };
 }
 
-module.exports = { react };
+module.exports = { react, init };
