@@ -1,6 +1,6 @@
-const { fetch } = require("node-fetch");
-
 async function getUuid(username) {
+  const fetch = require('node-fetch');
+  
   const url = `https://api.ashcon.app/mojang/v2/user/${username}`;
   await fetch(url)
     .then(res => res.json())
