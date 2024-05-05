@@ -67,7 +67,6 @@ cron.schedule(
   }
 );
 
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  console.log('Uncaught Exception:', err);
+process.on('uncaughtException', (error) => { // Error logging
+  console.error('Uncaught Exception:', error);
 });
