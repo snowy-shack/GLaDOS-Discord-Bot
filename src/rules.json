@@ -1,0 +1,32 @@
+[
+  {
+      "id": "rule_1",
+      "title": "Avoid spamming",
+      "description": "We don't allow any form of spamming. This includes sending excessive amounts of messages/emojis, or cluttering the chat in any other way. It also includes mentioning roles and pinging people without valid reason, and misusing bots. If you need to send a lot of messages or images at once, consider creating a thread!"
+  },
+  {
+      "id": "rule_2",
+      "title": "No spoilers",
+      "description": "Avoid sending spoilers related to games, TV shows, movies, or other forms of entertainment (especially when it's recently released media). Discussing these things is of course allowed. But please do so in either a thread on the subject, or make sure to mark everything containing spoilers with appropriate spoiler tags."
+  },
+  {
+      "id": "rule_3",
+      "title": "Be respectful",
+      "description": "Kindness and respect is essential. Of course you may disagree with others, but remain respectful during conversations and discussions. This rule also includes respecting privacy, boundaries, beliefs, and ways of life. Don't harass people for not believing the same things you do, but feel free to discuss them in a respectful manner."
+  },
+  {
+      "id": "rule_4",
+      "title": "Keep chats SFW",
+      "description": "This server is accessible to all ages, so please refrain from sending NSFW (not safe for work) content. This includes themes like nudity, excessive gore. If something is borderline safe for work, mark it as a spoiler. NSFW jokes are allowed, but avoid overdoing them."
+  },
+  {
+      "id": "rule_5",
+      "title": "Use channels properly",
+      "description": "Select the appropriate channels for your messages and try to stay on topic within them. Some channels have specific rules, so if someone points out that you're not using a channel correctly, you can check the corresponding channel description for more information."
+  },
+  {
+      "id": "rule_6",
+      "title": "Keep chats English",
+      "description": "To facilitate effective moderation and allow everyone to participate in conversations, please keep your conversations in this server in English. Occasional use of other languages is fine, but avoid entire conversations in your native language."
+  }
+]
