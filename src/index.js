@@ -47,7 +47,6 @@ registerSlashCommands.register();
     try {
       if (!interaction.isCommand()) return;
       interactionHandler.reply(interaction);
-      // interaction.reply({ embeds: [testEmbed] });
     } catch (error) {
       logs.logError(error);
     }
@@ -67,3 +66,8 @@ cron.schedule(
     timezone: "Europe/Amsterdam",
   }
 );
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  console.log('Uncaught Exception:', err);
+});
