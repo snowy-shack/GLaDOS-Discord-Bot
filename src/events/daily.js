@@ -1,13 +1,17 @@
 const database = require("../database");
 const skinForm = require("../functions/skinFormHandler");
 const trackBoosters = require("../functions/trackBoosters");
+const logs = require("../logs");
 
-async function run(client) {
+async function run() {
+  const client = await require("../client");
+
   phGuildId = (process.env.GUILDID).toString();
   phGuild = await client.guilds.fetch(phGuildId);
 
   boosters = await trackBoosters.getBoosters(client, phGuild);
 
+  console.log('updating boosting days for', boosters)
   boosters.forEach((boosterId) => {
     database.incBoostingDay(boosterId);
   });

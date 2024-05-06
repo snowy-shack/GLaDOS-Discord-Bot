@@ -54,13 +54,13 @@ registerSlashCommands.register();
 
 })();
 
-// daily.run(client);
+// daily.run();
 
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(
   "00 00 12 * * 0-6",
   () => {
-    daily.run(client);
+    daily.run();
   },
   {
     timezone: "Europe/Amsterdam",
