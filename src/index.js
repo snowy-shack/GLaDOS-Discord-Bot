@@ -8,10 +8,10 @@ const messageHandler = require("./functions/messageHandler");
 const dmMessageHandler = require("./functions/dmMessageHandler");
 const interactionHandler = require("./functions/interactionHandler");
 const reactionHandler = require("./functions/reactionHandler");
-const daily = require("./events/daily");
+const registerSlashCommands = require("./registerSlashCommands");
 
 const onReady = require("./events/ready");
-const registerSlashCommands = require("./registerSlashCommands");
+const daily = require("./events/daily");
 
 const emojis = require("./emojis.js");
 

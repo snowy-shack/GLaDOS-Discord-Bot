@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-const daily = require("./events/daily");
+const daily = require("../../events/daily");
 
 function init() {
   return new SlashCommandBuilder().setName('increment_boosters')
