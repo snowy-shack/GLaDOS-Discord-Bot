@@ -40,11 +40,11 @@ async function addGunSkin(discordId, minecraftUuid, skinType) {
     `,
     [ minecraftUuid, gunSkins[skinType] ]);
 
-    await pgClient.query(`
-        UPDATE users
-        SET mc_uuid = $1
-        WHERE discord_id = $2
-    `); // not done
+    // await pgClient.query(`
+    //     UPDATE users
+    //     SET mc_uuid = $1
+    //     WHERE discord_id = $2
+    // `); // not done
 }
 
 async function getBoosted() {
