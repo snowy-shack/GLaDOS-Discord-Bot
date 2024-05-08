@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const logs = require('../../logs');
 
 function init() {
   return new SlashCommandBuilder().setName('reboot')
@@ -8,6 +9,7 @@ function init() {
 
 async function react(interaction) {
   await interaction.reply('> `💀 Shutting down`');
+  logs.logMessage('> `💀 Attempting to restart`')
   console.log('Shutting down after command request');
   process.exit();
 }
