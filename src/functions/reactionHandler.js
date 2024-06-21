@@ -7,7 +7,7 @@ function react(message, reactionChannel) {
   if (reactLikeToImages) {
     hasImage = false; // Default init of hasImage
 
-    linkRegEx = /^.*https?:\/\/(www\.)?([^\/]+)\/.*$/;
+    linkRegEx = /https?:\/\/(www\.)?([^\/]+)\/.*$/;
     const linkMatches = message.content.match(linkRegEx);
     if (linkMatches) {
       const domain = linkMatches[2];      
