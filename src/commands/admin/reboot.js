@@ -9,7 +9,7 @@ function init() {
 
 async function react(interaction) {
   await interaction.reply('> `💀 Shutting down`');
-  logs.logMessage('> `💀 Attempting to restart`')
+  await logs.logMessage('> `💀 Attempting to restart`')
   console.log('Shutting down after command request');
   process.exit();
 }
