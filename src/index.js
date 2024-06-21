@@ -30,17 +30,26 @@ registerSlashCommands.register();
     }
   });
 
-  reactionChannels = [
-    '1235600733093761156', // Dev announcements
-    '1235600701602791455', // Dev art
+  reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
+    ['1235600733093761156', false, true,  false], // Dev announcements
+    ['1253797518555353239', false, true,  true ], // Dev updates
+    ['1235600701602791455', true,  false, false], // Dev art
 
-    '878221699844309033', // #News
-    '876132326101360670', // #Announcements
-    '981527027142262824' // #Art
+    ['878221699844309033',  false, true,  false], // #News
+    ['876132326101360670',  false, true,  false], // #Announcements
+    ['981527027142262824',  true,  false, false], // #Art
+    ['1005103628882804776', false, true,  true ]  // #Updates
   ]
 
-  client.on("messageCreate", async (message) => { // Reactions
-    if (!message.author.bot && message.guild && reactionChannels.includes(message.channelId)) reactionHandler.react(message);
+  client.on("messageCreate", async (message) => {
+    if (!message.author.bot && message.guild)  { // Reactions
+      for (i in reactionChannels) {
+        reactionChannel = reactionChannels[i];
+
+        if (reactionChannel[0] != message.channelId) continue;
+        reactionHandler.react(message, reactionChannel);
+      }
+    }
   });
 
   client.on('interactionCreate', async interaction => { // Slash commands
