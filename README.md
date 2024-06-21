@@ -1,2 +1,2 @@
 # GLaDOS bot for Phanty's Home
-### `Current Version: 1.2.4`
+### `Current Version: 1.3.0`
