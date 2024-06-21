@@ -10,9 +10,7 @@ function react(message, reactionChannel) {
     linkRegEx = /^https?:\/\/(www\.)?([^\/]+)\/.*$/;
     const linkMatches = message.content.match(linkRegEx);
     if (linkMatches) {
-      const domain = linkMatches[2];
-      console.log(domain);
-      
+      const domain = linkMatches[2];      
       if (artLinks.includes(domain)) hasImage = true;
     }
 
