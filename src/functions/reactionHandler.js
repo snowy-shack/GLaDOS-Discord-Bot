@@ -1,5 +1,5 @@
 const emojis = require("../emojis.js");
-const artLinks = require("./artLinks.json").links;
+const artLinks = require("./art_links.json").links;
 
 function react(message, reactionChannel) {
   [channelID, reactLikeToImages, reactLike, reactVotes] = reactionChannel; // (sorry)
@@ -10,7 +10,7 @@ function react(message, reactionChannel) {
     linkRegEx = /https?:\/\/(www\.)?([^\/]+)\/.*$/;
     const linkMatches = message.content.match(linkRegEx);
     if (linkMatches) {
-      const domain = linkMatches[2];      
+      const domain = linkMatches[2];
       if (artLinks.includes(domain)) hasImage = true;
     }
 
