@@ -1,6 +1,7 @@
 const client = require("../../client");
 
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const emojis = require("../../emojis");
 
 function init() {
   return new SlashCommandBuilder().setName('babble')
