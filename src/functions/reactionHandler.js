@@ -1,7 +1,8 @@
 const emojis = require("../emojis.js");
 const artLinks = require("./art_links.json").links;
+const logs = require("../logs");
 
-function react(message, reactionChannel) {
+async function react(message, reactionChannel) {
   [channelID, reactLikeToImages, reactLike, reactVotes] = reactionChannel; // (sorry)
 
   if (reactLikeToImages) {
@@ -21,8 +22,17 @@ function react(message, reactionChannel) {
     if (hasImage) message.react(emojis.like);
   }
   
-  if (reactLike) message.react(emojis.like);
-  if (reactVotes) {message.react(emojis.upvote); message.react(emojis.downvote)};
+  if (reactLike) await message.react(emojis.like);
+  if (reactVotes) {message.react(emojis.upvote).then(() => message.react(emojis.downvote))};
 }
 
-module.exports = { react }
+async function removeReactions(messageReaction, bySameUser) {
+  if (bySameUser) {
+    logs.logMessage(`🗑️ Removing ❤️ reaction on message in \`<#${messageReaction.message.channel.id}>\`.`);
+    messageReaction.message.reactions.cache.get('1235590078064234537')?.remove(); // Dev
+    messageReaction.message.reactions.cache.get('1264163067655229510')?.remove(); // Main
+  }
+  messageReaction.remove();
+}
+
+module.exports = { react, removeReactions }

@@ -10,11 +10,14 @@ async function createClient() {
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.MessageContent,
-      GatewayIntentBits.DirectMessages
+      GatewayIntentBits.DirectMessages,
     ],
     partials: [
-      Partials.Channel
+      Partials.Message,
+      Partials.Channel,
+      Partials.Reaction,
     ]
   });
 

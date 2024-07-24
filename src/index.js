@@ -14,6 +14,7 @@ const onReady = require("./events/ready");
 const daily = require("./events/daily");
 
 const emojis = require("./emojis.js");
+const { eventNames } = require("process");
 
 registerSlashCommands.register();
 
@@ -49,6 +50,19 @@ registerSlashCommands.register();
         if (reactionChannel[0] != message.channelId) continue;
         reactionHandler.react(message, reactionChannel);
       }
+    }
+  });
+
+  client.on("messageReactionAdd", async (messageReaction, author) => {
+    const message = await messageReaction.message.channel.messages.fetch(messageReaction.message.id); // Fetch message in channel by ID
+    const authorID = message.author.id;
+
+    inArtChannel = ['981527027142262824', '1235600701602791455'].includes(messageReaction.message.channelId);
+    bySameUser = author.id == authorID;
+    isDeleteReaction = ['1265683388069707776', '1264171028125323327'].includes(messageReaction.emoji.id);
+
+    if (inArtChannel && isDeleteReaction) {
+      reactionHandler.removeReactions(messageReaction, bySameUser);
     }
   });
 
