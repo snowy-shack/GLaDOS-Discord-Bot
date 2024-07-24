@@ -1,10 +1,16 @@
 const skinForm = require("./skinFormHandler");
 const logs = require("../logs");
-// const client 
+const database = require("../database");
+
 async function handleDM(message) {
   const client = await require("../client");
+
+
+  // Booster skin form handling
   message.channel.messages.fetch({ limit: 10 }).then(async scanMessages => {
     previousField = -1;
+
+    // Goes from top to bottom to get the latest values
     scanMessages.reverse().forEach(scannedMessage => {
       try {
         footerText = (typeof scannedMessage.embeds[0] != 'undefined') ? scannedMessage.embeds[0].footer.text : '';
@@ -18,13 +24,13 @@ async function handleDM(message) {
           } catch (error) {};
           
         } else {fieldValue = scannedMessage.content}
-      } catch (error) { console.log(error) };
+      } catch (error) { console.error(error) };
     })
     // console.log('previousField: ', previousField, 'fieldValue: ', fieldValue);
     if (previousField == 2 && fieldValue == 'confirm') {
 
       // update database here
-
+      await database.addGunSkin(uuidGot, "booster");
       logs.logMessage(`💎 Added booster skin to uuid '${uuidGot}' \`<@${message.author.id}>\`.`);
 
       previousField == -2; //Throw error message

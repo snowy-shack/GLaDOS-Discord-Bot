@@ -18,11 +18,12 @@ async function run() {
 
   logs.logMessage(`✅ Updated database for ${boosters.length} boosters.`);
 
-  boosted = await database.getBoosted();
-  for(let i = 0; i < boosted.length; i++) {
-    console.log(boosted[i])
-
+  boosted = await database.getBoosted(90); // Get list of IDs that have boosted 3 months
+  console.log(boosted);
+  for(let i = 0; i < boosted.length; i++) {    
     targetBooster = await phGuild.members.fetch(boosted[i]);
+    console.log(targetBooster.user.username, "has boosted for 90 days, DMing them!");
+
     skinForm.sendFormMessage(targetBooster, -1, '');
   }
 }

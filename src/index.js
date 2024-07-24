@@ -77,7 +77,7 @@ registerSlashCommands.register();
 
 })();
 
-// daily.run();
+daily.run();
 
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(
