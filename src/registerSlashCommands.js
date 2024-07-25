@@ -31,7 +31,7 @@ async function register() {
 
     logs.logMessage(`👁️‍🗨️ Reloaded ${commands.length} slash commands.`);
   } catch(error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
