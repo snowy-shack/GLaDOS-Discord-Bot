@@ -48,12 +48,12 @@ async function getBoosted(days) {
         AND messaged IS FALSE;
     `,
     [ days ]);
-    // await pgClient.query(`
-    //     UPDATE boosters
-    //     SET messaged = TRUE
-    //     WHERE days_boosted >= $1;
-    // `,
-    // [ days ]); // Ensure the same person doesn't get messaged multiple times
+    await pgClient.query(`
+        UPDATE boosters
+        SET messaged = TRUE
+        WHERE days_boosted >= $1;
+    `,
+    [ days ]); // Ensure the same person doesn't get messaged multiple times
     return boosted.rows.map(row => row.discord_id);
 }
 
