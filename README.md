@@ -1,7 +1,7 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for PortalMod and Phanty's Home  
 
-`Current Version: 1.5`
+`Current Version: 1.5.1`
 
 # To-do
 - Come up with more to-do features
@@ -11,6 +11,11 @@ Management and quality of life bot for PortalMod and Phanty's Home
 - Running /increment_boosters runs more than just incrementing boosters
 
 # Changelog
+## Release 1.5.1 - July 26th 2024
+### Fixes
+- Fixed a wrong string type in the booster form, which caused "${fieldValue}" to be shown to the user
+- Combined database queries to ensure boosters aren't DM'ed multiple times
+
 ## Release 1.5 - July 24th 2024
 ### Changes
 - Added functionality to remove ♥️ reactions when the message author reacts :delete: to their message
