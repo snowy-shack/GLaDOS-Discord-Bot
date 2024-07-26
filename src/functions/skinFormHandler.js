@@ -58,7 +58,7 @@ In order to apply your Portal Gun skin to your Minecraft account, we need your M
     } else {
       const form_1_error_2 = new EmbedBuilder().setColor("db4b4b")
         .setAuthor(formTitle)
-        .setDescription("I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.")
+        .setDescription(`I **couldn't find a player** with the name **${fieldValue}**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account.`)
         .setFooter({text: `field 1/2 • skin.${type} • not found`})
         .setTimestamp();
       return [form_1_error_2];

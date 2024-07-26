@@ -34,26 +34,38 @@ const gunSkins = {
 
 async function addGunSkin(minecraftUuid, skinType) {
     await pgClient.query(`
-        INSERT INTO players_skins_test (player_id, skin_id)
+        INSERT INTO players_skins (player_id, skin_id)
         VALUES ($1, $2);
     `,
     [ minecraftUuid, gunSkins[skinType] ]);
 }
 
 async function getBoosted(days) {
+    // boosted = await pgClient.query(`
+    //     SELECT discord_id
+    //     FROM boosters
+    //     WHERE days_boosted >= $1
+    //     AND messaged IS FALSE;
+    // `,
+    // [ days ]);
+    // await pgClient.query(`
+    //     UPDATE boosters
+    //     SET messaged = TRUE
+    //     WHERE days_boosted >= $1;
+    // `,
+    // [ days ]); 
     boosted = await pgClient.query(`
+        WITH updated_boosters AS (
+            UPDATE boosters
+            SET messaged = TRUE
+            WHERE days_boosted >= $1
+            AND messaged IS FALSE
+            RETURNING discord_id
+        )
         SELECT discord_id
-        FROM boosters
-        WHERE days_boosted >= $1
-        AND messaged IS FALSE;
-    `,
-    [ days ]);
-    await pgClient.query(`
-        UPDATE boosters
-        SET messaged = TRUE
-        WHERE days_boosted >= $1;
-    `,
-    [ days ]); // Ensure the same person doesn't get messaged multiple times
+        FROM updated_boosters;
+    `, [ days ]); // Ensure the same person doesn't get messaged multiple times
+
     return boosted.rows.map(row => row.discord_id);
 }
 
