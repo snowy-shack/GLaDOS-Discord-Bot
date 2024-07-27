@@ -4,11 +4,13 @@ Management and quality of life bot for PortalMod and Phanty's Home
 `Current Version: 1.5.1`
 
 # To-do
+- Add more error logging with discord.js events
 - Come up with more to-do features
 
 # Known issues
 - When running /reboot, the bot shuts down before being able to log that it's terminating itself
 - Running /increment_boosters runs more than just incrementing boosters
+- Reaction removing logs even if it couldn't remove anything
 
 # Changelog
 ## Release 1.5.1 - July 26th 2024
