@@ -6,7 +6,7 @@ const pgClient = new pg.Client({
     database: process.env.DBNAME,
     user:     process.env.DBUSER,
     password: process.env.DBPASS,
-});
+}); // Tee-hee
 
 pgClient.connect();
 
