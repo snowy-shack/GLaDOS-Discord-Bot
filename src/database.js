@@ -1,10 +1,10 @@
 const pg = require("pg");
 
 const pgClient = new pg.Client({
-    host:     "aws-0-eu-central-1.pooler.supabase.com",
-    port:     5432,
-    database: "postgres",
-    user:     "postgres.alydpmfevxaablumncyj",
+    host:     process.env.DBHOST,
+    port:     process.env.DBPORT,
+    database: process.env.DBNAME,
+    user:     process.env.DBUSER,
     password: process.env.DBPASS,
 });
 
