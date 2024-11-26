@@ -6,7 +6,7 @@ const emojis = require("../../emojis");
 function init() {
   return new SlashCommandBuilder().setName('babble')
   .setDescription('Be a good Genetic Lifeform')
-  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator | PermissionFlagsBits.MoveMembers)
   .addStringOption(option =>
     option.setName('message')
       .setDescription('The Message')
