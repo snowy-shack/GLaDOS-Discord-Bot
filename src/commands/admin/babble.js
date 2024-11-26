@@ -1,12 +1,11 @@
 const client = require("../../client");
 
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const emojis = require("../../emojis");
 
 function init() {
   return new SlashCommandBuilder().setName('babble')
   .setDescription('Be a good Genetic Lifeform')
-  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator | PermissionFlagsBits.MoveMembers)
+  .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
   .addStringOption(option =>
     option.setName('message')
       .setDescription('The Message')
