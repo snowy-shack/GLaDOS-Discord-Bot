@@ -1,5 +1,7 @@
 const pg = require("pg");
 
+const logs = require("./logs");
+
 const pgClient = new pg.Client({
     host:     process.env.DBHOST,
     port:     process.env.DBPORT,
@@ -10,20 +12,44 @@ const pgClient = new pg.Client({
 
 pgClient.connect();
 
-async function incBoostingDay(boosterId) {
-    await pgClient.query(`
-        INSERT INTO boosters (discord_id, days_boosted)
-        VALUES ($1, 0)
-        ON CONFLICT DO NOTHING;
-    `,
-    [ boosterId ]);
+// async function incBoostingDay(boosterId) {
+//     await pgClient.query(`
+//         INSERT INTO boosters (discord_id, days_boosted)
+//         VALUES ($1, 0)
+//         ON CONFLICT DO NOTHING;
+//     `,
+//     [ boosterId ]);
     
-    await pgClient.query(`
-        UPDATE boosters
-        SET days_boosted = days_boosted + 1
-        WHERE boosters.discord_id = $1;
-    `,
-    [ boosterId ]);
+//     await pgClient.query(`
+//         UPDATE boosters
+//         SET days_boosted = days_boosted + 1
+//         WHERE boosters.discord_id = $1;
+//     `,
+//     [ boosterId ]);
+// }
+
+async function incBoostingDay(boosterId) {
+    try {
+        await pgClient.query(`
+            INSERT INTO boosters (discord_id, days_boosted, last_modified)
+            VALUES ($1, 0, NOW())
+            ON CONFLICT DO NOTHING;
+        `, [boosterId]);
+
+        const result = await pgClient.query(`
+            UPDATE boosters
+            SET days_boosted = days_boosted + 1,
+                last_modified = NOW()
+            WHERE discord_id = $1
+            RETURNING *;
+        `, [boosterId]);
+        
+        return result.rowCount > 0; // Return the number of rows affected.
+    } catch (error) {
+        console.error("Error updating booster:", error);
+        logs.logError(error);
+        return false;
+    }
 }
 
 const gunSkins = {

@@ -4,10 +4,10 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const cron = require("node-cron");
 
 const logs = require("./logs");
-const messageHandler = require("./functions/messageHandler");
-const dmMessageHandler = require("./functions/dmMessageHandler");
+const messageHandler =     require("./functions/messageHandler");
+const dmMessageHandler =   require("./functions/dmMessageHandler");
 const interactionHandler = require("./functions/interactionHandler");
-const reactionHandler = require("./functions/reactionHandler");
+const reactionHandler =    require("./functions/reactionHandler");
 const registerSlashCommands = require("./registerSlashCommands");
 
 const onReady = require("./events/ready");
