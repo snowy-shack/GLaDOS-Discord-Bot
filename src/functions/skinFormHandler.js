@@ -103,15 +103,15 @@ In order to apply your Portal Gun skin to your Minecraft account, we need your M
 async function sendFormMessage(targetUser, previousField, fieldValue, retried = false) {
   const client = await require("../client");
 
-  try {
-    const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
-    
+  try {    
     // throw { code: 50007, message: "Emulated DM error" };
     await targetUser.send({ embeds: [await respond(previousField, fieldValue, 'booster') ] });
     return true;
   } catch (error) {
+    const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
+
     console.log(error);
-    logs.logMessage(`🎭 Woah! I ran into an issue DM'ing @${targetUser.username}, error code: ${error.code} (${error.message}).`);
+    logs.logMessage(`🎭 Woah! I ran into an issue DM'ing \`${targetUser}\`, error code: ${error.code} (${error.message}).`);
     if (!retried) { // Error: "Cannot send messages to this user"
       console.log("Couldn't DM user!");
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)

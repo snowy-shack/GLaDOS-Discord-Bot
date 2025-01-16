@@ -4,7 +4,7 @@ async function getLogChannel() {
 }
 
 function formatMessage(message) {
-  return '> **\`' + message + '\`**';
+  return '> **\`' + message.replace('\n', ' ') + '\`**';
 }
 
 async function logMessage(message) {

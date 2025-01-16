@@ -28,7 +28,7 @@ async function react(interaction) {
   skinForm.sendFormMessage(target_user, -1, skin_type);
   
   logs.logMessage(`❓ Asking \`${target_user}\` about their Minecraft UUID to add the ${skin_type} skin.`);
-  // exec('git pull origin master');
+  await interaction.reply(logs.formatMessage(`💎 DM'ing \`${target_user}\` with a form for the ${skin_type} skin.`));
 }
 
 module.exports = { react, init };
