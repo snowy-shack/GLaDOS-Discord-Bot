@@ -1,7 +1,7 @@
 async function getUuid(username) {
   const fetch = require('node-fetch');
   
-  const url = `https://api.mojang.com/users/profiles/minecraft/${username}`;
+  const url = `https://api.minecraftservices.com/minecraft/profile/lookup/name/${username}`;
   await fetch(url)
     .then(res => res.json())
     .then(json => {
