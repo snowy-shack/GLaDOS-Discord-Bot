@@ -22,12 +22,7 @@ async function react(interaction) {
     if (error) {
       logs.logError(error);
       console.error(`exec error: ${error}`);
-      logs.logMessage("❌ Update might not have been successful");
-      return;
-    } else if (stderr) {
-      logs.logError(stderr);
-      console.error(`stderr: ${stderr}`);
-      logs.logMessage("❌ Update might not have been successful");
+      logs.logMessage("⚠️ Update wasn't successful");
       return;
     } else {
       setTimeout(async () => {
