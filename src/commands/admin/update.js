@@ -27,7 +27,7 @@ async function react(interaction) {
     } else {
       setTimeout(async () => {
         if (stdout.includes("Fast-forward")) {
-          logs.logMessage(`✅ Successfully updated to **GLaDOS v${await getVersion()}**!`);
+          logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
           
           // Reboot after 2 seconds
           setTimeout(async () => {
@@ -35,7 +35,7 @@ async function react(interaction) {
             process.exit();
           }, 2000);
         } else if (stdout.includes("Already up to date")) {
-          logs.logMessage(`✅ Already up-to-date: **GLaDOS v${await getVersion()}**`);
+          logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
 
         } else {
           logs.logMessage("⚠️ Update wasn't successful");

@@ -8,7 +8,7 @@ module.exports = {
     name: Events.ClientReady,
     once: true,
     async execute(client) {
-        const status = await client.user.setPresence ({
+        await client.user.setPresence ({
             status: 'idle',
             activities: [{
                 type: ActivityType.Custom,
@@ -17,6 +17,6 @@ module.exports = {
             }]
         })
         console.log(`Ready! As ${client.user.tag}`);
-        logs.logMessage('💫 Online!');
+        logs.logMessage(`🌃 Online and connected as GLaDOS v${await getVersion()}!`);
     }
 };
