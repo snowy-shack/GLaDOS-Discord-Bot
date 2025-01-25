@@ -109,12 +109,15 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
     return true;
 
   } catch (error) { // Unable to DM
-    const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
 
-    console.log(error);
-    logs.logMessage(`🎭 Woah! I ran into an issue DM'ing \`${targetUser}\`, error code: ${error.code} (${error.message}).`);
+    console.error(error);
+    logs.logMessage(`🎭 Ran into an issue DM'ing \`${targetUser}\``);
+
     if (!retried) { // Error: "Cannot send messages to this user"
-      console.log("Couldn't DM user!");
+
+      const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
+
+      logs.logMessage(`🔁 Asking them to retry in \`${channel}\``);
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)
         .setAuthor(formTitle)
         .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? (Right click the server icon) \n\nIf this issue persists please notify \`@phantomeye\`.`)

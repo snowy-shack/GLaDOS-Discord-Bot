@@ -28,7 +28,8 @@ async function react(interaction) {
     console.log(`stdout: ${stdout}`);
   });
 
-  process.exit();
+  // Reboot after 5 seconds
+  setTimeout(() => { process.exit() }, 5000);
 }
 
 module.exports = { react, init };
