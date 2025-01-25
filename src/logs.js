@@ -9,16 +9,16 @@ function formatMessage(message) {
 
 async function logMessage(message) {
   const logChannel = await getLogChannel();
-  logChannel.send(formatMessage(message));
+  await logChannel.send(formatMessage(message));
 }
 
 async function directReply(message, response) {
-  message.reply(formatMessage(response.replace(/\n/g, " ")));
+  await message.reply(formatMessage(response.replace(/\n/g, " ")));
 }
 
 async function logError(error) {
   const logChannel = await getLogChannel();
-  logChannel.send(formatMessage(`❌ An error occured: ${error}`));
+  await logChannel.send(formatMessage(`❌ An error occured: ${error}`));
 }
 
 module.exports = { 
