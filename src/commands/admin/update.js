@@ -37,7 +37,8 @@ async function react(interaction) {
 
     } else if (stdout.includes("Already up to date")) {
       logs.logMessage(`✅ Already up-to-date: **GLaDOS v${await getVersion()}**`);
-
+      return;
+      
     } else {
       logs.logMessage("❌ Update might not have been successful");
       return;
