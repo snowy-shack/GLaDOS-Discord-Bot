@@ -2,4 +2,4 @@
 
 cd /home/phantomeye/phbot/phantys-home-bot/
 
-git pull
+git pull --no-rebase
