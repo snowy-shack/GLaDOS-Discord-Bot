@@ -1,6 +1,5 @@
 const path = require("path");
 require("./envloader");
-// require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const cron = require("node-cron");
 
@@ -83,12 +82,8 @@ registerSlashCommands.register();
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(
   "00 00 12 * * 0-6",
-  () => {
-    daily.run();
-  },
-  {
-    timezone: "Europe/Amsterdam",
-  }
+  () => { daily.run(); },
+  { timezone: "Europe/Amsterdam" }
 );
 
 process.on('uncaughtException', (error) => { // Error logging

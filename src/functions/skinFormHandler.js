@@ -107,7 +107,8 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
     // throw { code: 50007, message: "Emulated DM error" };
     await targetUser.send({ embeds: [await respond(previousField, fieldValue, 'booster') ] });
     return true;
-  } catch (error) {
+
+  } catch (error) { // Unable to DM
     const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
 
     console.log(error);
@@ -116,7 +117,7 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
       console.log("Couldn't DM user!");
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)
         .setAuthor(formTitle)
-        .setDescription(`${targetUser} It seems I couldn't DM you for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! Could you try (temporarily) changing your Privacy settings on this server? (right click the server icon) If this issue persists please notify @phantomeye.`)
+        .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? (Right click the server icon) \n\nIf this issue persists please notify \`@phantomeye\`.`)
         .setFooter({text: `skin.${fieldValue} • message error (${error.code})`})
         .setTimestamp();
       

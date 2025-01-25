@@ -18,7 +18,10 @@ async function directReply(message, response) {
 
 async function logError(error) {
   const logChannel = await getLogChannel();
-  await logChannel.send(formatMessage(`❌ An error occured: ${error}`));
+  if (error.code && error.message)
+    await logChannel.send(formatMessage(`❌ An error occured: ${error.code} - ${error.message}`));
+  else
+    await logChannel.send(formatMessage(`❌ An error occured: ${error}`));
 }
 
 module.exports = { 

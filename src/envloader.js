@@ -7,4 +7,3 @@ const envFile = isBeta ? ".envbeta" : ".env";
 
 dotenv.config({ path: path.resolve(__dirname, `../${envFile}`) });
 console.log(`Using environment file: ${envFile}`);
-
