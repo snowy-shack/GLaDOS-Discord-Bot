@@ -1,8 +1,7 @@
-const { 
-    Events, 
-    ActivityType 
-} = require('discord.js');
+const { Events, ActivityType } = require('discord.js');
+
 const logs = require('../logs');
+const { getVersion } = require('../functions/versionManager');
 
 module.exports = {
     name: Events.ClientReady,
