@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const logs = require('../../logs');
 const { exec } = require('child_process');
+const { getVersion } = require('../../functions/versionManager');
 
 function init() {
   return new SlashCommandBuilder().setName('update')
@@ -18,18 +19,36 @@ async function react(interaction) {
     if (error) {
       logs.logError(error);
       console.error(`exec error: ${error}`);
+      logs.logMessage("❌ Update might not have been successful");
       return;
     }
     if (stderr) {
       logs.logError(stderr);
       console.error(`stderr: ${stderr}`);
+      logs.logMessage("❌ Update might not have been successful");
       return;
     }
     console.log(`stdout: ${stdout}`);
   });
 
+  setTimeout(async () => {
+    if (stdout.includes("Fast-forward")) {
+      logs.logMessage(`✅ Successfully updated to **GLaDOS v${await getVersion()}**!`);
+
+    } else if (stdout.includes("Already up to date")) {
+      logs.logMessage(`✅ Already up-to-date: **GLaDOS v${await getVersion()}**`);
+
+    } else {
+      logs.logMessage("❌ Update might not have been successful");
+      return;
+    }
+  }, 1000);
+
   // Reboot after 5 seconds
-  setTimeout(() => { process.exit() }, 5000);
+  setTimeout(async () => {
+    await logs.logMessage("🔁 Rebooting");
+    process.exit();
+  }, 5000);
 }
 
 module.exports = { react, init };
