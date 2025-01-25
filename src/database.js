@@ -8,9 +8,24 @@ const pgClient = new pg.Client({
     database: process.env.DBNAME,
     user:     process.env.DBUSER,
     password: process.env.DBPASS,
-}); // Tee-hee
+});
 
 pgClient.connect();
+
+async function ensureDbConnection(retries = 5, delay = 1000) {
+    while (retries--) {
+        try {
+            await pgClient.query('SELECT 1');
+            return;
+        } catch {
+            console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
+            try { await pgClient.end(); } catch {}
+            pgClient.connect();
+        }
+        await new Promise(r => setTimeout(r, delay *= 2));
+    }
+    throw new Error('Database reconnection failed');
+}
 
 // async function incBoostingDay(boosterId) {
 //     await pgClient.query(`
@@ -29,6 +44,7 @@ pgClient.connect();
 // }
 
 async function incBoostingDay(boosterId) {
+    await ensureDbConnection();
     try {
         await pgClient.query(`
             INSERT INTO boosters (discord_id, days_boosted, last_modified)
@@ -59,6 +75,7 @@ const gunSkins = {
 }
 
 async function addGunSkin(minecraftUuid, skinType) {
+    await ensureDbConnection();
     await pgClient.query(`
         INSERT INTO players_skins (player_id, skin_id)
         VALUES ($1, $2);
@@ -67,6 +84,7 @@ async function addGunSkin(minecraftUuid, skinType) {
 }
 
 async function getBoosted(days) {
+    await ensureDbConnection();
     // boosted = await pgClient.query(`
     //     SELECT discord_id
     //     FROM boosters
@@ -95,8 +113,18 @@ async function getBoosted(days) {
     return boosted.rows.map(row => row.discord_id);
 }
 
+async function markBoosterAsMessaged(discordId) {
+    await ensureDbConnection();
+    await pgClient.query(`
+        UPDATE boosters
+        SET messaged = TRUE
+        WHERE discord_id = $1;
+    `, [discordId]);
+}
+
 module.exports = { 
     incBoostingDay, 
     addGunSkin, 
-    getBoosted 
+    getBoosted,
+    markBoosterAsMessaged
 };

@@ -18,6 +18,9 @@ async function react(interaction) {
   console.log('⏬ Pulling from git');
 
   exec(path.join(__dirname, '../../../scripts/git-pull.sh'), (error, stdout, stderr) => {
+    console.log("error: " + error);
+    console.log("stdout: " + stdout);
+    console.log("stderr: " + stderr);
     if (error) {
       logs.logError(error);
       console.error(`exec error: ${error}`);

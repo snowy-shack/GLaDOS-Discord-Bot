@@ -7,13 +7,14 @@ const logs = require("./logs");
 const messageHandler =     require("./functions/messageHandler");
 const dmMessageHandler =   require("./functions/dmMessageHandler");
 const interactionHandler = require("./functions/interactionHandler");
+const buttonHandler =      require("./functions/buttonHandler");
 const reactionHandler =    require("./functions/reactionHandler");
 const registerSlashCommands = require("./registerSlashCommands");
 
 const onReady = require("./events/ready");
 const daily = require("./events/daily");
 
-const emojis = require("./emojis.js");
+const emojis = require("./consts/emojis");
 const { eventNames } = require("process");
 
 registerSlashCommands.register();
@@ -53,7 +54,7 @@ registerSlashCommands.register();
     }
   });
 
-  client.on("messageReactionAdd", async (messageReaction, author) => {
+  client.on("messageReactionAdd", async (messageReaction, author) => { // Emoji reactions
     const message = await messageReaction.message.channel.messages.fetch(messageReaction.message.id); // Fetch message in channel by ID
     const authorID = message.author.id;
 
@@ -68,8 +69,11 @@ registerSlashCommands.register();
 
   client.on('interactionCreate', async interaction => { // Slash commands
     try {
-      if (!interaction.isCommand()) return;
-      interactionHandler.reply(interaction);
+      if (interaction.isCommand()) {
+        interactionHandler.reply(interaction);
+      } else if (interaction.isButton()) {
+        buttonHandler.reply(interaction);
+      }
     } catch (error) {
       logs.logError(error);
     }

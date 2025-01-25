@@ -84,7 +84,7 @@ In order to apply your Portal Gun skin to your Minecraft account, we need your M
     } else if (fieldValue == "change") {
       const form_2_reset = new EmbedBuilder().setColor(colors.Primary)
         .setAuthor(formTitle)
-        .setDescription("Alright, what is the username of the account you would like to change it to?")
+        .setDescription("Alright, what is the username of the account you would like to change it to? If you get the incorrect account, try your UUID instead (you can find this on namemc.com)")
         .setFooter({text: `field 1/2 • skin.${type} • reset`})
         .setTimestamp();
       return [form_2_reset];
@@ -120,7 +120,7 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
       logs.logMessage(`🔁 Asking them to retry in \`${channel}\``);
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)
         .setAuthor(formTitle)
-        .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? (Right click the server icon) \n\nIf this issue persists please notify \`@phantomeye\`.`)
+        .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? \n(Right click the server icon)`)
         .setFooter({text: `skin.${fieldValue} • message error (${error.code})`})
         .setTimestamp();
       
@@ -151,7 +151,7 @@ async function buttonPressed(buttonID, interaction) {
         embeds: [
           new EmbedBuilder().setColor(colors.error)
             .setAuthor(formTitle)
-            .setDescription(`It seems I still wasn't able to message you!`)
+            .setDescription(`It seems I still wasn't able to message you! \nIf this issue persists please notify **\`@phantomeye\`**.`)
             .setFooter({text: `skin.${newFieldValue} • message error`})
             .setTimestamp()
         ],

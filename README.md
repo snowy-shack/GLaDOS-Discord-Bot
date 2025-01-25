@@ -13,6 +13,27 @@ Management and quality of life bot for PortalMod and Phanty's Home
 - Reaction removing logs even if it couldn't remove anything
 
 # Changelog
+## Release 1.07.0 - January 25th 2025
+### Fixes
+- Merged two instances of the bot's code.
+- DB automatic reconnect
+
+## Release 1.6.2 - October 30th 2024
+### Fixes
+- More error handling for skin form DMs
+- Some import fixes
+
+## Release 1.6.1 - October 30th 2024
+### Fixes
+- Hotfix: users weren't marked as MESSAGED when GLaDOS dm'ed them
+- Rebooting wouldn't log because the service quit before the reboot could be logged
+
+## Release 1.6 - October 29th 2024
+### Changes
+- Added functionality to handle skin form errors and give boosters another attempt
+- Implemented button handling
+
+
 ## Release 1.5.1 - July 26th 2024
 ### Fixes
 - Fixed a wrong string type in the booster form, which caused "${fieldValue}" to be shown to the user

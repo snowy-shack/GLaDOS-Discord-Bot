@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const logs = require("../logs");
 
 function init() {
   return new SlashCommandBuilder().setName('ping')
