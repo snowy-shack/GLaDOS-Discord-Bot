@@ -134,6 +134,7 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
         .addComponents(retry);
       
       channel.send({ content: `${targetUser}`, embeds: [couldnt_dm_error], components: [buttons] });
+      return false;
     }
   }
   return false;
