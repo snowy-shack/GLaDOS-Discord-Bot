@@ -150,7 +150,7 @@ async function buttonPressed(buttonID, interaction) {
     } else {
       interaction.reply({
         embeds: [
-          new EmbedBuilder().setColor(colors.error)
+          new EmbedBuilder().setColor(colors.Error)
             .setAuthor(formTitle)
             .setDescription(`It seems I still wasn't able to message you! \nIf this issue persists please notify **\`@phantomeye\`**.`)
             .setFooter({text: `skin.${newFieldValue} • message error`})
