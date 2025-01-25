@@ -18,9 +18,6 @@ async function react(interaction) {
   console.log('⏬ Pulling from git');
 
   exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, stderr) => {
-    console.log("error: " + error);
-    console.log("stdout: " + stdout);
-    console.log("stderr: " + stderr);
 
     if (error) {
       logs.logError(error);
@@ -36,22 +33,19 @@ async function react(interaction) {
       setTimeout(async () => {
         if (stdout.includes("Fast-forward")) {
           logs.logMessage(`✅ Successfully updated to **GLaDOS v${await getVersion()}**!`);
-
+          
+          // Reboot after 2 seconds
+          setTimeout(async () => {
+            await logs.logMessage("🔁 Rebooting");
+            process.exit();
+          }, 2000);
         } else if (stdout.includes("Already up to date")) {
           logs.logMessage(`✅ Already up-to-date: **GLaDOS v${await getVersion()}**`);
-          return;
 
         } else {
           logs.logMessage("⚠️ Update wasn't successful");
-          return;
         }
       }, 500);
-
-      // Reboot after 2 seconds
-      setTimeout(async () => {
-        await logs.logMessage("🔁 Rebooting");
-        process.exit();
-      }, 2000);
     }    
   });
 }
