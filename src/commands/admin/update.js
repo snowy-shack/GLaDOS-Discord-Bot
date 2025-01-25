@@ -1,6 +1,8 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const logs = require('../../logs');
 const { exec } = require('child_process');
+const path = require('path');
+
+const logs = require('../../logs');
 const { getVersion } = require('../../functions/versionManager');
 
 function init() {
@@ -15,7 +17,7 @@ async function react(interaction) {
 
   console.log('⏬ Pulling from git');
 
-  exec('script/git-pull.sh', (error, stdout, stderr) => {
+  exec(path.join(__dirname, 'script/git-pull.sh'), (error, stdout, stderr) => {
     if (error) {
       logs.logError(error);
       console.error(`exec error: ${error}`);
@@ -38,7 +40,7 @@ async function react(interaction) {
     } else if (stdout.includes("Already up to date")) {
       logs.logMessage(`✅ Already up-to-date: **GLaDOS v${await getVersion()}**`);
       return;
-      
+
     } else {
       logs.logMessage("❌ Update might not have been successful");
       return;
