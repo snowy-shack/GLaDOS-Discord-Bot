@@ -26,4 +26,6 @@ async function createClient() {
   return client;
 }
 
-module.exports = createClient();
+const client = createClient();
+
+module.exports = client;

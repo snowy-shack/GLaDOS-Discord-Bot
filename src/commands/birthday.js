@@ -28,6 +28,15 @@ function init() {
                 .setRequired(true)
             )
         )
+        .addSubcommand(subcommand => subcommand
+            .setName('next')
+            .setDescription("See the next birthday(s)")
+            .addIntegerOption(option => option
+                .setName('count')
+                .setDescription('The number of birthdays to view')
+                .setMinValue(1).setMaxValue(10)
+            )
+        )
 }
 
 const emojiIcons = {
@@ -50,7 +59,7 @@ const birthdayInput = new TextInputBuilder()
     .setCustomId("birthday")
     .setLabel("Enter your birthday: (This is permanent!)")
     .setStyle(TextInputStyle.Short)
-    .setPlaceholder("DD-MM-YY or DD-MM")
+    .setPlaceholder("DD-MM-YYYY or DD-MM")
     .setRequired(true)
     .setMaxLength(10);
 
@@ -75,7 +84,7 @@ function parseDate(input) {
 }
 
 // Returns date in human-readable format
-function formatDate(date) {
+function formatDate(date, includeYear) {
     const months = ["January", "February", "March", "April", "May", "June", 
         "July", "August", "September", "October", "November", "December"];
 
@@ -88,7 +97,7 @@ function formatDate(date) {
         (day % 10 === 2 && day !== 12) ? "nd" :
         (day % 10 === 3 && day !== 13) ? "rd" : "th";
 
-    return year === 1900 ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
+    return (year === 1900 || !includeYear) ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
 }
 
 // Returns true if today is the input date
@@ -114,6 +123,33 @@ function daysUntilBirthday(birthday) {
     return Math.ceil((nextBirthday - today) / 86400000); // Divide by number of ms per day
 }
 
+// Format row details
+async function getUserDetails(users) {
+    const usernames     = [];
+    const dates         = [];
+    const daysRemaining = [];
+    let lastMember;
+
+    const guild   = await require("../guild");
+    for (const user of users) {
+        try {
+            const member = await guild.members.fetch(user.discord_id);
+            if (member && !lastMember) lastMember = member;
+
+            const displayName   = member.nickname || member.user.globalName;
+            const formattedDate = formatDate(user.birthday, false);
+            const remainingDays = daysUntilBirthday(user.birthday);
+
+            usernames.push(displayName);
+            dates.push(formattedDate);
+            daysRemaining.push(remainingDays);
+        } catch {}
+    }
+
+    return { usernames, dates, daysRemaining, lastMember };
+}
+
+
 
 async function react(interaction) {
     // Birthday Add command
@@ -128,7 +164,7 @@ async function react(interaction) {
         const reply = new EmbedBuilder()
             .setColor(colors.Error)
             .setAuthor(formTitle)
-            .setDescription(`You already have your birthday set to **${formatDate(userBirthday)}**! For the time being, **you can't change your birthday**. If you made a mistake, please DM **\`@phantomeye\`**`)
+            .setDescription(`You already have your birthday set to **${formatDate(userBirthday, true)}**! For the time being, **you can't change your birthday**. If you made a mistake, please DM **\`@phantomeye\`**`)
             .setFooter({ text: `birthday • duplicate` })
             .setThumbnail(emojiIcons.mark)
             .setTimestamp();
@@ -155,9 +191,42 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `**${birthdayUser.displayName}**'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday) }`)
+                    `**${birthdayUser.displayName}**'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(birthdayUser.displayAvatarURL())
+                .setTimestamp();
+        }
+
+        await interaction.reply({ embeds: [ reply ] });
+        return;
+    }
+
+    // Birthday next command
+    if (interaction.options.getSubcommand() == 'next') {
+        birthdayCount = interaction.options.getInteger('count');
+        nextBirthdays = await database.getNextBirthdays(birthdayCount ? birthdayCount : 1);
+
+        entries = await getUserDetails(nextBirthdays);
+
+        let reply = new EmbedBuilder()
+            .setColor(colors.Primary)
+            .setAuthor(formTitle)
+            .setDescription(`Here's the upcoming **${entries.usernames.length}** next birthdays! \n_ _\n_ _`)
+            .addFields({ name: '**Name:**',      value: `**\`\`\`\n${entries.usernames.join('\n')    }\n\`\`\`**`, inline: true })
+            .addFields({ name:   'Date:',        value:   `\`\`\`\n${entries.dates.join('\n')        }\n\`\`\``,   inline: true })
+            .addFields({ name:   'Days left:',   value:   `\`\`\`\n${entries.daysRemaining.join('\n')}\n\`\`\``,   inline: true })
+            .setFooter({ text: `birthday • next ${entries.usernames.length}` })
+            .setThumbnail(emojiIcons.home)
+            .setTimestamp();
+
+        if (birthdayCount == 1) {
+           let reply = new EmbedBuilder()
+                .setColor(colors.Primary)
+                .setAuthor(formTitle)
+                .setDescription(
+                    `The next birthday is **${entries.usernames[0]}**'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
+                .setFooter({ text: `birthday • success` })
+                .setThumbnail(entries.lastMember.displayAvatarURL())
                 .setTimestamp();
         }
 
@@ -171,7 +240,6 @@ async function modalSubmitted(formID, interaction) {
 
         const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
 
-
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
             .setAuthor(formTitle)
@@ -182,14 +250,14 @@ async function modalSubmitted(formID, interaction) {
 
         // Valid input
         if (birthDate) {
-            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate)}`)
+            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate, true)}`)
             
             database.saveBirthday(interaction.user.id, birthDate)
 
             reply = new EmbedBuilder()
                 .setColor(colors.Calendar)
                 .setAuthor(formTitle)
-                .setDescription(`Successfully saved your birthday as **${formatDate(birthDate)}**! I will start on preparations for baking the cake!`)
+                .setDescription(`Successfully saved your birthday as **${formatDate(birthDate, true)}**! I will start on preparations for baking the cake!`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(emojiIcons.events)
                 .setTimestamp();

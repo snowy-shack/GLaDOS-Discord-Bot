@@ -128,12 +128,48 @@ async function getBirthdaysToday() {
     return result.rows.map(row => row.discord_id); 
 }
 
+async function getNextBirthdays(count) {
+    await ensureDBConnection();
+
+    const result = await pgClient.query(`
+        WITH upcoming_birthdays AS (
+            SELECT discord_id, birthday,
+                CASE
+                    WHEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' + (birthday - DATE_TRUNC('year', birthday)) < CURRENT_DATE
+                    THEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' + (birthday - DATE_TRUNC('year', birthday))
+                    ELSE DATE_TRUNC('year', CURRENT_DATE) + (birthday - DATE_TRUNC('year', birthday))
+                END AS next_birthday
+            FROM birthdays
+        )
+        SELECT discord_id, birthday FROM upcoming_birthdays
+        ORDER BY next_birthday
+        LIMIT $1;
+    `, [count]);
+
+    // const result = await pgClient.query(`
+    //     SELECT discord_id, birthday 
+    //     FROM birthdays 
+    //     WHERE discord_id = '382524802491219969'
+    //     LIMIT 1;
+    // `);
+
+    return result.rows.map(row => ({
+        discord_id: row.discord_id,
+        birthday: new Date(row.birthday)
+    }));
+}
+
+
+
+
 module.exports = { 
     incBoostingDay, 
     addGunSkin, 
     getBoosted,
     markBoosterAsMessaged,
+
     saveBirthday,
     getBirthday,
     getBirthdaysToday,
+    getNextBirthdays,
 };
