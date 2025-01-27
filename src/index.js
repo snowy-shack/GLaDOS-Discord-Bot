@@ -4,11 +4,14 @@ require("./envloader");
 const cron = require("node-cron");
 
 const logs = require("./logs");
-const messageHandler =     require("./functions/messageHandler");
-const dmMessageHandler =   require("./functions/dmMessageHandler");
-const interactionHandler = require("./functions/interactionHandler");
-const buttonHandler =      require("./functions/buttonHandler");
-const reactionHandler =    require("./functions/reactionHandler");
+
+const commandHandler        = require("./functions/commandHandler");
+const buttonHandler         = require("./functions/buttonHandler");
+const modalHandler          = require("./functions/modalHandler");
+
+const messageHandler        = require("./functions/messageHandler");
+const dmMessageHandler      = require("./functions/dmMessageHandler");
+const reactionHandler       = require("./functions/reactionHandler");
 const registerSlashCommands = require("./registerSlashCommands");
 
 const onReady = require("./events/ready");
@@ -43,6 +46,8 @@ registerSlashCommands.register();
     ['1005103628882804776', false, true,  true ]  // #Updates
   ]
 
+
+  // Automatic emoji reaction handling
   client.on("messageCreate", async (message) => {
     if (!message.author.bot && message.guild)  { // Reactions
       for (i in reactionChannels) {
@@ -54,7 +59,9 @@ registerSlashCommands.register();
     }
   });
 
-  client.on("messageReactionAdd", async (messageReaction, author) => { // Emoji reactions
+
+  // Emoji reaction handling
+  client.on("messageReactionAdd", async (messageReaction, author) => {
     const message = await messageReaction.message.channel.messages.fetch(messageReaction.message.id); // Fetch message in channel by ID
     const authorID = message.author.id;
 
@@ -67,21 +74,20 @@ registerSlashCommands.register();
     }
   });
 
-  client.on('interactionCreate', async interaction => { // Slash commands
+
+  // Interaction handling
+  client.on('interactionCreate', async interaction => {
     try {
-      if (interaction.isCommand()) {
-        interactionHandler.reply(interaction);
-      } else if (interaction.isButton()) {
-        buttonHandler.reply(interaction);
-      }
+      if (interaction.isCommand())     commandHandler.reply(interaction);
+      if (interaction.isButton())      buttonHandler.reply(interaction);
+      if (interaction.isModalSubmit()) modalHandler.reply(interaction);
+
     } catch (error) {
       logs.logError(error);
     }
   });
 
 })();
-
-// daily.run();
 
 // Increment the boosting value of all boosters everyday at 12 PM CEST
 cron.schedule(

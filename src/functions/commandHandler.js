@@ -12,6 +12,7 @@ async function reply(interaction) {
   commandList = getCommandList();
   commandList.forEach((command) => {
     const { commandName } = interaction;
+
     if (commandName == command.split('/').pop()) {
       const module = require(`../commands/${command}`);
       module.react(interaction);

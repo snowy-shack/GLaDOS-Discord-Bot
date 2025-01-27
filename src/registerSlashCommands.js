@@ -3,7 +3,7 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const logs = require("./logs");
-const commandList = require("./functions/interactionHandler").getCommandList();
+const commandList = require("./functions/commandHandler").getCommandList();
 
 // commandList.forEach((command) => {
 //   const module = require(`./commands/${command}`);
@@ -14,10 +14,11 @@ const commands = (commandList.map(commandName => require(`./commands/${commandNa
 
 // Register the commands
 const rest = new REST().setToken(process.env.TOKEN);
+
 async function register() {
   try {
     const client = await require("./client");
-    const servers = await client.guilds.cache.map(guild => guild.id);
+    // const servers = await client.guilds.cache.map(guild => guild.id);
 
     console.log(`Started refreshing ${commands.length} slash commands.`);
 
@@ -25,6 +26,7 @@ async function register() {
       Routes.applicationGuildCommands(client.application.id, process.env.GUILDID),
       { body: commands }
     );
+
     rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
     console.log(`Succesfully refreshed ${data.length} slash commands.`);

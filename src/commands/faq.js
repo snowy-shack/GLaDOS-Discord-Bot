@@ -26,10 +26,10 @@ function init() {
 }
 
 async function react(interaction) {
-  const faqsJSON = require("../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
-  const faqId = interaction.options.getString('question');
+  const faqsJSON      = require("../faqs.json"); // Inside the function to not require a bot restart upon FAQ changes
+  const faqId         = interaction.options.getString('question');
   const targetMessage = interaction.options.getString('message_id');
-  const targetUser = interaction.options.getUser('reply_user');
+  const targetUser    = interaction.options.getUser('reply_user');
 
   // console.log(`FAQ requested by ${interaction.user}`);
   object = faqsJSON.find(object => object.id == faqId)

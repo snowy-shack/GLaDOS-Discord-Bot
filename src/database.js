@@ -12,7 +12,7 @@ const pgClient = new pg.Client({
 
 pgClient.connect();
 
-async function ensureDbConnection(retries = 5, delay = 1000) {
+async function ensureDBConnection(retries = 5, delay = 1000) {
     while (retries--) {
         try {
             await pgClient.query('SELECT 1');
@@ -27,24 +27,8 @@ async function ensureDbConnection(retries = 5, delay = 1000) {
     throw new Error('Database reconnection failed');
 }
 
-// async function incBoostingDay(boosterId) {
-//     await pgClient.query(`
-//         INSERT INTO boosters (discord_id, days_boosted)
-//         VALUES ($1, 0)
-//         ON CONFLICT DO NOTHING;
-//     `,
-//     [ boosterId ]);
-    
-//     await pgClient.query(`
-//         UPDATE boosters
-//         SET days_boosted = days_boosted + 1
-//         WHERE boosters.discord_id = $1;
-//     `,
-//     [ boosterId ]);
-// }
-
 async function incBoostingDay(boosterId) {
-    await ensureDbConnection();
+    await ensureDBConnection();
     try {
         await pgClient.query(`
             INSERT INTO boosters (discord_id, days_boosted, last_modified)
@@ -75,7 +59,7 @@ const gunSkins = {
 }
 
 async function addGunSkin(minecraftUuid, skinType) {
-    await ensureDbConnection();
+    await ensureDBConnection();
     await pgClient.query(`
         INSERT INTO players_skins (player_id, skin_id)
         VALUES ($1, $2);
@@ -84,20 +68,7 @@ async function addGunSkin(minecraftUuid, skinType) {
 }
 
 async function getBoosted(days) {
-    await ensureDbConnection();
-    // boosted = await pgClient.query(`
-    //     SELECT discord_id
-    //     FROM boosters
-    //     WHERE days_boosted >= $1
-    //     AND messaged IS FALSE;
-    // `,
-    // [ days ]);
-    // await pgClient.query(`
-    //     UPDATE boosters
-    //     SET messaged = TRUE
-    //     WHERE days_boosted >= $1;
-    // `,
-    // [ days ]); 
+    await ensureDBConnection();
     boosted = await pgClient.query(`
         WITH updated_boosters AS (
             UPDATE boosters
@@ -114,7 +85,7 @@ async function getBoosted(days) {
 }
 
 async function markBoosterAsMessaged(discordId) {
-    await ensureDbConnection();
+    await ensureDBConnection();
     await pgClient.query(`
         UPDATE boosters
         SET messaged = TRUE
@@ -122,9 +93,47 @@ async function markBoosterAsMessaged(discordId) {
     `, [discordId]);
 }
 
+// Birthday commands
+async function saveBirthday(user_id, date) {
+    await ensureDBConnection();
+
+    await pgClient.query(`
+        INSERT INTO birthdays (discord_id, birthday, created_at)
+        VALUES ($1, $2, NOW())
+        ON CONFLICT DO NOTHING;
+    `, [user_id, date.toISOString().split('T')[0]]);
+}
+
+async function getBirthday(user_id) {
+    await ensureDBConnection();
+
+    const result = await pgClient.query(`
+        SELECT birthday FROM birthdays WHERE discord_id = $1;
+    `, [user_id]);
+
+    if (result.rows.length === 0) return null; // No birthday found
+
+    return new Date(result.rows[0].birthday);
+}
+
+async function getBirthdaysToday() {
+    await ensureDBConnection();
+
+    const today = new Date().toISOString().split('T')[0];
+
+    const result = await pgClient.query(`
+        SELECT discord_id FROM birthdays WHERE birthday = $1;
+    `, [today]);
+
+    return result.rows.map(row => row.discord_id); 
+}
+
 module.exports = { 
     incBoostingDay, 
     addGunSkin, 
     getBoosted,
-    markBoosterAsMessaged
+    markBoosterAsMessaged,
+    saveBirthday,
+    getBirthday,
+    getBirthdaysToday,
 };

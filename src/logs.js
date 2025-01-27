@@ -21,7 +21,7 @@ async function logError(error) {
   if (error.code && error.message)
     await logChannel.send(formatMessage(`❌ An error occured: ${error.code} - ${error.message.trim()}`));
   else
-    await logChannel.send(formatMessage(`❌ An error occured: ${error.trim()}`));
+    await logChannel.send(formatMessage(`❌ An error occured: ${error}`));
 }
 
 module.exports = { 
