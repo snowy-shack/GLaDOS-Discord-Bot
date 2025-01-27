@@ -69,10 +69,12 @@ function parseDate(input) {
     day   = parseInt(day);
     month = parseInt(month);
     year  = year ? parseInt(year) : 0;
-
+    
     const date = new Date(year, month - 1, day);
 
     if (date.getDate() != day || date.getMonth() != month - 1) return null;
+    date.setHours(12, 0, 0, 0); // Fix off by one?
+
     return date;
 }
 
@@ -157,7 +159,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `**${birthdayUser.displayName}**'s birthday is in ${daysUntilBirthday(userBirthday)} days:\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday) }`)
+                    `**${birthdayUser.displayName}**'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday) }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(birthdayUser.displayAvatarURL())
                 .setTimestamp();
@@ -171,7 +173,10 @@ async function react(interaction) {
 async function modalSubmitted(formID, interaction) {
     if (formID == "birthday") {
 
-        const birthDate = parseDate(interaction.fields.getTextInputValue('birthday'));
+        console.log(interaction.fields.getTextInputValue('birthday'))
+        const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
+        console.log(birthDate)
+        console.log(birthDate.toISOString().split('T')[0])
 
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
