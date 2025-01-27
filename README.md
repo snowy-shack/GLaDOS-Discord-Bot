@@ -1,7 +1,7 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for PortalMod and Phanty's Home  
 
-`Current Version: 1.08.3`
+`Current Version: 1.08.4`
 
 # To-do
 - Add more error logging with discord.js events
@@ -13,6 +13,10 @@ Management and quality of life bot for PortalMod and Phanty's Home
 - Reaction removing logs even if it couldn't remove anything
 
 # Changelog
+## Release 1.08.4 - January 28th 2025
+### Changes
+- Added /birthday next
+
 ## Release 1.08.3 - January 27th 2025
 ### Fixes
 - Fixed logging if input date format is incorrect
