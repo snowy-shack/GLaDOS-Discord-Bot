@@ -184,7 +184,7 @@ async function react(interaction) {
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
             .setAuthor(formTitle)
-            .setDescription(`\`@${birthdayUser.displayName}\` doesn't seem to have a birthday saved! You can tell them to add one with **\`/birthday add\`**.`)
+            .setDescription(`@${birthdayUser.displayName} doesn't seem to have a birthday saved! You can tell them to add one with **\`/birthday add\`**.`)
             .setFooter({ text: `birthday • not found` })
             .setThumbnail(birthdayUser.displayAvatarURL())
             .setTimestamp();
@@ -194,7 +194,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `**${birthdayUser.displayName}**'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
+                    `@${birthdayUser.displayName}'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(birthdayUser.displayAvatarURL())
                 .setTimestamp();
@@ -232,7 +232,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `The next birthday is \`@${entries.usernames[0]}\`'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
+                    `The next birthday is @${entries.usernames[0]}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(url)
                 .setTimestamp();
