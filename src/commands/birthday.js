@@ -194,7 +194,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `@${birthdayUser.displayName}'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
+                    `<@${birthdayUser.id}>'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(birthdayUser.displayAvatarURL())
                 .setTimestamp();
