@@ -4,10 +4,7 @@ const {
   ModalBuilder,
   TextInputBuilder,
   EmbedBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   TextInputStyle,
-  PermissionFlagsBits,
 } = require("discord.js");
 
 const logs     = require("../logs");
@@ -17,8 +14,7 @@ const colors   = require("../consts/colors");
 function init() {
     return new SlashCommandBuilder()
         .setName("birthday")
-        .setDescription("BIG COMMAND")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDescription("View and save birthdays")
         .addSubcommand(subcommand => subcommand
             .setName('add')
             .setDescription("Add your birthday")
@@ -173,10 +169,9 @@ async function react(interaction) {
 async function modalSubmitted(formID, interaction) {
     if (formID == "birthday") {
 
-        console.log(interaction.fields.getTextInputValue('birthday'))
         const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
-        console.log(birthDate)
-        console.log(birthDate.toISOString().split('T')[0])
+        logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate)}`)
+
 
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
