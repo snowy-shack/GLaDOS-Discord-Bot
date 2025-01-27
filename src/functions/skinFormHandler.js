@@ -121,7 +121,7 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)
         .setAuthor(formTitle)
         .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? \n(Right click the server icon)`)
-        .setFooter({text: `skin.${fieldValue} • message error (${error.code})`})
+        .setFooter({text: `skin.${fieldValue} • DM error (${error.code})`})
         .setTimestamp();
       
       const retry = new ButtonBuilder()
