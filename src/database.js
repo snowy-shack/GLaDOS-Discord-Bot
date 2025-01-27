@@ -96,7 +96,6 @@ async function markBoosterAsMessaged(discordId) {
 // Birthday commands
 async function saveBirthday(user_id, date) {
     await ensureDBConnection();
-    console.log(date.toISOString().split('T')[0])
 
     await pgClient.query(`
         INSERT INTO birthdays (discord_id, birthday, created_at)

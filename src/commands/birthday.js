@@ -170,7 +170,6 @@ async function modalSubmitted(formID, interaction) {
     if (formID == "birthday") {
 
         const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
-        logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate)}`)
 
 
         let reply = new EmbedBuilder()
@@ -183,6 +182,8 @@ async function modalSubmitted(formID, interaction) {
 
         // Valid input
         if (birthDate) {
+            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate)}`)
+            
             database.saveBirthday(interaction.user.id, birthDate)
 
             reply = new EmbedBuilder()
