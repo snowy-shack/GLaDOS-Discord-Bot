@@ -12,7 +12,7 @@ function init() {
 }
 
 async function react(interaction) {
-  await interaction.reply(logs.formatMessage("⏬ Downloading latest changes"));
+  await interaction.reply(logs.formatMessage("⏬ Updating to the latest version"));
   await logs.logMessage("⏬ Downloading latest changes");
 
   console.log('⏬ Pulling from git');
