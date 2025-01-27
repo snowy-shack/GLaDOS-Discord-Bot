@@ -184,7 +184,7 @@ async function react(interaction) {
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
             .setAuthor(formTitle)
-            .setDescription(`@${birthdayUser.displayName} doesn't seem to have a birthday saved! You can tell them to add one with **\`/birthday add\`**.`)
+            .setDescription(`<@${birthdayUser.id}> doesn't seem to have a birthday saved! You can tell them to add one with **\`/birthday add\`**.`)
             .setFooter({ text: `birthday • not found` })
             .setThumbnail(birthdayUser.displayAvatarURL())
             .setTimestamp();
@@ -223,8 +223,10 @@ async function react(interaction) {
             .setTimestamp();
 
         let url = emojiIcons.mark;
+        let name = entries.usernames[0];
         try { 
             url = entries.lastMember.displayAvatarURL();
+            name = `<@${entries.lastMember.id}>`;
         } catch {}
 
         if (birthdayCount == 1) {
@@ -232,7 +234,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `The next birthday is @${entries.usernames[0]}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
+                    `The next birthday is ${name}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(url)
                 .setTimestamp();
