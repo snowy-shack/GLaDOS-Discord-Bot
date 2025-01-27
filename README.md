@@ -1,7 +1,7 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for PortalMod and Phanty's Home  
 
-`Current Version: 1.07.1`
+`Current Version: 1.08.0`
 
 # To-do
 - Add more error logging with discord.js events
