@@ -67,7 +67,7 @@ form.addComponents(new ActionRowBuilder().addComponents(birthdayInput));
 
 // Cap a string str at len length
 function trimString(str, len) {
-    return str.length > len ? str.slice(0, len - 3) + "..." : str;
+    return str.length > len ? str.slice(0, len - 1) + '…' : str;
 }
 
 // Returns Date from "dd-mm[-yyyy]" format
@@ -145,7 +145,7 @@ async function getUserDetails(users) {
             const formattedDate = formatDate(user.birthday, false);
             const remainingDays = daysUntilBirthday(user.birthday);
 
-            usernames.push(trimString(displayName, 22));
+            usernames.push(trimString(displayName, 20));
             dates.push(formattedDate);
             daysRemaining.push(remainingDays);
         } catch {}
