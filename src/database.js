@@ -134,14 +134,15 @@ async function getNextBirthdays(count) {
     const result = await pgClient.query(`
         WITH upcoming_birthdays AS (
             SELECT discord_id, birthday,
-                CASE
-                    WHEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' + (birthday - DATE_TRUNC('year', birthday)) < CURRENT_DATE
-                    THEN DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year' + (birthday - DATE_TRUNC('year', birthday))
-                    ELSE DATE_TRUNC('year', CURRENT_DATE) + (birthday - DATE_TRUNC('year', birthday))
+                CASE 
+                    WHEN TO_DATE(TO_CHAR(CURRENT_DATE, 'YYYY') || '-' || TO_CHAR(birthday, 'MM-DD'), 'YYYY-MM-DD') < CURRENT_DATE
+                    THEN TO_DATE(TO_CHAR(CURRENT_DATE + INTERVAL '1 year', 'YYYY') || '-' || TO_CHAR(birthday, 'MM-DD'), 'YYYY-MM-DD')
+                    ELSE TO_DATE(TO_CHAR(CURRENT_DATE, 'YYYY') || '-' || TO_CHAR(birthday, 'MM-DD'), 'YYYY-MM-DD')
                 END AS next_birthday
             FROM birthdays
         )
-        SELECT discord_id, birthday FROM upcoming_birthdays
+        SELECT discord_id, birthday 
+        FROM upcoming_birthdays
         ORDER BY next_birthday
         LIMIT $1;
     `, [count]);

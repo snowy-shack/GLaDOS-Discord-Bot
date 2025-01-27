@@ -203,8 +203,8 @@ async function react(interaction) {
 
     // Birthday next command
     if (interaction.options.getSubcommand() == 'next') {
-        birthdayCount = interaction.options.getInteger('count');
-        nextBirthdays = await database.getNextBirthdays(birthdayCount ? birthdayCount : 1);
+        birthdayCount = interaction.options.getInteger('count') || 1;
+        nextBirthdays = await database.getNextBirthdays(birthdayCount);
 
         entries = await getUserDetails(nextBirthdays);
 
@@ -219,14 +219,19 @@ async function react(interaction) {
             .setThumbnail(emojiIcons.home)
             .setTimestamp();
 
+        let url = emojiIcons.mark;
+        try { 
+            url = entries.lastMember.displayAvatarURL();
+        } catch {}
+
         if (birthdayCount == 1) {
-           let reply = new EmbedBuilder()
+            reply = new EmbedBuilder()
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
                     `The next birthday is **${entries.usernames[0]}**'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
                 .setFooter({ text: `birthday • success` })
-                .setThumbnail(entries.lastMember.displayAvatarURL())
+                .setThumbnail(url)
                 .setTimestamp();
         }
 
