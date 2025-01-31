@@ -9,7 +9,7 @@ function isAdmin(message) {
 }
 
 async function handleMessage(prefix, message) {
-  const phGuild = await require("../guild");
+  const phGuild = await require("../guild").getGuild();
 
   if (message.content.startsWith(prefix + 'formDM ') && isAdmin(message)) {
     // message.author.send({ embeds: [await skinForm.respond(-1, '') ] });

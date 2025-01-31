@@ -135,10 +135,10 @@ async function getUserDetails(users) {
     const daysRemaining = [];
     let lastMember;
 
-    const guild   = await require("../guild");
+    const guild = await require("../guild").getGuild();
     for (const user of users) {
         try {
-            const member = await guild.members.fetch(user.discord_id);
+            const member = await guild.getUser(user.discord_id);
             if (member && !lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
@@ -194,7 +194,7 @@ async function react(interaction) {
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `<@${birthdayUser.id}>'s birthday is in **${daysUntilBirthday(userBirthday)} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
+                    `<@${birthdayUser.id}>'s birthday is in **${daysUntilBirthday(userBirthday) % 365} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(birthdayUser.displayAvatarURL())
                 .setTimestamp();

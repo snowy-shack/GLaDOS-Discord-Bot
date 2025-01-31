@@ -119,11 +119,10 @@ async function getBirthday(user_id) {
 async function getBirthdaysToday() {
     await ensureDBConnection();
 
-    const today = new Date().toISOString().split('T')[0];
-
     const result = await pgClient.query(`
-        SELECT discord_id FROM birthdays WHERE birthday = $1;
-    `, [today]);
+        SELECT discord_id FROM birthdays 
+        WHERE TO_CHAR(birthday, 'MM-DD') = TO_CHAR(CURRENT_DATE, 'MM-DD');
+    `);
 
     return result.rows.map(row => row.discord_id); 
 }

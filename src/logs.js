@@ -1,6 +1,6 @@
 async function getLogChannel() {
-  const phGuild = await require("./guild");
-  return await phGuild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
+  const guild = await require("./guild").getGuild();
+  return await guild.channels.fetch(process.env.LOG_CHANNEL_ID.toString());
 }
 
 function formatMessage(message) {

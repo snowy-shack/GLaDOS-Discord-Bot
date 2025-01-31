@@ -7,8 +7,10 @@ const colors = require("../consts/colors.js");
 const logs = require("../logs.js");
 
 const messages = {
+  blank:   ``,
   booster: `It seems like you've**${emojis.booster}boosted** Phanty's Home for **3 months**! Thank you so much!`,
-  translator: `It seems like you've**${emojis.booster}boosted** Phanty's Home for **3 months**! Thank you so much!`
+  translator: `Hey! Thanks for helping us**${emojis.translator}translate** PortalMod. As a little thank you, we'd like to give you a Portal Gun skin.`,
+  birthday: `Hey! **Happy birthday 🍰🎉!!!**\nWe've got a (permanent) birthday Portal Gun skin for you to link to your account!`,
 }
 
 const formTitle = { 
@@ -17,7 +19,7 @@ const formTitle = {
 }
 
 
-async function respond(previousField, fieldValue, type) {
+async function respond(previousField, fieldValue, type = 'blank') {
   const form_1 = new EmbedBuilder().setColor(colors.Primary)
 	.setAuthor(formTitle)
   .setDescription(
@@ -76,7 +78,7 @@ In order to apply your Portal Gun skin to your Minecraft account, we need your M
       const form_3 = new EmbedBuilder().setColor(colors.Primary)
         .setAuthor(formTitle)
         // .setThumbnail(link)
-        .setDescription("Perfect! A Booster portal gun skin has been linked to this Minecraft account. Thank you for your support!!")
+        .setDescription("Perfect! Your Portal Gun skin has been linked to this Minecraft account. Thank you for your support!!")
         .setFooter({text: "form complete"})
         .setTimestamp();
       return [form_3];
@@ -84,7 +86,7 @@ In order to apply your Portal Gun skin to your Minecraft account, we need your M
     } else if (fieldValue == "change") {
       const form_2_reset = new EmbedBuilder().setColor(colors.Primary)
         .setAuthor(formTitle)
-        .setDescription("Alright, what is the username of the account you would like to change it to? If you get the incorrect account, try your UUID instead (you can find this on namemc.com)")
+        .setDescription("Alright, what is the username of the account you would like to change it to? If you get the incorrect account, try your UUID instead (you can find this on [namemc.com](https://namemc.com/))")
         .setFooter({text: `field 1/2 • skin.${type} • reset`})
         .setTimestamp();
       return [form_2_reset];
@@ -105,19 +107,19 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
 
   try {    
     // throw { code: 50007, message: "Emulated DM error" };
-    await targetUser.send({ embeds: [await respond(previousField, fieldValue, 'booster') ] });
+    await targetUser.send({ embeds: [await respond(previousField, fieldValue, fieldValue) ] });
     return true;
 
   } catch (error) { // Unable to DM
 
     console.error(error);
-    logs.logMessage(`🎭 Ran into an issue DM'ing \`${targetUser}\``);
+    logs.logMessage(`🎭 Ran into an issue DM'ing \`${targetUser}\`.`);
 
     if (!retried) { // Error: "Cannot send messages to this user"
 
       const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
 
-      logs.logMessage(`🔁 Asking them to retry in \`${channel}\``);
+      logs.logMessage(`🔁 Asking them to retry in \`${channel}\`.`);
       const couldnt_dm_error = new EmbedBuilder().setColor(colors.Error)
         .setAuthor(formTitle)
         .setDescription(`${targetUser} It seems **I couldn't DM you** for your ${fieldValue.replace(/^\w/, (c) => c.toUpperCase())} Portal Gun skin! \n\nCould you try (temporarily) changing your **Privacy Settings** on this server? \n(Right click the server icon)`)
@@ -141,6 +143,20 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
 }
 
 async function buttonPressed(buttonID, interaction) {
+  if (!interaction.message.content.includes(interaction.user.id)) {
+      interaction.reply({
+          embeds: [
+              new EmbedBuilder().setColor(colors.Error)
+                  .setAuthor(formTitle)
+                  .setDescription(`Hey! You're not the addressed user!\nYou wouldn't pirate a Portal Gun skin now would you?`)
+                  .setFooter({text: `skins • denied`})
+                  .setTimestamp()
+          ],
+          ephemeral: true
+      })
+      return;
+  }
+
   newTargetUser = interaction.user;
   newFieldValue = interaction.message.embeds[0].data.footer.text.split('.')[1].split(' ')[0];
 
@@ -152,7 +168,7 @@ async function buttonPressed(buttonID, interaction) {
         embeds: [
           new EmbedBuilder().setColor(colors.Error)
             .setAuthor(formTitle)
-            .setDescription(`It seems I still wasn't able to message you! \nIf this issue persists please notify **\`@phantomeye\`**.`)
+            .setDescription(`It seems I still wasn't able to message you, please try again! \nIf this issue persists please notify **\`@phantomeye\`**.`)
             .setFooter({text: `skin.${newFieldValue} • message error`})
             .setTimestamp()
         ],

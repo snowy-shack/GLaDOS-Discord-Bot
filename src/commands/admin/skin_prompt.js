@@ -1,5 +1,6 @@
 const skinForm = require('../../functions/skinFormHandler');
-const logs = require('../../logs');
+const logs     = require('../../logs');
+const skins    = require('../../consts/gun_skins');
 
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
@@ -17,7 +18,7 @@ function init() {
       .setDescription('The Portal Gun skin to give')
       .setRequired(true)
       .addChoices(
-        {name: 'Booster Skin', value: 'booster'}
+        {name: 'Booster Skin', value: skins.Booster}
       )
   );
 }

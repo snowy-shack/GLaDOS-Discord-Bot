@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-const daily = require("../../events/daily");
-const logs = require("../../logs");
+const boosterHandler = require("../../functions/boosterHandler");
+const logs  = require("../../logs");
 
 function init() {
   return new SlashCommandBuilder().setName('increment_boosters')
@@ -12,7 +12,7 @@ function init() {
 async function react(interaction) {
   await interaction.reply(logs.formatMessage('➕ Incrementing boosters'));
   console.log('Manually incrementing boosters');
-  daily.run();
+  boosterHandler.incrementAndDM();
 }
 
 module.exports = { react, init };
