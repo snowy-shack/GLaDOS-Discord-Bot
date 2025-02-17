@@ -144,16 +144,17 @@ async function sendFormMessage(targetUser, previousField, fieldValue, retried = 
 
 async function buttonPressed(buttonID, interaction) {
   if (!interaction.message.content.includes(interaction.user.id)) {
-      interaction.reply({
-          embeds: [
-              new EmbedBuilder().setColor(colors.Error)
-                  .setAuthor(formTitle)
-                  .setDescription(`Hey! You're not the addressed user!\nYou wouldn't pirate a Portal Gun skin now would you?`)
-                  .setFooter({text: `skins • denied`})
-                  .setTimestamp()
-          ],
-          ephemeral: true
-      })
+      interaction.deferUpdate();
+      // interaction.reply({
+      //     embeds: [
+      //         new EmbedBuilder().setColor(colors.Error)
+      //             .setAuthor(formTitle)
+      //             .setDescription(`Hey! You're not the addressed user!\nYou wouldn't pirate a Portal Gun skin now would you?`)
+      //             .setFooter({text: `skins • denied`})
+      //             .setTimestamp()
+      //     ],
+      //     ephemeral: true
+      // })
       return;
   }
 
