@@ -1,16 +1,18 @@
 import fs from "fs";
 import path from "path";
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
+import * as logs from "#src/modules/logs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function getCommandList() {
     const normalCommandsList = fs
-        .readdirSync(path.join(__dirname, '../commands'))
-        .filter(file => file.endsWith('.js'));
+        .readdirSync(path.join(__dirname, "../commands"))
+        .filter(file => file.endsWith(".js"));
     const adminCommandsList = fs
-        .readdirSync(path.join(__dirname, '../commands/admin'))
-        .filter(file => file.endsWith('.js'));
+        .readdirSync(path.join(__dirname, "../commands/admin"))
+        .filter(file => file.endsWith(".js"));
 
     return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
 }
@@ -23,8 +25,13 @@ export async function reply(interaction) {
         const { commandName } = interaction;
 
         if (commandName === command.split('/').pop()) {
-            const { react } = await import(`../commands/${command}.js`);
-            react(interaction);
+            const commandModule = await import(`../commands/${command}.js`);
+
+            if ("react" in commandModule) {
+                commandModule.react(interaction);
+            } else {
+                await logs.logError("handling command", Error(`${command} command has no react functionality`));
+            }
         }
     }
 }

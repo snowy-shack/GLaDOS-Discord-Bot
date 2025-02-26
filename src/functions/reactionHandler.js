@@ -37,7 +37,7 @@ export async function react(message, reactionChannel) {
         await logs.logMessage(`⬆️ Adding automatic reactions to \`<#${channelID}>\``);
 }
 
-/* private */ async function removeReactions(messageReaction, bySameUser) {
+export async function removeReactions(messageReaction, bySameUser) {
     if (bySameUser) {
         await logs.logMessage(`🗑️ Removing ❤️ reaction on message in \`<#${messageReaction.message.channel.id}>\`.`);
 
@@ -46,5 +46,3 @@ export async function react(message, reactionChannel) {
     }
     messageReaction.remove();
 }
-
-export default { react, removeReactions }

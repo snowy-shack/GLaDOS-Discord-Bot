@@ -23,7 +23,7 @@ export async function directReply(message, response) {
 }
 
 export async function logError(location, error) {
-    console.error("Error occurred " + location + error.message);
+    console.error(`Error occurred ${location}: ${error.message}`);
 
     try {
         const logChannel = await getLogChannel();
