@@ -1,27 +1,31 @@
-const skinForm = require("./skinFormHandler");
-const client = require("../client");
-const logs = require("../logs");
+import { PermissionFlagsBits } from "discord.js";
+import * as DMFormHandler from "#src/functions/DMFormHandler";
+import * as reactionHandler from "#src/functions/reactionHandler";
 
-const { PermissionFlagsBits } = require("discord.js");
+let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
+    ['1235600733093761156', false, true,  false], // Dev announcements
+    ['1253797518555353239', false, true,  true ], // Dev updates
+    ['1235600701602791455', true,  false, false], // Dev art
 
-function isAdmin(message) {
-  return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.adm);
+    ['878221699844309033',  false, true,  false], // #News
+    ['876132326101360670',  false, true,  false], // #Announcements
+    ['981527027142262824',  true,  false, false], // #Art
+    ['1005103628882804776', false, true,  true ]  // #Updates
+]
+
+/* private */ function isAdmin(message) {
+    return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.Administrator);
 }
 
-async function handleMessage(prefix, message) {
-  const phGuild = await require("../guild").getGuild();
+export async function handleMessage(prefix, message) {
+    for (const i in reactionChannels) {
+        let reactionChannel = reactionChannels[i];
 
-  if (message.content.startsWith(prefix + 'formDM ') && isAdmin(message)) {
-    // message.author.send({ embeds: [await skinForm.respond(-1, '') ] });
-    try {
-      targetUser = await phGuild.members.fetch(message.content.split(' ')[1]);
-      skinForm.sendFormMessage(targetUser, -1, '');
-      
-      logs.logMessage(`❓ Asking \`<@${message.author.id}>\` about their Minecraft UUID.`);
-    } catch (error) {
-      logs.directReply(message, `❌ An error occured: ${error}`)
+        if (reactionChannel[0] !== message.channelId) continue;
+        await reactionHandler.react(message, reactionChannel);
     }
-  }
 }
 
-module.exports = { handleMessage }
+export async function handleDM(message) {
+    await DMFormHandler.replyToDM(message);
+}

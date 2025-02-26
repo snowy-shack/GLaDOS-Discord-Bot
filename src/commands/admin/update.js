@@ -1,48 +1,43 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { exec } = require('child_process');
-const path = require('path');
+import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import { exec } from "child_process";
+import path from "path";
+import { getVersion } from "#src/functions/versionManager";
+import * as logs from "#src/modules/logs";
 
-const logs = require('../../logs');
-const { getVersion } = require('../../functions/versionManager');
-
-function init() {
-  return new SlashCommandBuilder().setName('update')
-    .setDescription('Updates GLaDOS')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+export function init() {
+    return new SlashCommandBuilder().setName('update')
+            .setDescription('Updates GLaDOS')
+            .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
-async function react(interaction) {
-  await interaction.reply(logs.formatMessage("⏬ Updating to the latest version"));
-  await logs.logMessage("⏬ Downloading latest changes");
+export async function react(interaction) {
+    await interaction.reply(logs.formatMessage("⏬ Updating to the latest version"));
+    await logs.logMessage("⏬ Downloading latest changes");
 
-  console.log('⏬ Pulling from git');
+    console.log('⏬ Pulling from git');
 
-  exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, stderr) => {
+    exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, stderr) => {
 
-    if (error) {
-      logs.logError(error);
-      console.error(`exec error: ${error}`);
-      logs.logMessage("⚠️ Update wasn't successful");
-      return;
-    } else {
-      setTimeout(async () => {
-        if (stdout.includes("Fast-forward")) {
-          logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
-          
-          // Reboot after 2 seconds
-          setTimeout(async () => {
-            await logs.logMessage("🔁 Rebooting");
-            process.exit();
-          }, 2000);
-        } else if (stdout.includes("Already up to date")) {
-          logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
-
+        if (error) {
+            logs.logError("executing a script", error);
+            logs.logMessage("⚠️ Update wasn't successful");
         } else {
-          logs.logMessage("⚠️ Update wasn't successful");
-        }
-      }, 500);
-    }    
-  });
-}
+            setTimeout(async () => {
+                if (stdout.includes("Fast-forward")) {
+                    logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
 
-module.exports = { react, init };
+                    // Reboot after 2 seconds
+                    setTimeout(async () => {
+                        await logs.logMessage("🔁 Rebooting");
+                        process.exit();
+                    }, 2000);
+                } else if (stdout.includes("Already up to date")) {
+                    logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
+
+                } else {
+                    logs.logMessage("⚠️ Update wasn't successful");
+                }
+            }, 500);
+        }
+    });
+}

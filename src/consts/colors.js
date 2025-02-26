@@ -5,4 +5,4 @@ const colors = {
     Calendar:  "fe8452",
 }
 
-module.exports = colors;
+export default colors;

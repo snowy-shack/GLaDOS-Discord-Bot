@@ -1,10 +1,10 @@
-async function reply(interaction) {
+export async function reply(interaction) {
   const { customId } = interaction;
 
   const [modulePath, buttonID] = customId.split('#');
 
-  const module = require(`../${modulePath.replace(/\./g, '/')}`);
-  module.buttonPressed(buttonID, interaction);
+  const module = await import(`../${modulePath.replace(/\./g, '/')}`);
+  await module.buttonPressed(buttonID, interaction);
 }
 
-module.exports = { reply };
+export default { reply };

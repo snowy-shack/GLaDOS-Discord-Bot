@@ -1,17 +1,18 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const logs = require('../../logs');
+import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import * as logs from "#src/modules/logs";
 
-function init() {
-  return new SlashCommandBuilder().setName('reboot')
-    .setDescription('Reboots GLaDOS')
+
+export function init() {
+  return new SlashCommandBuilder().setName("reboot")
+    .setDescription("Reboots GLaDOS")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
-async function react(interaction) {
+export async function react(interaction) {
   await interaction.reply(logs.formatMessage("💀 Shutting down"));
   await logs.logMessage("💀 Attempting to restart");
-  console.log('💀 Shutting down after command request');
+  console.log("💀 Shutting down after command request");
   process.exit();
 }
 
-module.exports = { react, init };
+export default { react, init };

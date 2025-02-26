@@ -9,5 +9,4 @@ const emojis = {
   portalmod:  "<:portalmod:1264163032876060756>",
   home:       "<:phantys_home:1264163401962229780>",
 }
-
-module.exports = emojis;
+export default emojis;

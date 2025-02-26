@@ -1,10 +1,12 @@
-const fs = require('fs').promises;
-const path = require('path');
+import { promises as fs } from "fs";
+import path from "path";
 
-async function getVersion() {
-    const data = await fs.readFile(path.join(__dirname, '../../README.md'), 'utf8');
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export async function getVersion() {
+    const data = await fs.readFile(path.join(__dirname, "../../README.md"), "utf8");
     const version = data.match(/Current Version:\s*([\d]+\.[\d]+\.[\d]+)/);
-    return version ? version[1] : '.unknown';
-}
 
-module.exports = { getVersion }
+    return version ? version[1] : ".unknown";
+}

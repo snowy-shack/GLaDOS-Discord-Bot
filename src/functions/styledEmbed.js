@@ -1,16 +1,14 @@
-const {
-    EmbedBuilder,
-} = require("discord.js");
-const colors = require("../consts/colors");
+import { EmbedBuilder } from "discord.js";
+import colors from "#src/consts/colors";
 
-const emojiIcons = {
+/* private */ const emojiIcons = { // TODO generalize to consts/icons.js
     home:   'https://portalmod.net/images/icons/home.png',
     mark:   'https://portalmod.net/images/icons/mark.png',
     events: 'https://portalmod.net/images/icons/events.png',
 }
 
-function makeEmbed(bodyText, footerText, title, color = colors.Primary, fields = []) {
-    isPortalModEmbed = title.includes("PortalMod");
+export function makeEmbed(bodyText, footerText, title, color = colors.Primary, fields = []) {
+    const isPortalModEmbed = title.includes("PortalMod");
     const formTitle = { 
         name: title, 
         iconURL: isPortalModEmbed ? 'https://portalmod.net/images/logo/mark.png' : emojiIcons.home
@@ -23,5 +21,3 @@ function makeEmbed(bodyText, footerText, title, color = colors.Primary, fields =
         .addFields(...fields)
         .setTimestamp();
 }
-
-module.exports = makeEmbed;

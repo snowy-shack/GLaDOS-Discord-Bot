@@ -1,17 +1,13 @@
-const client = require("../../client");
-const birthdayHandler = require("../../functions/birthdayHandler");
+import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import birthdayHandler from "#src/functions/birthdayHandler";
 
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-
-function init() {
-  return new SlashCommandBuilder().setName('test')
-  .setDescription('TEST COMMAND')
-  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+export function init() {
+    return new SlashCommandBuilder().setName("test")
+        .setDescription("TEST COMMAND")
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
-async function react(interaction) {
-  await interaction.reply({content: 'Test ran'});
-  birthdayHandler.checkBirthdays();
+export async function react(interaction) {
+    await interaction.deferReply();
+    await birthdayHandler.checkBirthdays();
 }
-
-module.exports = { react, init };

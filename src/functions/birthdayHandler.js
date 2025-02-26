@@ -1,31 +1,23 @@
-const {
-    EmbedBuilder,
-  } = require("discord.js");
-
-const database = require("../database");
-const logs     = require("../logs");
-const guild    = require("../guild");
-const skinForm    = require("./skinFormHandler");
-const styledEmbed = require("./styledEmbed");
-
-const skins    = require("../consts/gun_skins");
-const emojis   = require("../consts/emojis");
-
-function wait(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-}
+import * as database from "#src/modules/database";
+import * as logs from "#src/modules/logs";
+import * as guild from "#src/modules/discord";
+import * as skinForm from "#src/functions/skinFormHandler";
+import * as styledEmbed from "#src/functions/styledEmbed";
+import * as skins from "#src/consts/gun_skins";
+import emojis from "#src/consts/emojis";
+import * as util from "#src/core/util";
 
 async function checkBirthdays() {
-    const client = await require("../client");
-    birthdays = await database.getBirthdaysToday() || [];
+    const client = await import("#src/modules/client");
+    const birthdays = await database.getBirthdaysToday() || [];
 
-    logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
+    await logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
 
     for (const discord_id of birthdays) {
         await (async () => {
-            logs.logMessage(`🎉 It's \`<@${discord_id}>\`'s birthday!`);
+            await logs.logMessage(`🎉 It's \`<@${discord_id}>\`'s birthday!`);
             
-            skinForm.sendFormMessage(await guild.getUser(discord_id), -1, skins.Birthday); // Start a DM form
+            await skinForm.sendFormMessage(await guild.getUser(discord_id), -1, skins.Birthday); // Start a DM form
 
             const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
             const happy_birthday = styledEmbed(
@@ -35,9 +27,9 @@ async function checkBirthdays() {
             );
 
             channel.send({ content: `<@${discord_id}>`, embeds: [happy_birthday] });
-            await wait(600000);
+            await util.wait(600000);
         })();
     }
 }
 
-module.exports = { checkBirthdays }
+export default { checkBirthdays }

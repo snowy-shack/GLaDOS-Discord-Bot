@@ -1,17 +1,12 @@
-const {
-  ActionRowBuilder,
-  SlashCommandBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  EmbedBuilder,
-  TextInputStyle,
-} = require("discord.js");
+import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
+    TextInputBuilder, EmbedBuilder, TextInputStyle, } from "discord.js";
 
-const logs     = require("../logs");
-const database = require("../database");
-const colors   = require("../consts/colors");
+import * as logs from "#src/modules/logs";
+import * as database from "#src/modules/database";
+import * as guild from "#src/modules/discord";
+import colors from "#src/consts/colors";
 
-function init() {
+export function init() {
     return new SlashCommandBuilder()
         .setName("birthday")
         .setDescription("View and save birthdays")
@@ -135,10 +130,9 @@ async function getUserDetails(users) {
     const daysRemaining = [];
     let lastMember;
 
-    const guild = await require("../guild").getGuild();
     for (const user of users) {
         try {
-            const member = await guild.getUser(user.discord_id);
+            const member = await guild.getGuild().getUser(user.discord_id);
             if (member && !lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
@@ -154,9 +148,9 @@ async function getUserDetails(users) {
     return { usernames, dates, daysRemaining, lastMember };
 }
 
-async function react(interaction) {
+export async function react(interaction) {
     // Birthday Add command
-    if (interaction.options.getSubcommand() == 'add') {
+    if (interaction.options.getSubcommand() === 'add') {
         const userBirthday = await database.getBirthday(interaction.user.id);
 
         if (!userBirthday) {
@@ -177,7 +171,7 @@ async function react(interaction) {
     }
 
     // Birthday Get command
-    if (interaction.options.getSubcommand() == 'get') {
+    if (interaction.options.getSubcommand() === 'get') {
         const birthdayUser = interaction.options.getUser('user');
         const userBirthday = await database.getBirthday(birthdayUser.id);
 
@@ -205,11 +199,11 @@ async function react(interaction) {
     }
 
     // Birthday next command
-    if (interaction.options.getSubcommand() == 'next') {
-        birthdayCount = interaction.options.getInteger('count') || 1;
-        nextBirthdays = await database.getNextBirthdays(birthdayCount);
+    if (interaction.options.getSubcommand() === 'next') {
+        const birthdayCount = interaction.options.getInteger('count') || 1;
+        const nextBirthdays = await database.getNextBirthdays(birthdayCount);
 
-        entries = await getUserDetails(nextBirthdays);
+        const entries = await getUserDetails(nextBirthdays);
 
         let reply = new EmbedBuilder()
             .setColor(colors.Primary)
@@ -229,12 +223,12 @@ async function react(interaction) {
             name = `<@${entries.lastMember.id}>`;
         } catch {}
 
-        if (birthdayCount == 1) {
+        if (birthdayCount === 1) {
             reply = new EmbedBuilder()
                 .setColor(colors.Primary)
                 .setAuthor(formTitle)
                 .setDescription(
-                    `The next birthday is ${name}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] == 0 ? "Today! 🎉" : entries.dates[0] }`)
+                    `The next birthday is ${name}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] === 0 ? "Today! 🎉" : entries.dates[0] }`)
                 .setFooter({ text: `birthday • success` })
                 .setThumbnail(url)
                 .setTimestamp();
@@ -253,7 +247,7 @@ async function modalSubmitted(formID, interaction) {
         let reply = new EmbedBuilder()
             .setColor(colors.Error)
             .setAuthor(formTitle)
-            .setDescription(`I wasn't able to understand that answer! Please enter your birthday in the **\`dd-mm[-yyyy]\`** format, and make sure **it's a valid date**!`)
+            .setDescription(`I wasn't able to understand that description! Please enter your birthday in the **\`dd-mm[-yyyy]\`** format, and make sure **it's a valid date**!`)
             .setFooter({ text: `birthday • incorrect format` })
             .setThumbnail(emojiIcons.mark)
             .setTimestamp();
@@ -277,4 +271,4 @@ async function modalSubmitted(formID, interaction) {
     }
 }
 
-module.exports = { react, init, modalSubmitted };
+export default { react, init, modalSubmitted };

@@ -3,8 +3,9 @@ async function reply(interaction) {
 
     const [modulePath, formID] = customId.split('#');
 
-    const module = require(`../${modulePath.replace(/\./g, '/')}`);
-    module.modalSubmitted(formID, interaction);
+    // Dynamic import
+    const module = await import(`../${modulePath.replace(/\./g, '/')}`);
+    await module.modalSubmitted(formID, interaction);
 }
 
-module.exports = { reply };
+export default { reply };

@@ -1,23 +1,32 @@
-const fs = require('fs');
-const path = require('path');
+import fs from "fs";
+import path from "path";
 
-function getCommandList() {
-  const normalCommandsList = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
-  const adminCommandsList = fs.readdirSync(path.join(__dirname, '../commands/admin')).filter(file => file.endsWith('.js'));
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-  return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
+export function getCommandList() {
+    const normalCommandsList = fs
+        .readdirSync(path.join(__dirname, '../commands'))
+        .filter(file => file.endsWith('.js'));
+    const adminCommandsList = fs
+        .readdirSync(path.join(__dirname, '../commands/admin'))
+        .filter(file => file.endsWith('.js'));
+
+    return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
 }
 
-async function reply(interaction) {
-  commandList = getCommandList();
-  commandList.forEach((command) => {
-    const { commandName } = interaction;
+export async function reply(interaction) {
+    let commandList = getCommandList();
 
-    if (commandName == command.split('/').pop()) {
-      const module = require(`../commands/${command}`);
-      module.react(interaction);
+    // Find the command associated
+    for (const command of commandList) {
+        const { commandName } = interaction;
+
+        if (commandName === command.split('/').pop()) {
+            const { react } = await import(`../commands/${command}.js`);
+            react(interaction);
+        }
     }
-  });
 }
 
-module.exports = { reply, getCommandList };
+export default { reply, getCommandList };

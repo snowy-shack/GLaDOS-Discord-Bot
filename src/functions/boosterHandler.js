@@ -1,26 +1,25 @@
-const database = require("../database");
-const skinForm = require("../functions/skinFormHandler");
-const logs     = require("../logs");
-const guild    = require("../guild");
+import * as database from "#src/modules/database";
+import * as skinForm from "#src/functions/skinFormHandler";
+import * as logs from "#src/modules/logs";
 
-async function getBoosters(phGuild) {
+/* private */ async function getBoosters(phGuild) {
     await phGuild.members.fetch(); // Fetch and cache server members
   
     const boosterRoleID = process.env.BOOSTER_ROLE_ID;
     const boosterRole = await phGuild?.roles?.fetch(boosterRoleID); // Get Booster role
     const boosters = await boosterRole?.members.map(m=>m.user.id); // Get IDs of all Boosters
-  
+
     return boosters;
 }
 
 async function incrementAndDM() {
     try {
-        const client = await require("../client");
+        const client = await import("#src/modules/client");
 
-        phGuildId = process.env.GUILDID.toString();
-        phGuild = await client.guilds.fetch(phGuildId);
+        let phGuildId = process.env.GUILDID.toString();
+        let phGuild = await client.guilds.fetch(phGuildId);
 
-        boosters = await getBoosters(phGuild);
+        let boosters = await getBoosters(phGuild);
 
         // Incrementing boosters
         let successes = 0;
@@ -31,13 +30,13 @@ async function incrementAndDM() {
             if (result) successes++;
         }
 
-    logs.logMessage(`✅ Incremented boosting days for ${successes} members.`);
+        await logs.logMessage(`✅ Incremented boosting days for ${successes} members.`);
 
         // Form DM'ing
-        boosted = await database.getBoosted(90); // Get list of IDs that have boosted 3 months
+        const boosted = await database.getBoosted(90); // Get list of IDs that have boosted 3 months
 
         for (let i = 0; i < boosted.length; i++) {
-            targetBooster = await phGuild.members.fetch(boosted[i]);
+            const targetBooster = await phGuild.members.fetch(boosted[i]);
             console.log(
                 targetBooster.user.username,
                 "has boosted for 90 days, DMing them!");
@@ -46,45 +45,8 @@ async function incrementAndDM() {
         }
 
     } catch (error) {
-        logs.logError(error);
+        await logs.logError("incrementing boosters", error);
     }
 }
 
-async function replyToDM(message) {
-    const client = await require("../client");
-
-    // Booster skin form handling
-    message.channel.messages.fetch({ limit: 10 }).then(async scanMessages => {
-    previousField = -1;
-
-    // Goes from top to bottom to get the latest values
-    scanMessages.reverse().forEach(scannedMessage => {
-        try {
-            footerText = (typeof scannedMessage.embeds[0] != 'undefined') ? scannedMessage.embeds[0].footer.text : '';
-            if (scannedMessage.author.id == client.application.id) {
-
-                const fieldIndex = parseInt(footerText.split(' ')[1].split('/')[0]) || 3;
-                previousField = Math.min(fieldIndex, 3);
-                try {
-                    const match = /UUID: (.+?)\`/.exec(scannedMessage.embeds[1].description);
-                    uuidGot = match ? match[1] : null;
-                } catch (error) {};
-            } else {fieldValue = scannedMessage.content}
-        } catch (error) { console.error(error) };
-        })
-        
-        if (previousField == 2 && fieldValue == 'confirm') {
-
-            // update database here
-            await database.addGunSkin(uuidGot, "booster");
-            logs.logMessage(`💎 Added booster skin to uuid '${uuidGot}' \`<@${message.author.id}>\`.`);
-
-            previousField == -2; //Throw error message
-        }
-
-        formMessageEmbeds = await skinForm.respond(previousField, fieldValue.toLowerCase(), 'booster');
-        if (typeof formMessageEmbeds != 'undefined') message.author.send({ embeds: formMessageEmbeds });
-    })
-}
-
-module.exports = { incrementAndDM, replyToDM, getBoosters };
+export default { incrementAndDM };
