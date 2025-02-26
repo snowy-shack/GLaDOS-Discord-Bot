@@ -2,10 +2,10 @@ import * as database from "#src/modules/database";
 import * as logs from "#src/modules/logs";
 import * as guild from "#src/modules/discord";
 import * as skinForm from "#src/functions/skinFormHandler";
-import * as styledEmbed from "#src/functions/styledEmbed";
+import * as styledEmbed from "#src/factories/styledEmbed";
 import * as skins from "#src/consts/gun_skins";
 import emojis from "#src/consts/emojis";
-import * as util from "#src/core/util";
+import * as util from "#src/modules/util";
 
 async function checkBirthdays() {
     const client = await import("#src/modules/client");
@@ -17,7 +17,7 @@ async function checkBirthdays() {
         await (async () => {
             await logs.logMessage(`🎉 It's \`<@${discord_id}>\`'s birthday!`);
             
-            await skinForm.sendFormMessage(await guild.getUser(discord_id), -1, skins.Birthday); // Start a DM form
+            await skinForm.sendFormMessage(await guild.getUser(discord_id), 0, skins.Birthday); // Start a DM form
 
             const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
             const happy_birthday = styledEmbed(

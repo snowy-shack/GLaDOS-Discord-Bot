@@ -14,6 +14,8 @@ export function formatMessage(message) {
 }
 
 export async function logMessage(message) {
+    console.log(`[LOGS]: ${message}`);
+
     const logChannel = await getLogChannel();
     await logChannel.send(formatMessage(message));
 }

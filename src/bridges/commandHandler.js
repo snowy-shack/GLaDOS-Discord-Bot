@@ -25,7 +25,7 @@ export async function reply(interaction) {
         const { commandName } = interaction;
 
         if (commandName === command.split('/').pop()) {
-            const commandModule = await import(`../commands/${command}.js`);
+            const commandModule = await import(`#src/commands/${command}`);
 
             if ("react" in commandModule) {
                 commandModule.react(interaction);

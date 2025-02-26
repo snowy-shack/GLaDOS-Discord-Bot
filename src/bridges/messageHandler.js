@@ -17,7 +17,7 @@ let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes
     return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.Administrator);
 }
 
-export async function handleMessage(prefix, message) {
+export async function handleMessage(message) {
     for (const i in reactionChannels) {
         let reactionChannel = reactionChannels[i];
 

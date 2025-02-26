@@ -1,7 +1,7 @@
 import { Events, ActivityType } from "discord.js";
 
 import * as logs from "#src/modules/logs";
-import { getVersion } from "#src/functions/versionManager";
+import { getVersion } from "#src/modules/version";
 
 export default {
     name: Events.ClientReady,

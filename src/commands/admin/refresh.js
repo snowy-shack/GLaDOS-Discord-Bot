@@ -51,22 +51,18 @@ export async function react(interaction) {
         }
     }
 
-    let client = await getClient();
-
     interaction.reply(logs.formatMessage("🔄️ Updating " + channelName + " Channel"));
     logs.logMessage("🔄️ Updating FAQ" + channelName + " Channel");
 
-    const channel = discord.getChannel(channelID);
+    const channel = await discord.getChannel(channelID);
 
-    const fetch = await channel.messages.fetch({ limit: 100 });
+    const fetchedMessages = await channel.messages.fetch({ limit: 100 });
 
-    fetch.then(async messages => {
-        for (const message of messages) {
-            if (message.author.id === client.application.id) { // If the message was sent by the bot
-                message.delete();
-            }
-        }
-    });
+    for (const message of fetchedMessages) {
+        // if (message[1].author.id === client.application.id) { // If the message was sent by the bot
+            message[1].delete();
+        // }
+    }
 
     const formattedDate = getCurrentDate();
 

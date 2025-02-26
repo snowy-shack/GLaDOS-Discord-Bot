@@ -1,15 +1,17 @@
-import { REST, Routes, SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import { getCommandList } from "#src/functions/commandHandler";
+import { REST, Routes } from "discord.js";
+import { getCommandList } from "#src/bridges/commandHandler";
 import { getClient } from "#src/modules/client";
 import * as logs from "#src/modules/logs";
 
 // Define the commands
-var commandList = getCommandList();
+let commandList = getCommandList();
 
 const commands = await Promise.all(
     commandList.map(async commandName => {
         const { init } = await import(`#src/commands/${commandName}`);
-        return (await init()).toJSON();
+        let initialization = init();
+
+        return initialization.toJSON();
     })
 );
 

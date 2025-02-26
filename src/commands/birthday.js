@@ -3,8 +3,8 @@ import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
 
 import * as logs from "#src/modules/logs";
 import * as database from "#src/modules/database";
-import * as guild from "#src/modules/discord";
 import colors from "#src/consts/colors";
+import { getUser } from "#src/modules/discord";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -132,7 +132,7 @@ async function getUserDetails(users) {
 
     for (const user of users) {
         try {
-            const member = await guild.getGuild().getUser(user.discord_id);
+            const member = await getUser(user.discord_id);
             if (member && !lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
@@ -142,7 +142,9 @@ async function getUserDetails(users) {
             usernames.push(trimString(displayName, 20));
             dates.push(formattedDate);
             daysRemaining.push(remainingDays);
-        } catch {}
+        } catch (error) {
+            await logs.logError("indexing birthdays", error)
+        }
     }
 
     return { usernames, dates, daysRemaining, lastMember };
@@ -150,7 +152,7 @@ async function getUserDetails(users) {
 
 export async function react(interaction) {
     // Birthday Add command
-    if (interaction.options.getSubcommand() === 'add') {
+    if (interaction.options.getSubcommand() === "add") {
         const userBirthday = await database.getBirthday(interaction.user.id);
 
         if (!userBirthday) {
@@ -162,7 +164,7 @@ export async function react(interaction) {
             .setColor(colors.Error)
             .setAuthor(formTitle)
             .setDescription(`You already have your birthday set to **${formatDate(userBirthday, true)}**! For the time being, **you can't change your birthday**. If you made a mistake, please DM **\`@phantomeye\`**`)
-            .setFooter({ text: `birthday • duplicate` })
+            .setFooter({ text: "birthday • duplicate" })
             .setThumbnail(emojiIcons.mark)
             .setTimestamp();
                 
@@ -171,8 +173,8 @@ export async function react(interaction) {
     }
 
     // Birthday Get command
-    if (interaction.options.getSubcommand() === 'get') {
-        const birthdayUser = interaction.options.getUser('user');
+    if (interaction.options.getSubcommand() === "get") {
+        const birthdayUser = interaction.options.getUser("user");
         const userBirthday = await database.getBirthday(birthdayUser.id);
 
         let reply = new EmbedBuilder()
@@ -239,7 +241,7 @@ export async function react(interaction) {
     }
 }
 
-async function modalSubmitted(formID, interaction) {
+export async function modalSubmitted(formID, interaction) {
     if (formID == "birthday") {
 
         const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));

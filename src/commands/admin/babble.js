@@ -14,7 +14,7 @@ export function init() {
 }
 
 export async function react(interaction) {
-    await interaction.reply({content: "Speaking...", ephemeral: true});  // otherwise it will say "application did not respond"
+    await interaction.reply({content: "Speaking...", ephemeral: true});
     await interaction.deleteReply();
 
     const channel = await discord.getChannel(interaction.channelId);

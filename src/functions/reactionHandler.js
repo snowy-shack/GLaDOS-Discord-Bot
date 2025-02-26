@@ -1,5 +1,5 @@
 import emojis from "#src/consts/emojis";
-import artLinks from "#src/functions/art_links.json" with { type: "json" };
+import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
 import * as logs from "#src/modules/logs";
 
 /**

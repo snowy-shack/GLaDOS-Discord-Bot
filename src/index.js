@@ -3,11 +3,11 @@ import cron from "node-cron";
 
 import "#src/envloader";
 import * as logs from "#src/modules/logs";
-import commandHandler from "#src/functions/commandHandler";
-import buttonHandler from "#src/functions/buttonHandler";
-import modalHandler from "#src/functions/modalHandler";
+import commandHandler from "#src/bridges/commandHandler";
+import buttonHandler from "#src/bridges/buttonHandler";
+import modalHandler from "#src/bridges/modalHandler";
 
-import * as messageHandler from "#src/functions/messageHandler";
+import * as messageHandler from "#src/bridges/messageHandler";
 import * as reactionHandler from "#src/functions/reactionHandler";
 import registerSlashCommands from "#src/registerSlashCommands";
 

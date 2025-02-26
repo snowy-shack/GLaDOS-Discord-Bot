@@ -40,3 +40,9 @@ export async function getChannel(id) {
 
     return fetchedChannel;
 }
+
+export async function getRoleUsers(id) {
+    const role = await phantys_home.roles.fetch(id);
+
+    return await role.members.map(member => member.user.id);
+}

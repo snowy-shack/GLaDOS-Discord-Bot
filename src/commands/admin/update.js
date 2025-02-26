@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
 import { exec } from "child_process";
 import path from "path";
-import { getVersion } from "#src/functions/versionManager";
+import { getVersion } from "#src/modules/version";
 import * as logs from "#src/modules/logs";
 
 export function init() {

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import birthdayHandler from "#src/functions/birthdayHandler";
+import { spamKick } from "#src/actions/spam_kick";
 
 export function init() {
     return new SlashCommandBuilder().setName("test")
@@ -9,5 +9,7 @@ export function init() {
 
 export async function react(interaction) {
     await interaction.deferReply();
-    await birthdayHandler.checkBirthdays();
+
+    // Functionality
+    await spamKick(interaction.user.id);
 }

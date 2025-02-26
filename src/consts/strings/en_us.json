@@ -1,0 +1,17 @@
+{
+    "server.notification.spam_kicked": "## Hey! \nWe detected suspicious behavior of your Discord account. Please ensure you haven't been hacked, and if you have, please change your password.\n\nOnce you've assured you have full access over your account, we invite you to rejoin!\nhttps://discord.gg/portalmod",
+
+    "skins.form.intro.booster": "Hi!\n\nIt seems like you've**$booster$boosted** Phanty's Home for **3 months**! Thank you so much!\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",
+    "skins.form.intro.translator": "Hi!\n\nHey! Thanks for helping us**$translator$translate** PortalMod. As a little thank you, we'd like to give you a Portal Gun skin.\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",
+    "skins.form.intro.birthday": "Hi!\n\nHey! **Happy birthday \uD83C\uDF70\uD83C\uDF89!!!**\nWe've got a (permanent) birthday Portal Gun skin for you to link to your account!\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",
+
+    "skins.form.username.error": "I didn't quite catch that. Please enter your Minecraft: Java Edition username in plain text.",
+    "skins.form.username.unknown": "I **couldn't find a player** with the name **%1%**. Please make sure you've spelled it correctly and it's a Minecraft: Java Edition account. If this still doesn't work, try your UUID instead (you can find this on namemc.com).",
+    "skins.form.confirm": "Great! Please confirm that the Minecraft account below is your account by sending **`confirm`**. Otherwise send **`change`** to change it.",
+    "skins.form.confirm.change": "Alright, what is the username of the account you would like to change it to?\n\nIf you get the incorrect account, try your `UUID` instead (you can find this on [namemc.com](https://namemc.com/))",
+    "skins.form.confirm.error": "I don't understand that description. Please reply with either '**confirm**' to confirm or '**change**' to change your submitted username.",
+    "skins.form.finished": "Perfect! Your Portal Gun skin has been linked to this Minecraft account. Thank you for your support!!",
+
+    "skins.form.fail.again": "It seems I still wasn't able to message you, please try again!\nIf this issue persists please notify **`@phantomeye`**.",
+    "skins.form.fail": "%1% It seems **I couldn't DM you** for your %2% Portal Gun skin!\\n\\nCould you try (temporarily) changing your **Privacy Settings** on this server? \\n(Right click the server icon)`"
+}

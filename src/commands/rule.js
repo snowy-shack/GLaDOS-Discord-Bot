@@ -25,34 +25,40 @@ export function init() {
 }
 
 export async function react(interaction) {
-    const ruleId = interaction.options.getString('rule');
-    const targetMessage = interaction.options.getString('message_id');
-    const targetUser = interaction.options.getUser('reply_user');
+    const ruleId = interaction.options.getString("rule");
+    const targetMessage = interaction.options.getString("message_id");
+    const targetUser = interaction.options.getUser("reply_user");
 
-    const rule = rulesJSON.find(object => object.id == ruleId)
+    logs.logMessage(`Sending requested rule message in \`${interaction.channel}\`.`);
+    const object = rulesJSON.find(object => object.id === ruleId)
 
-    const ruleBlock = `# ${emojis.home} ` + rule.title + '\n> ' + rule.description;
+    const ruleBlock = `# ${emojis.home} ` + object.title + '\n> ' + object.description;
 
     if (targetUser && targetMessage) {
-        interaction.reply({content: logs.formatMessage('❌ Please provide either a user or a message ID'), ephemeral: true});
+        interaction.reply({content: logs.formatMessage("❌ Please provide either a user or a message ID"), ephemeral: true});
         return;
     }
 
     if (targetUser) {
         let replied = false;
-        interaction.channel.messages.fetch({ limit: 50 }).then(async messageScan => {
-            messageScan.forEach(async scannedMessage => {
-                if (scannedMessage.author == targetUser) {
-                    if (replied == false) {
-                        scannedMessage.reply(ruleBlock);
-                        replied = true;
-                        interaction.reply({content: logs.formatMessage('✅ Succesfully replied to user\'s latest message!'), ephemeral: true});
-                    }
+
+        let scannedMessages = await interaction.channel.messages.fetch({ limit: 50 });
+
+        for (const scannedMessage of scannedMessages) {
+            if (scannedMessage[1].author.id === targetUser.id) {
+                if (!replied) {
+                    await scannedMessage[1].reply(ruleBlock);
+                    replied = true;
+                    interaction.reply({content: "replying!", ephemeral: true});
+                    setTimeout(() => {
+                        interaction.deleteReply();
+                    }, 1000);
                 }
-            });
-        });
-        if (replied == false) {
-            interaction.reply({content: logs.formatMessage('❌ Couldn\'t find recent message by user!'), ephemeral: true});
+            }
+        }
+
+        if (replied === false) {
+            interaction.reply({content: logs.formatMessage("❌ Couldn't find recent message by user!"), ephemeral: true});
             return;
         }
         return;
@@ -63,22 +69,24 @@ export async function react(interaction) {
             const message = await interaction.channel.messages.fetch(targetMessage);
             if (message) {
                 message.reply(ruleBlock);
-                interaction.reply({content: logs.formatMessage('✅ Succesfully replied to their message!'), ephemeral: true});
+                interaction.reply({content: "replying!", ephemeral: true});
+                setTimeout(() => {
+                    interaction.deleteReply();
+                }, 1000);
+
                 return;
             } else {
-                throw new Error('Message could not be found');
+                throw new Error("Message could not be found");
             }
         } catch (error) {
-            interaction.reply({content: logs.formatMessage('❌ Unknown message ID!'), ephemeral: true});
+            interaction.reply({content: logs.formatMessage("❌ Unknown message ID!"), ephemeral: true});
             return;
         }
-    };
+    }
 
-    if (rule) {
+    if (object) {
         await interaction.reply(ruleBlock)
     } else {
-        await interaction.reply(logs.formatMessage('❌ Unknown faq ID!'));
-    };
+        await interaction.reply(logs.formatMessage("❌ Unknown rule ID!"));
+    }
 }
-
-export default { react, init };
