@@ -19,13 +19,13 @@ export function getGuild() {
     return phantys_home;
 }
 
-export async function getUser(id) {
+export async function getMember(id) {
     const cachedUser = users.get(id);
 
     if (cachedUser) return cachedUser;
 
     const fetchedUser = await phantys_home.members.fetch(id);
-    users.put(id, fetchedUser);
+    // users.put(id, fetchedUser);
 
     return fetchedUser;
 }
@@ -36,7 +36,7 @@ export async function getChannel(id) {
     if (cachedChannel) return cachedChannel;
 
     const fetchedChannel = await phantys_home.channels.fetch(id);
-    users.put(id, fetchedChannel);
+    // users.put(id, fetchedChannel);
 
     return fetchedChannel;
 }

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import { spamKick } from "#src/actions/spam_kick";
+import { spamKick } from "#src/actions/spamKick";
 
 export function init() {
     return new SlashCommandBuilder().setName("test")

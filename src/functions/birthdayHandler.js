@@ -17,7 +17,7 @@ async function checkBirthdays() {
         await (async () => {
             await logs.logMessage(`🎉 It's \`<@${discord_id}>\`'s birthday!`);
             
-            await skinForm.sendFormMessage(await guild.getUser(discord_id), 0, skins.Birthday); // Start a DM form
+            await skinForm.sendFormMessage(await guild.getMember(discord_id), 0, skins.Birthday); // Start a DM form
 
             const channel = await client.channels.fetch(process.env.EXCLUSIVE_CHANNEL_ID);
             const happy_birthday = styledEmbed(

@@ -1,6 +1,6 @@
 import "#src/envloader";
 import { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
-import * as minecraft from "#src/modules/minecraftAPI";
+import * as minecraft from "#src/modules/minecraft";
 
 import colors from "#src/consts/colors";
 import * as logs from "#src/modules/logs";

@@ -13,6 +13,8 @@ import registerSlashCommands from "#src/registerSlashCommands";
 
 import ready from "#src/events/ready";
 import daily from "#src/events/daily";
+import {getRoleUsers} from "#src/modules/discord";
+import {spamKick} from "#src/actions/spamKick";
 
 const { getClient } = await import("#src/modules/client");
 
@@ -61,6 +63,12 @@ async function main() {
 
         if (inArtChannel && isDeleteReaction) {
             await reactionHandler.removeReactions(messageReaction, bySameUser);
+        }
+    });
+
+    client.on(Events.GuildMemberUpdate, async (memberOld, memberNew) => {
+        if (memberNew.roles.cache.has(process.env.SPAMBOT_ROLE_ID)) {
+            await spamKick(memberNew.id, false);
         }
     });
 }

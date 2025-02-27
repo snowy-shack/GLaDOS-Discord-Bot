@@ -4,7 +4,7 @@ import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
 import * as logs from "#src/modules/logs";
 import * as database from "#src/modules/database";
 import colors from "#src/consts/colors";
-import { getUser } from "#src/modules/discord";
+import { getMember } from "#src/modules/discord";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -132,7 +132,7 @@ async function getUserDetails(users) {
 
     for (const user of users) {
         try {
-            const member = await getUser(user.discord_id);
+            const member = await getMember(user.discord_id);
             if (member && !lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
