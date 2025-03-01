@@ -24,10 +24,11 @@ export async function getMember(id) {
 
     if (cachedUser) return cachedUser;
 
-    const fetchedUser = await phantys_home.members.fetch(id);
-    // users.put(id, fetchedUser);
-
-    return fetchedUser;
+    try {
+        return await phantys_home.members.fetch(id);
+    } catch {
+        return undefined;
+    }
 }
 
 export async function getChannel(id) {
@@ -35,10 +36,11 @@ export async function getChannel(id) {
 
     if (cachedChannel) return cachedChannel;
 
-    const fetchedChannel = await phantys_home.channels.fetch(id);
-    // users.put(id, fetchedChannel);
-
-    return fetchedChannel;
+    try {
+        return await phantys_home.channels.fetch(id);
+    } catch {
+        return undefined;
+    }
 }
 
 export async function getRoleUsers(id) {
