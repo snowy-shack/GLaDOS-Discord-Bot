@@ -5,6 +5,8 @@ import * as logs from "#src/modules/logs";
 import * as database from "#src/modules/database";
 import colors from "#src/consts/colors";
 import { getMember } from "#src/modules/discord";
+import {message} from "#src/factories/styledEmbed";
+import {string, templateString} from "#src/agents/stringAgent";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -40,6 +42,7 @@ const emojiIcons = {
     events: 'https://portalmod.net/images/icons/events.png',
 }
 
+const title = "Phanty's Home Birthdays";
 const formTitle = {
   name: "Phanty's Home Birthdays",
   iconURL: emojiIcons.home
@@ -133,7 +136,10 @@ async function getUserDetails(users) {
     for (const user of users) {
         try {
             const member = await getMember(user.discord_id);
-            if (member && !lastMember) lastMember = member;
+
+            if (!member) continue;
+
+            if (!lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
             const formattedDate = formatDate(user.birthday, false);
@@ -159,16 +165,14 @@ export async function react(interaction) {
             await interaction.showModal(form);
             return;
         }
-        
-        const reply = new EmbedBuilder()
-            .setColor(colors.Error)
-            .setAuthor(formTitle)
-            .setDescription(`You already have your birthday set to **${formatDate(userBirthday, true)}**! For the time being, **you can't change your birthday**. If you made a mistake, please DM **\`@phantomeye\`**`)
-            .setFooter({ text: "birthday • duplicate" })
-            .setThumbnail(emojiIcons.mark)
-            .setTimestamp();
-                
-        await interaction.reply({ embeds: [ reply ] });
+
+        interaction.reply(message(
+            await templateString("birthday.add.duplicate", [ formatDate(userBirthday, true) ]),
+            "birthday • duplicate",
+            title,
+            colors.Error,
+            true
+        ));
         return;
     }
 
@@ -177,100 +181,103 @@ export async function react(interaction) {
         const birthdayUser = interaction.options.getUser("user");
         const userBirthday = await database.getBirthday(birthdayUser.id);
 
-        let reply = new EmbedBuilder()
-            .setColor(colors.Error)
-            .setAuthor(formTitle)
-            .setDescription(`<@${birthdayUser.id}> doesn't seem to have a birthday saved! You can tell them to add one with **\`/birthday add\`**.`)
-            .setFooter({ text: `birthday • not found` })
-            .setThumbnail(birthdayUser.displayAvatarURL())
-            .setTimestamp();
-            
         if (userBirthday) {
-            reply = new EmbedBuilder()
-                .setColor(colors.Primary)
-                .setAuthor(formTitle)
-                .setDescription(
-                    `<@${birthdayUser.id}>'s birthday is in **${daysUntilBirthday(userBirthday) % 365} days**!\n## ${birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true) }`)
-                .setFooter({ text: `birthday • success` })
-                .setThumbnail(birthdayUser.displayAvatarURL())
-                .setTimestamp();
+            interaction.reply(message(
+                await templateString("birthday.get.success", [
+                        `<@${birthdayUser.id}>`,
+                        daysUntilBirthday(userBirthday) % 365,
+                        birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)]),
+                "birthday • success",
+                title,
+                colors.Primary,
+                false,
+                birthdayUser.displayAvatarURL()
+            ));
+        } else {
+            interaction.reply(message(
+                await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
+                "birthday • not found",
+                title,
+                colors.Primary,
+                false,
+                birthdayUser.displayAvatarURL()
+            ));
         }
-
-        await interaction.reply({ embeds: [ reply ] });
         return;
     }
 
     // Birthday next command
-    if (interaction.options.getSubcommand() === 'next') {
-        const birthdayCount = interaction.options.getInteger('count') || 1;
-        const nextBirthdays = await database.getNextBirthdays(birthdayCount);
+    if (interaction.options.getSubcommand() === "next") {
+        interaction.deferReply();
+        const birthdayCount = interaction.options.getInteger("count") || 1;
+        const nextBirthdays = await database.getNextBirthdays(50);
 
         const entries = await getUserDetails(nextBirthdays);
 
-        let reply = new EmbedBuilder()
-            .setColor(colors.Primary)
-            .setAuthor(formTitle)
-            .setDescription(`Here's the upcoming **${entries.usernames.length}** next birthdays! \n_ _\n_ _`)
-            .addFields({ name: '**Name:**',      value: `**\`\`\`\n${entries.usernames.join('\n')    }\n\`\`\`**`, inline: true })
-            .addFields({ name:   'Date:',        value:   `\`\`\`\n${entries.dates.join('\n')        }\n\`\`\``,   inline: true })
-            .addFields({ name:   'Days left:',   value:   `\`\`\`\n${entries.daysRemaining.join('\n')}\n\`\`\``,   inline: true })
-            .setFooter({ text: `birthday • next ${entries.usernames.length}` })
-            .setThumbnail(emojiIcons.home)
-            .setTimestamp();
-
-        let url = emojiIcons.mark;
-        let name = entries.usernames[0];
-        try { 
-            url = entries.lastMember.displayAvatarURL();
-            name = `<@${entries.lastMember.id}>`;
-        } catch {}
-
         if (birthdayCount === 1) {
-            reply = new EmbedBuilder()
-                .setColor(colors.Primary)
-                .setAuthor(formTitle)
-                .setDescription(
-                    `The next birthday is ${name}'s, in **${entries.daysRemaining[0]} days**!\n## ${entries.daysRemaining[0] === 0 ? "Today! 🎉" : entries.dates[0] }`)
-                .setFooter({ text: `birthday • success` })
-                .setThumbnail(url)
-                .setTimestamp();
-        }
+            let url = emojiIcons.mark;
+            let name = entries.usernames[0];
+            try {
+                url = entries.lastMember.displayAvatarURL();
+                name = `<@${entries.lastMember.id}>`;
+            } catch {}
 
-        await interaction.reply({ embeds: [ reply ] });
-        return;
+            await interaction.editReply(message(
+                await templateString("birthday.next.single", [name, entries.daysRemaining[0], entries.daysRemaining[0] === 0 ? "Today! 🎉" : entries.dates[0]]),
+                "birthday • success",
+                title,
+                colors.Primary,
+                false,
+                url
+            ));
+
+        } else {
+            let nr = Math.min(birthdayCount, entries.usernames.length);
+
+            await interaction.editReply(message(
+                await templateString("birthday.next.multiple", [nr]),
+                `birthday • next ${nr}`,
+                title,
+                colors.Primary,
+                false,
+                emojiIcons.home,
+                [
+                    { name: '**Name:**',      value: `**\`\`\`\n${entries.usernames.slice(0, birthdayCount).join('\n')    }\n\`\`\`**`, inline: true },
+                    { name:   'Date:',        value:   `\`\`\`\n${entries.dates.slice(0, birthdayCount).join('\n')        }\n\`\`\``,   inline: true },
+                    { name:   'Days left:',   value:   `\`\`\`\n${entries.daysRemaining.slice(0, birthdayCount).join('\n')}\n\`\`\``,   inline: true }
+                ]
+            ));
+        }
     }
 }
 
 export async function modalSubmitted(formID, interaction) {
-    if (formID == "birthday") {
-
+    if (formID === "birthday") {
         const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
-
-        let reply = new EmbedBuilder()
-            .setColor(colors.Error)
-            .setAuthor(formTitle)
-            .setDescription(`I wasn't able to understand that description! Please enter your birthday in the **\`dd-mm[-yyyy]\`** format, and make sure **it's a valid date**!`)
-            .setFooter({ text: `birthday • incorrect format` })
-            .setThumbnail(emojiIcons.mark)
-            .setTimestamp();
 
         // Valid input
         if (birthDate) {
-            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate, true)}`)
-            
-            database.saveBirthday(interaction.user.id, birthDate)
+            await database.saveBirthday(interaction.user.id, birthDate);
+            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate, true)}`);
 
-            reply = new EmbedBuilder()
-                .setColor(colors.Calendar)
-                .setAuthor(formTitle)
-                .setDescription(`Successfully saved your birthday as **${formatDate(birthDate, true)}**! I will start on preparations for baking the cake!`)
-                .setFooter({ text: `birthday • success` })
-                .setThumbnail(emojiIcons.events)
-                .setTimestamp();
+            interaction.reply(message(
+                await templateString("birthday.add.success", [formatDate(birthDate, true)]),
+                "birthday • success",
+                title,
+                colors.Calendar,
+                false,
+                emojiIcons.events
+            ));
+
+        } else {
+            interaction.reply(message(
+                await string("birthday.add.syntax"),
+                "birthday • incorrect format",
+                title,
+                colors.Error,
+                true,
+                emojiIcons.mark
+            ));
         }
-    
-        interaction.reply({ embeds: [ reply ] });
     }
 }
-
-export default { react, init, modalSubmitted };

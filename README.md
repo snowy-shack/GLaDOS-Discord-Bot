@@ -1,19 +1,14 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for PortalMod and Phanty's Home  
 
-`Current Version: 1.09.0`
+`Current Version: 2.00.0`
 
-# To-do
-- Add more error logging with discord.js events
-- Come up with more to-do features
 
 # Known issues
-- When running /reboot, the bot shuts down before being able to log that it's terminating itself
-- Running /increment_boosters runs more than just incrementing boosters
 - Reaction removing logs even if it couldn't remove anything
 
 # Changelog
-## Release 1.09.0 - January 31th 2025
+## Release 1.09.0 - January 31st 2025
 ### Changes
 - Added general chat pings for when it's someone's birthday
 ### Fixes
@@ -83,11 +78,11 @@ Management and quality of life bot for PortalMod and Phanty's Home
 - Moved emojis that the bot uses to Discord's new application emojis instead of server emojis
 - Some minor refactors 
 
-## Release 1.3.1 - June 21th 2024
+## Release 1.3.1 - June 21st 2024
 ### Fixes
 - Regular Expression that detected art links no longer stops at line breaks
 
-## Release 1.3 - June 21th 2024
+## Release 1.3 - June 21st 2024
 ### Changes
 - Added detection of art links for auto reactions
 - Auto-reactions got an upgrade
