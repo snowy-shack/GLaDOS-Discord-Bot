@@ -8,6 +8,8 @@ const emojis = {
   translator: "<:translator:1335008128323944528>",
   portalmod:  "<:portalmod:1264163032876060756>",
   home:       "<:phantys_home:1264163401962229780>",
+
+  yo: "<:yo:1123652629210341417>"
 }
 
 export default emojis;

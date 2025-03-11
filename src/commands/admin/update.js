@@ -21,23 +21,23 @@ export async function react(interaction) {
         if (error) {
             logs.logError("executing a script", error);
             logs.logMessage("⚠️ Update wasn't successful");
-        } else {
-            setTimeout(async () => {
-                if (stdout.includes("Fast-forward")) {
-                    logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
-
-                    // Reboot after 2 seconds
-                    setTimeout(async () => {
-                        await logs.logMessage("🔁 Rebooting");
-                        process.exit();
-                    }, 2000);
-                } else if (stdout.includes("Already up to date")) {
-                    logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
-
-                } else {
-                    logs.logMessage("⚠️ Update wasn't successful");
-                }
-            }, 500);
+            return;
         }
+
+        setTimeout(async () => {
+            if (stdout.includes("Fast-forward")) {
+                await logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
+
+                // Reboot after 2 seconds
+                setTimeout(async () => {
+                    await logs.logMessage("🔁 Rebooting");
+                    process.exit();
+                }, 2000);
+            } else if (stdout.includes("Already up to date")) {
+                await logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
+            } else {
+                await logs.logMessage("⚠️ Update wasn't successful");
+            }
+        }, 500);
     });
 }

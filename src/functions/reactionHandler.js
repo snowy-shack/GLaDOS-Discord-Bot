@@ -26,7 +26,7 @@ export async function react(message, reactionChannel) {
             let contentType = attachment.contentType || null;
             if (['image','video'].includes(contentType.split('/')[0])) hasImage = true;
         }));
-        if (hasImage) message.react(emojis.like);
+        if (hasImage) message.react(getRandomLikeReaction());
     }
 
     if (reactLike)
@@ -45,4 +45,14 @@ export async function removeReactions(messageReaction, bySameUser) {
         messageReaction.message.reactions.cache.get('1264163067655229510')?.remove(); // Main
     }
     messageReaction.remove();
+}
+
+function getRandomLikeReaction() {
+    const random = Math.random();
+
+    if (random < 0.01) {
+        return emojis.yo;
+    }
+
+    return emojis.like;
 }

@@ -1,6 +1,7 @@
 import { PermissionFlagsBits } from "discord.js";
 import * as DMFormHandler from "#src/functions/DMFormHandler";
 import * as reactionHandler from "#src/functions/reactionHandler";
+import {factorial} from "#src/conversations/conversations";
 
 let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
     ['1235600733093761156', false, true,  false], // Dev announcements
@@ -18,12 +19,18 @@ let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes
 }
 
 export async function handleMessage(message) {
+    if (!message.channel.isSendable()) return;
+
     for (const i in reactionChannels) {
         let reactionChannel = reactionChannels[i];
 
         if (reactionChannel[0] !== message.channelId) continue;
         await reactionHandler.react(message, reactionChannel);
     }
+
+    factorial(message)
+
+    //TODO haiku
 }
 
 export async function handleDM(message) {
