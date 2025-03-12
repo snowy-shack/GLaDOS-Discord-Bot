@@ -9,7 +9,7 @@ const emojis = {
   portalmod:  "<:portalmod:1264163032876060756>",
   home:       "<:phantys_home:1264163401962229780>",
 
-  yo: "<:yo:1123652629210341417>"
+  yo: "<:yo:1349437436719005749>"
 }
 
 export default emojis;
