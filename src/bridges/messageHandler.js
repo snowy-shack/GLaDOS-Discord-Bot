@@ -1,7 +1,8 @@
 import { PermissionFlagsBits } from "discord.js";
 import * as DMFormHandler from "#src/functions/DMFormHandler";
 import * as reactionHandler from "#src/functions/reactionHandler";
-import {factorial} from "#src/conversations/conversations";
+import * as countingHandler from "#src/functions/countingHandler";
+import { replyFunctions } from "#src/functions/autoReplies";
 
 let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
     ['1235600733093761156', false, true,  false], // Dev announcements
@@ -28,9 +29,14 @@ export async function handleMessage(message) {
         await reactionHandler.react(message, reactionChannel);
     }
 
-    factorial(message)
+    // Try all replies until one succeeds
+    for (const replyFunction of replyFunctions) {
+        if (replyFunction(message)) break;
+    }
 
-    //TODO haiku
+    if (message.channelId === process.env.COUNTING_CHANNEL_ID) {
+        countingHandler.onCountingMessage(message);
+    }
 }
 
 export async function handleDM(message) {
