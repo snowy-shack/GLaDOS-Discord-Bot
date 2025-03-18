@@ -1,4 +1,4 @@
-import { GatewayIntentBits, Partials, Client } from "discord.js";
+import {GatewayIntentBits, Partials, Client, ActivityType} from "discord.js";
 
 export async function getClient() {
     const client = new Client({
@@ -14,7 +14,15 @@ export async function getClient() {
             Partials.Message,
             Partials.Channel,
             Partials.Reaction,
-        ]
+        ],
+        presence : {
+            status: "idle",
+            activities: [{
+                type: ActivityType.Watching,
+                name: "Phanty's Home",
+                state: "Looking over Phanty's Home"
+            }]
+        }
     });
 
     await client.login(process.env.TOKEN);
