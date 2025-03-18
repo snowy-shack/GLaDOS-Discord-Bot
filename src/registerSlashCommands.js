@@ -1,40 +1,40 @@
-const { REST, Routes, SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-
-const logs = require("./logs");
-const commandList = require("./functions/commandHandler").getCommandList();
-
-// commandList.forEach((command) => {
-//   const module = require(`./commands/${command}`);
-// });
+import { REST, Routes } from "discord.js";
+import { getCommandList } from "#src/bridges/commandHandler";
+import { getClient } from "#src/modules/client";
+import * as logs from "#src/modules/logs";
+import {guildID} from "#src/consts/phantys_home";
 
 // Define the commands
-const commands = (commandList.map(commandName => require(`./commands/${commandName}`).init())).map(command => command.toJSON());
+let commandList = getCommandList();
+
+const commands = await Promise.all(
+    commandList.map(async commandName => {
+        const { init } = await import(`#src/commands/${commandName}`);
+        let initialization = init();
+
+        return initialization.toJSON();
+    })
+);
 
 // Register the commands
 const rest = new REST().setToken(process.env.TOKEN);
 
-async function register() {
-  try {
-    const client = await require("./client");
-    // const servers = await client.guilds.cache.map(guild => guild.id);
+export async function register() {
+    try {
+        const client = await getClient();
+        console.log(`Started refreshing ${commands.length} slash commands.`);
 
-    console.log(`Started refreshing ${commands.length} slash commands.`);
+        const data = await rest.put(
+            Routes.applicationGuildCommands(client.application.id, guildID),
+            { body: commands }
+        );
 
-    const data = await rest.put(
-      Routes.applicationGuildCommands(client.application.id, process.env.GUILDID),
-      { body: commands }
-    );
+        rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
-    rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
-
-    console.log(`Succesfully refreshed ${data.length} slash commands.`);
-
-    logs.logMessage(`👁️‍🗨️ Reloaded ${commands.length} slash commands.`);
-  } catch(error) {
-    console.error(error);
-  }
+        console.log(`Succesfully refreshed ${data.length} slash commands.`);
+    } catch(error) {
+        console.error(error);
+    }
 }
 
-module.exports = { register };
+export default { register };

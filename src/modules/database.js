@@ -1,33 +1,69 @@
-const pg = require("pg");
+import pg from "pg";
+import * as logs from "#src/modules/logs";
+import {delayInMilliseconds} from "#src/modules/util";
 
-const logs = require("./logs");
+let pgClient;
 
-const pgClient = new pg.Client({
-    host:     process.env.DBHOST,
-    port:     process.env.DBPORT,
-    database: process.env.DBNAME,
-    user:     process.env.DBUSER,
-    password: process.env.DBPASS,
-});
+await ensureDBConnection();
 
-pgClient.connect();
-
-async function ensureDBConnection(retries = 5, delay = 1000) {
+/* private */ async function ensureDBConnection(retries = 5, delay = 1000) {
+    let reconnect = false;
     while (retries--) {
         try {
             await pgClient.query('SELECT 1');
+
+            if (reconnect) await logs.logMessage("✅ Database connection successful.");
             return;
         } catch {
-            console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
-            try { await pgClient.end(); } catch {}
-            pgClient.connect();
+            reconnect = true;
+            if (retries < 4) {
+                console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
+            } else {
+                await logs.logMessage("❓ Attempting Database (re)connection.");
+            }
+
+            pgClient?.end().catch(() => {});
+
+            pgClient = new pg.Client({
+                host:     process.env.DBHOST,
+                port:     process.env.DBPORT,
+                database: process.env.DBNAME,
+                user:     process.env.DBUSER,
+                password: process.env.DBPASS,
+            });
+
+            await pgClient.connect();
         }
-        await new Promise(r => setTimeout(r, delay *= 2));
+        await delayInMilliseconds(delay *= 2);
     }
     throw new Error('Database reconnection failed');
 }
 
-async function incBoostingDay(boosterId) {
+// This is just for migration; TODO remove later
+export async function fetchBoosters() {
+    await ensureDBConnection();
+    try {
+        const res = await pgClient.query('SELECT discord_id, days_boosted, messaged FROM boosters');
+        return res.rows;
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        return [];
+    }
+}
+
+// This is just for migration; TODO remove later
+export async function fetchBirthdays() {
+    await ensureDBConnection();
+    try {
+        const res = await pgClient.query('SELECT discord_id, birthday FROM birthdays');
+        return res.rows;
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        return [];
+    }
+}
+
+export async function incBoostingDay(boosterId) {
     await ensureDBConnection();
     try {
         await pgClient.query(`
@@ -46,30 +82,23 @@ async function incBoostingDay(boosterId) {
         
         return result.rowCount > 0; // Return the number of rows affected.
     } catch (error) {
-        console.error("Error updating booster:", error);
-        logs.logError(error);
+        await logs.logError("updating a booster", error);
         return false;
     }
 }
 
-const gunSkins = {
-    booster: "2ba60975-4f3f-47c7-981b-e0d938115288",
-    donator: "",
-    colour: "169752be-2bf6-4ce2-9653-03098354505e"
-}
-
-async function addGunSkin(minecraftUuid, skinType) {
+export async function addGunSkin(minecraftUuid, skinUUID) {
     await ensureDBConnection();
     await pgClient.query(`
         INSERT INTO players_skins (player_id, skin_id)
         VALUES ($1, $2);
     `,
-    [ minecraftUuid, gunSkins[skinType] ]);
+    [ minecraftUuid, skinUUID ]);
 }
 
-async function getBoosted(days) {
+export async function getBoosted(days) {
     await ensureDBConnection();
-    boosted = await pgClient.query(`
+    const boosted = await pgClient.query(`
         WITH updated_boosters AS (
             UPDATE boosters
             SET messaged = TRUE
@@ -94,7 +123,7 @@ async function markBoosterAsMessaged(discordId) {
 }
 
 // Birthday commands
-async function saveBirthday(user_id, date) {
+export async function saveBirthday(user_id, date) {
     await ensureDBConnection();
 
     await pgClient.query(`
@@ -104,7 +133,7 @@ async function saveBirthday(user_id, date) {
     `, [user_id, date.toISOString().split('T')[0]]);
 }
 
-async function getBirthday(user_id) {
+export async function getBirthday(user_id) {
     await ensureDBConnection();
 
     const result = await pgClient.query(`
@@ -116,7 +145,7 @@ async function getBirthday(user_id) {
     return new Date(result.rows[0].birthday);
 }
 
-async function getBirthdaysToday() {
+export async function getBirthdaysToday() {
     await ensureDBConnection();
 
     const result = await pgClient.query(`
@@ -127,7 +156,7 @@ async function getBirthdaysToday() {
     return result.rows.map(row => row.discord_id); 
 }
 
-async function getNextBirthdays(count) {
+export async function getNextBirthdays(count) {
     await ensureDBConnection();
 
     const result = await pgClient.query(`
@@ -158,18 +187,3 @@ async function getNextBirthdays(count) {
         birthday: new Date(row.birthday)
     }));
 }
-
-
-
-
-module.exports = { 
-    incBoostingDay, 
-    addGunSkin, 
-    getBoosted,
-    markBoosterAsMessaged,
-
-    saveBirthday,
-    getBirthday,
-    getBirthdaysToday,
-    getNextBirthdays,
-};

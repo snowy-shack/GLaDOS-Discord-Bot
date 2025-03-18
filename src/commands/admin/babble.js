@@ -1,22 +1,22 @@
-const client = require("../../client");
+import {SlashCommandBuilder, PermissionFlagsBits, MessageFlags} from "discord.js";
+import * as discord from "#src/modules/discord";
 
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-function init() {
-  return new SlashCommandBuilder().setName('babble')
-  .setDescription('Be a good Genetic Lifeform')
-  .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
-  .addStringOption(option =>
-    option.setName('message')
-      .setDescription('The Message')
-      .setRequired(true)
-  );
+export function init() {
+    return new SlashCommandBuilder().setName("babble")
+        .setDescription("Be a good Genetic Lifeform")
+        .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
+        .addStringOption(option =>
+            option.setName("message")
+                .setDescription("The Message")
+                .setRequired(true)
+        );
 }
 
-async function react(interaction) {
-  await interaction.reply({content: 'Speaking...', ephemeral: true});  // otherwise it will say "application did not respond"
-  await interaction.deleteReply();
-  (await client).channels.cache.get(interaction.channelId).send(interaction.options.getString('message'));
-}
+export async function react(interaction) {
+    await interaction.reply({content: "Speaking...", flags: MessageFlags.Ephemeral});
+    await interaction.deleteReply();
 
-module.exports = { react, init };
+    const channel = await discord.getChannel(interaction.channelId);
+    channel.send(interaction.options.getString("message").replace(/\\n/g, "\n"));
+}

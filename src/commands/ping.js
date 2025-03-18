@@ -1,13 +1,11 @@
-const { SlashCommandBuilder } = require('discord.js');
-const logs = require("../logs");
+import { SlashCommandBuilder } from "discord.js";
+import * as logs from "#src/modules/logs";
 
-function init() {
-  return new SlashCommandBuilder().setName('ping')
-  .setDescription('Ping GLaDOS');
+export function init() {
+    return new SlashCommandBuilder().setName('ping')
+        .setDescription('Ping GLaDOS');
 }
 
-async function react(interaction) {
-  await interaction.reply(logs.formatMessage(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
+export async function react(interaction) {
+    await interaction.reply(logs.formatMessage(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
 }
-
-module.exports = { react, init };

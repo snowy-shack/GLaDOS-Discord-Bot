@@ -1,0 +1,16 @@
+export const icons = {
+    arcade:     "https://portalmod.net/images/icons/arcade.png",
+    booster:    "https://portalmod.net/images/icons/booster.png",
+    counting:   "https://portalmod.net/images/icons/counting.png",
+    events:     "https://portalmod.net/images/icons/events.png",
+    fire:       "https://portalmod.net/images/icons/fire.png",
+    glados:     "https://portalmod.net/images/icons/glados.png",
+    home:       "https://portalmod.net/images/icons/home.png",
+    important:  "https://portalmod.net/images/icons/important.png",
+    like:       "https://portalmod.net/images/icons/like.png",
+    mark:       "https://portalmod.net/images/icons/mark.png",
+    playtester: "https://portalmod.net/images/icons/playtester.png",
+    portalmod:  "https://portalmod.net/images/icons/portalmod.png",
+    supporter:  "https://portalmod.net/images/icons/supporter.png",
+    translate:  "https://portalmod.net/images/icons/translate.png",
+}

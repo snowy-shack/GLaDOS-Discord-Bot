@@ -1,101 +1,95 @@
-const path = require("path");
-require("./envloader");
+import { Events } from "discord.js";
+import cron from "node-cron";
 
-const cron = require("node-cron");
+import "#src/envloader";
+import * as logs from "#src/modules/logs";
+import commandHandler from "#src/bridges/commandHandler";
+import buttonHandler from "#src/bridges/buttonHandler";
+import modalHandler from "#src/bridges/modalHandler";
 
-const logs = require("./logs");
+import * as messageHandler from "#src/bridges/messageHandler";
+import * as reactionHandler from "#src/functions/emojiReactionHandler";
+import registerSlashCommands from "#src/registerSlashCommands";
 
-const commandHandler        = require("./functions/commandHandler");
-const buttonHandler         = require("./functions/buttonHandler");
-const modalHandler          = require("./functions/modalHandler");
+import ready from "#src/events/ready";
+import daily from "#src/events/daily";
+import {spamKick} from "#src/actions/spamKick";
+import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home";
+import {flags, getFlag, setFlag} from "#src/agents/flagAgent";
 
-const messageHandler        = require("./functions/messageHandler");
-const dmMessageHandler      = require("./functions/dmMessageHandler");
-const reactionHandler       = require("./functions/reactionHandler");
-const registerSlashCommands = require("./registerSlashCommands");
-
-const onReady = require("./events/ready");
-const daily = require("./events/daily");
-
-const emojis = require("./consts/emojis");
-const { eventNames } = require("process");
+const { getClient } = await import("#src/modules/client");
 
 registerSlashCommands.register();
 
-(async () => {
-  const client = await require("./client");
-  client.once(onReady.name, (...args) => onReady.execute(...args));
+async function main() {
+    let client = await getClient();
 
-  client.on("messageCreate", async (message) => { // DM messages
-    try {
-      if (message.author.bot || message.guild) return; // Ensure the bot doesn't reply to bots, or server messages
-      dmMessageHandler.handleDM(message);
-    } catch (error) {
-      logs.logError(error);
-    }
-  });
+    client.once(ready.name, (...args) => ready.execute(...args));
 
-  reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
-    ['1235600733093761156', false, true,  false], // Dev announcements
-    ['1253797518555353239', false, true,  true ], // Dev updates
-    ['1235600701602791455', true,  false, false], // Dev art
+    // Interaction handling
+    client.on(Events.InteractionCreate, async interaction => {
+        try {
+            if (interaction.isCommand())     await commandHandler.reply(interaction);
+            if (interaction.isButton())      await buttonHandler.reply(interaction);
+            if (interaction.isModalSubmit()) await modalHandler.reply(interaction);
+        } catch (error) {
+            await logs.logError("handling interaction", error);
+        }
+    });
 
-    ['878221699844309033',  false, true,  false], // #News
-    ['876132326101360670',  false, true,  false], // #Announcements
-    ['981527027142262824',  true,  false, false], // #Art
-    ['1005103628882804776', false, true,  true ]  // #Updates
-  ]
+    // Message handling
+    client.on(Events.MessageCreate, async (message) => {
+        if (message.author.bot) return;
 
+        let wasGhost = await getFlag(message.author.id, flags.Ghost);
+        if (wasGhost) setFlag(message.author.id, flags.Ghost, false);
 
-  // Automatic emoji reaction handling
-  client.on("messageCreate", async (message) => {
-    if (!message.author.bot && message.guild)  { // Reactions
-      for (i in reactionChannels) {
-        reactionChannel = reactionChannels[i];
+        try {
+            if (message.guild) {
+                await messageHandler.handleMessage(message);
+            } else {
+                await messageHandler.handleDM(message);
+            }
+        } catch (error) {
+            await logs.logError(`handling ${message.guild ? "guild" : "DM"} message`, error);
+        }
+    });
 
-        if (reactionChannel[0] != message.channelId) continue;
-        reactionHandler.react(message, reactionChannel);
-      }
-    }
-  });
+    // Emoji reaction handling
+    client.on(Events.MessageReactionAdd, async (reaction, author) => {
+        const message = await reaction.message.channel.messages.fetch(reaction.message.id); // Fetch message in channel by ID
 
+        // If user adds Delete to their message, remove likes
+        if (addLikesToMedia(reaction.message.channelId)
+            && reaction.emoji.id === serverEmojis.Delete
+            && author.id === message.author.id) {
 
-  // Emoji reaction handling
-  client.on("messageReactionAdd", async (messageReaction, author) => {
-    const message = await messageReaction.message.channel.messages.fetch(messageReaction.message.id); // Fetch message in channel by ID
-    const authorID = message.author.id;
+            await reactionHandler.removeReactions(reaction);
+        }
+    });
 
-    inArtChannel = ['981527027142262824', '1235600701602791455'].includes(messageReaction.message.channelId);
-    bySameUser = author.id == authorID;
-    isDeleteReaction = ['1265683388069707776', '1264171028125323327'].includes(messageReaction.emoji.id);
+    client.on(Events.GuildMemberUpdate, async (_, member) => {
+        if (member.roles.cache.has(roles.SpamBot)) {
+            await spamKick(member.id, "User selected Spam Bot role");
+        }
+    });
 
-    if (inArtChannel && isDeleteReaction) {
-      reactionHandler.removeReactions(messageReaction, bySameUser);
-    }
-  });
+    client.on(Events.GuildMemberAdd, async (member) => {
+        // Make sure the user isn't considered a ghost
+        let wasGhost = await getFlag(member.id, flags.Ghost);
+        if (wasGhost) setFlag(member.id, flags.Ghost, false);
+    });
+}
 
+await main();
 
-  // Interaction handling
-  client.on('interactionCreate', async interaction => {
-    try {
-      if (interaction.isCommand())     commandHandler.reply(interaction);
-      if (interaction.isButton())      buttonHandler.reply(interaction);
-      if (interaction.isModalSubmit()) modalHandler.reply(interaction);
-
-    } catch (error) {
-      logs.logError(error);
-    }
-  });
-
-})();
-
-// Increment the boosting value of all boosters everyday at 12 PM CEST
+// Increment the boosting value of all boosters every day at 10 AM CET
 cron.schedule(
-  "00 00 12 * * 0-6",
-  () => { daily.run(); },
-  { timezone: "Europe/Amsterdam" }
+    "00 00 10 * * 0-6",
+    () => { daily.run(); },
+    { timezone: "Europe/Amsterdam" }
 );
 
 process.on('uncaughtException', (error) => { // Error logging
-  console.error('Uncaught Exception:', error);
+    console.error('Uncaught Exception:', error);
 });

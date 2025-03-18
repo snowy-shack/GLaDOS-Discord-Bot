@@ -1,13 +1,14 @@
-const boosterHandler  = require("../functions/boosterHandler");
-const birthdayHandler = require("../functions/birthdayHandler");
-const logs            = require("../logs");
+import boosterHandler from "#src/functions/boosterHandler";
+import birthdayHandler from "#src/functions/birthdayHandler";
+import * as logs from "#src/modules/logs";
 
 async function run() {
     try {
         boosterHandler.incrementAndDM();
-        birthdayHandler.checkBirthdays();
+        await birthdayHandler.checkBirthdays();
     } catch (error) {
-        logs.logError(error);
+        await logs.logError("Error running daily events", error);
     }
 }
-module.exports = { run };
+
+export default { run };

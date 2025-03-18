@@ -1,9 +1,9 @@
-const { Events, ActivityType } = require('discord.js');
+import { Events, ActivityType } from "discord.js";
 
-const logs = require('../logs');
-const { getVersion } = require('../functions/versionManager');
+import * as logs from "#src/modules/logs";
+import { getVersion } from "#src/modules/version";
 
-module.exports = {
+export default {
     name: Events.ClientReady,
     once: true,
     async execute(client) {

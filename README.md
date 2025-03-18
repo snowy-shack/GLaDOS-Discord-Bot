@@ -1,19 +1,42 @@
 # GLaDOS bot for Phanty's Home
-Management and quality of life bot for PortalMod and Phanty's Home  
+Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 1.09.0`
-
-# To-do
-- Add more error logging with discord.js events
-- Come up with more to-do features
+`Current Version: 2.00.0`
 
 # Known issues
-- When running /reboot, the bot shuts down before being able to log that it's terminating itself
-- Running /increment_boosters runs more than just incrementing boosters
 - Reaction removing logs even if it couldn't remove anything
 
 # Changelog
-## Release 1.09.0 - January 31th 2025
+## Release 2.00.0 - March 18th 2025
+Major rewrite of the bot's infrastructure, switching to ESM standards and overall improving stability,
+readability, and performance.
+### Changes
+- Logs and generic interaction replies are now formatted in embeds
+- Introduced new `/kick` command, which kicks and notifies the user kicked 
+- Better support and error handling for commands, buttons and modals
+- Merged `/refresh_faqs` and `/refresh_rules` into `/refresh <faq|rules>`
+- Added `bsky.app` to the recognized art domains
+- Introduced a new `styledEmbed` module for creating embeds in a generalized way
+- GLaDOS can now automatically respond to messages randomly with humorous responses
+- Overall refactors and name changes
+
+#### FLAGS
+Introduced a new flags system, which can locally keep track of variables per user
+- Added 'ghost' tracking, when members are no longer in the server, so that GLaDOS can ignore them
+- Replaced booster and birthday implementations to use flags rather than the database
+- Keeps track of user's Minecraft UUID to skip the skin form the second time around
+- New `/flags <set|get|remove>` admin command to change the value of flags
+
+#### STRINGS
+Introduced a new strings system, which keeps all long text responses in one place.
+- Moved long strings to string files
+- Allows for potential future multi-language support
+
+#### CONSTS
+Introduced new constant modules which provide easy access to values for emojis, icons, colors, channel and role IDs, etc.
+- Moved emojis, channels and roles from `.env` files to `phantys_home.js`
+
+## Release 1.09.0 - January 31st 2025
 ### Changes
 - Added general chat pings for when it's someone's birthday
 ### Fixes
@@ -83,11 +106,11 @@ Management and quality of life bot for PortalMod and Phanty's Home
 - Moved emojis that the bot uses to Discord's new application emojis instead of server emojis
 - Some minor refactors 
 
-## Release 1.3.1 - June 21th 2024
+## Release 1.3.1 - June 21st 2024
 ### Fixes
 - Regular Expression that detected art links no longer stops at line breaks
 
-## Release 1.3 - June 21th 2024
+## Release 1.3 - June 21st 2024
 ### Changes
 - Added detection of art links for auto reactions
 - Auto-reactions got an upgrade
