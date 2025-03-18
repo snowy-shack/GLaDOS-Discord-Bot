@@ -17,6 +17,7 @@ readability, and performance.
 - Merged `/refresh_faqs` and `/refresh_rules` into `/refresh <faq|rules>`
 - Added `bsky.app` to the recognized art domains
 - Introduced a new `styledEmbed` module for creating embeds in a generalized way
+- GLaDOS can now automatically respond to messages randomly with humorous responses
 - Overall refactors and name changes
 
 #### FLAGS
@@ -34,14 +35,6 @@ Introduced a new strings system, which keeps all long text responses in one plac
 #### CONSTS
 Introduced new constant modules which provide easy access to values for emojis, icons, colors, channel and role IDs, etc.
 - Moved emojis, channels and roles from `.env` files to `phantys_home.js`
-
-#### AUTOMATIC RESPONSES
-GLaDOS can now automatically respond to messages randomly
-- Now responds to `calc` with a humorous response, as a reference to a meme
-- Now responds to `<nr>!` at the end of a sentence with the factorial of that number
-- Now responds to `glados` with a random voice line
-- Has a 1/500 chance to count the next number in `#counting`
-- Has a 1/5 chance to steal the next number after a number ending in `999`
 
 ## Release 1.09.0 - January 31st 2025
 ### Changes
