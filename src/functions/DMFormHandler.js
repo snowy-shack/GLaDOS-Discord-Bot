@@ -51,9 +51,11 @@ export async function replyToDM(message) {
         // const skinType = gun_skins.Booster.id;
         const skinType = skinTypeFromFooter(lastMessage);
 
-        await setFlag(message.author.id, flags.Booster.Unlocked, true)
+        setFlag(message.author.id, flags.Booster.Unlocked, true);
+        setFlag(message.author.id, flags.MinecraftUUID, uuidGot);
 
         let skinUUID = gun_skins[capitalize(skinType)].uuid;
+
         await database.addGunSkin(uuidGot, skinUUID);
         await logs.logMessage(`💎 Added ${skinType} skin to uuid '${uuidGot}' ${await getMember(message.author.id)}.`);
     }
