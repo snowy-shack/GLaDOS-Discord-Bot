@@ -9,7 +9,7 @@ async function reply(interaction) {
     // Dynamic import
     const module = await import(path);
 
-    if ("buttonPressed" in module) {
+    if (typeof module.buttonPressed === "function") {
         await module.buttonPressed(buttonID, interaction);
     } else {
         await logs.logError("handling button", Error(`${modulePath} button has no submit functionality`));

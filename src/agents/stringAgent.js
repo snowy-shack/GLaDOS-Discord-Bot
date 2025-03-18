@@ -1,9 +1,9 @@
-import emojis from "#src/consts/emojis";
+import { emojis } from "#src/consts/phantys_home";
 
 export async function string(key, local = "en_us") {
     const strings = await import(`#src/consts/strings/${local}.json`, { assert: { type: "json" } });
 
-    const string =  strings.default[key] ? strings.default[key] : "[undefined string]";
+    const string = strings.default[key] ? strings.default[key] : "[undefined string]";
 
     // Emojis
     return string.replace(/\$(\w+)\$/g, (match, key) => {

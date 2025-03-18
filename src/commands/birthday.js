@@ -1,12 +1,13 @@
 import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
-    TextInputBuilder, EmbedBuilder, TextInputStyle, } from "discord.js";
+    TextInputBuilder, TextInputStyle, } from "discord.js";
 
 import * as logs from "#src/modules/logs";
-import * as database from "#src/modules/database";
 import colors from "#src/consts/colors";
 import { getMember } from "#src/modules/discord";
-import {message} from "#src/factories/styledEmbed";
+import {embedMessageObject} from "#src/factories/styledEmbed";
 import {string, templateString} from "#src/agents/stringAgent";
+import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent";
+import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -63,67 +64,20 @@ const birthdayInput = new TextInputBuilder()
 
 form.addComponents(new ActionRowBuilder().addComponents(birthdayInput));
 
-// Cap a string str at len length
-function trimString(str, len) {
-    return str.length > len ? str.slice(0, len - 1) + '…' : str;
-}
-
-// Returns Date from "dd-mm[-yyyy]" format
-function parseDate(input) {
-    const matches = input.match(/^(\d{2})-(\d{2})(?:-(\d{4}))?$/);
-    if (!matches) return null;
-
-    let [_, day, month, year] = matches;
-    day   = parseInt(day);
-    month = parseInt(month);
-    year  = year ? parseInt(year) : 0;
-    
-    const date = new Date(year, month - 1, day);
-
-    if (date.getDate() != day || date.getMonth() != month - 1) return null;
-    date.setHours(12, 0, 0, 0); // Fix off by one?
-
-    return date;
-}
-
-// Returns date in human-readable format
-function formatDate(date, includeYear) {
-    const months = ["January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December"];
-
-    const day   = date.getDate();
-    const month = months[date.getMonth()];
-    const year  = date.getFullYear();
-
-    const suffix = 
-        (day % 10 === 1 && day !== 11) ? "st" :
-        (day % 10 === 2 && day !== 12) ? "nd" :
-        (day % 10 === 3 && day !== 13) ? "rd" : "th";
-
-    return (year === 1900 || !includeYear) ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
-}
-
-// Returns true if today is the input date
-function birthdayIsToday(date) {
-    const today = new Date();
-    return date.getDate()  === today.getDate() &&
-           date.getMonth() === today.getMonth();
-}
-
 // Returns the number of days until the input birthday
-function daysUntilBirthday(birthday) {
+function daysUntilBirthday(stringDate) {
     const today = new Date();
-    const birthdayMonth = birthday.getMonth();
-    const birthdayDay   = birthday.getDate();
-    
-    let nextBirthday = new Date(today.getFullYear(), birthdayMonth, birthdayDay);
 
-    // If birthday has passed, adjust to next year
+    const [day, month] = stringDate.split('-').map(Number);
+
+    let nextBirthday = new Date(today.getFullYear(), month - 1, day);
+
+    // If the birthday has already passed this year, move it to next year
     if (today > nextBirthday) {
         nextBirthday.setFullYear(today.getFullYear() + 1);
     }
 
-    return Math.ceil((nextBirthday - today) / 86400000); // Divide by number of ms per day
+    return Math.ceil((nextBirthday - today) / DAY_IN_MS); // Convert ms to days
 }
 
 // Format row details
@@ -133,17 +87,19 @@ async function getUserDetails(users) {
     const daysRemaining = [];
     let lastMember;
 
-    for (const user of users) {
+    for (const entry of users) {
+        let ghost = await getFlag(entry.user, flags.Ghost);
+        if (ghost) continue;
         try {
-            const member = await getMember(user.discord_id);
+            const member = await getMember(entry.user);
 
             if (!member) continue;
 
             if (!lastMember) lastMember = member;
 
             const displayName   = member.nickname || member.user.globalName;
-            const formattedDate = formatDate(user.birthday, false);
-            const remainingDays = daysUntilBirthday(user.birthday);
+            const formattedDate = formatDate(entry.value, false);
+            const remainingDays = daysUntilBirthday(entry.value);
 
             usernames.push(trimString(displayName, 20));
             dates.push(formattedDate);
@@ -157,110 +113,140 @@ async function getUserDetails(users) {
 }
 
 export async function react(interaction) {
-    // Birthday Add command
-    if (interaction.options.getSubcommand() === "add") {
-        const userBirthday = await database.getBirthday(interaction.user.id);
+    switch (interaction.options.getSubcommand()) {
+        // Birthday Add command
+        case "add": {
+            const userBirthday = await getFlag(interaction.user.id, flags.Birthday.Date);
 
-        if (!userBirthday) {
-            await interaction.showModal(form);
-            return;
-        }
+            if (!userBirthday) {
+                await interaction.showModal(form);
+                return;
+            }
 
-        interaction.reply(message(
-            await templateString("birthday.add.duplicate", [ formatDate(userBirthday, true) ]),
-            "birthday • duplicate",
-            title,
-            colors.Error,
-            true
-        ));
-        return;
-    }
+            interaction.reply(embedMessageObject(
+                await templateString("birthday.add.duplicate", [ formatDate(userBirthday, true) ]),
+                "birthday • duplicate",
+                title,
+                colors.Error,
+                true
+            ));
+        } break;
 
-    // Birthday Get command
-    if (interaction.options.getSubcommand() === "get") {
-        const birthdayUser = interaction.options.getUser("user");
-        const userBirthday = await database.getBirthday(birthdayUser.id);
+        // Birthday Get command
+        case "get": {
+            await interaction.deferReply();
 
-        if (userBirthday) {
-            interaction.reply(message(
-                await templateString("birthday.get.success", [
+            const birthdayUser = interaction.options.getUser("user");
+            const userBirthday = await getFlag(birthdayUser.id, flags.Birthday.Date);
+
+            if (userBirthday) {
+                interaction.editReply(embedMessageObject(
+                    await templateString("birthday.get.success", [
                         `<@${birthdayUser.id}>`,
                         daysUntilBirthday(userBirthday) % 365,
-                        birthdayIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)]),
-                "birthday • success",
-                title,
-                colors.Primary,
-                false,
-                birthdayUser.displayAvatarURL()
-            ));
-        } else {
-            interaction.reply(message(
-                await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
-                "birthday • not found",
-                title,
-                colors.Primary,
-                false,
-                birthdayUser.displayAvatarURL()
-            ));
-        }
-        return;
-    }
+                        dateIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)]),
+                    "birthday • success",
+                    title,
+                    colors.Primary,
+                    false,
+                    birthdayUser.displayAvatarURL()
+                ));
 
-    // Birthday next command
-    if (interaction.options.getSubcommand() === "next") {
-        interaction.deferReply();
-        const birthdayCount = interaction.options.getInteger("count") || 1;
-        const nextBirthdays = await database.getNextBirthdays(50);
+            } else {
+                interaction.editReply(embedMessageObject(
+                    await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
+                    "birthday • not found",
+                    title,
+                    colors.Primary,
+                    false,
+                    birthdayUser.displayAvatarURL()
+                ));
+            }
+        } break;
 
-        const entries = await getUserDetails(nextBirthdays);
 
-        if (birthdayCount === 1) {
-            let url = emojiIcons.mark;
-            let name = entries.usernames[0];
-            try {
-                url = entries.lastMember.displayAvatarURL();
-                name = `<@${entries.lastMember.id}>`;
-            } catch {}
+        // Birthday next command
+        case "next": {
+            await interaction.deferReply();
 
-            await interaction.editReply(message(
-                await templateString("birthday.next.single", [name, entries.daysRemaining[0], entries.daysRemaining[0] === 0 ? "Today! 🎉" : entries.dates[0]]),
-                "birthday • success",
-                title,
-                colors.Primary,
-                false,
-                url
-            ));
+            let users = await getAllFlagValues(flags.Birthday.Date);
 
-        } else {
-            let nr = Math.min(birthdayCount, entries.usernames.length);
+            users = sortDatesUpcoming(users);
 
-            await interaction.editReply(message(
-                await templateString("birthday.next.multiple", [nr]),
-                `birthday • next ${nr}`,
-                title,
-                colors.Primary,
-                false,
-                emojiIcons.home,
-                [
-                    { name: '**Name:**',      value: `**\`\`\`\n${entries.usernames.slice(0, birthdayCount).join('\n')    }\n\`\`\`**`, inline: true },
-                    { name:   'Date:',        value:   `\`\`\`\n${entries.dates.slice(0, birthdayCount).join('\n')        }\n\`\`\``,   inline: true },
-                    { name:   'Days left:',   value:   `\`\`\`\n${entries.daysRemaining.slice(0, birthdayCount).join('\n')}\n\`\`\``,   inline: true }
-                ]
-            ));
-        }
+            const birthdayCount = interaction.options.getInteger("count") || 1;
+
+            const userEntries = await getUserDetails(users);
+
+            // Single birthday
+            if (birthdayCount === 1) {
+                let url = emojiIcons.mark;
+                let name = userEntries.usernames[0];
+                try {
+                    url = userEntries.lastMember.displayAvatarURL();
+                    name = `<@${userEntries.lastMember.id}>`;
+                } catch {}
+
+                await interaction.editReply(embedMessageObject(
+                    await templateString(
+                        "birthday.next.single",
+                        [name, userEntries.daysRemaining[0], userEntries.daysRemaining[0] === 0 ? "Today! 🎉" : userEntries.dates[0]]
+                    ),
+                    "birthday • success",
+                    title,
+                    colors.Primary,
+                    false,
+                    url
+                ));
+            // Multiple birthdays
+            } else {
+                let nr = Math.min(birthdayCount, userEntries.usernames.length);
+
+                await interaction.editReply(embedMessageObject(
+                    await templateString("birthday.next.multiple", [nr]),
+                    `birthday • next ${birthdayCount}`,
+                    title,
+                    colors.Primary,
+                    false,
+                    emojiIcons.home,
+                    [
+                        { name: '**Name:**',      value: `**\`\`\`\n${userEntries.usernames.slice(0, birthdayCount).join('\n')    }\n\`\`\`**`, inline: true },
+                        { name:   'Date:',        value:   `\`\`\`\n${userEntries.dates.slice(0, birthdayCount).join('\n')        }\n\`\`\``,   inline: true },
+                        { name:   'Days left:',   value:   `\`\`\`\n${userEntries.daysRemaining.slice(0, birthdayCount).join('\n')}\n\`\`\``,   inline: true }
+                    ]
+                ));
+            }
+        } break;
     }
 }
 
 export async function modalSubmitted(formID, interaction) {
     if (formID === "birthday") {
-        const birthDate = await parseDate(interaction.fields.getTextInputValue('birthday'));
+        let birthDate = interaction.fields.getTextInputValue('birthday');
+
+        const matches = birthDate.match(/^(\d{2})-(\d{2})(?:-(\d{4}))?$/);
+
+        let [_, day, month, year] = matches;
+
+        if (matches) {
+            year = year && /^\d{4}$/.test(year) ? year : "1900"; // Default to 1900 if missing/invalid
+
+            // Convert to numbers
+            const dayNum = parseInt(day, 10);
+            const monthNum = parseInt(month, 10);
+            const yearNum = parseInt(year, 10);
+
+            // Check whether the date is valid
+            birthDate = isValidDate(dayNum, monthNum, yearNum) ? `${day}-${month}-${year}` : undefined;
+        } else {
+            birthDate = undefined;
+        }
 
         // Valid input
         if (birthDate) {
-            await database.saveBirthday(interaction.user.id, birthDate);
-            logs.logMessage(`🍰 Saved birthday of \`${interaction.user}\`: ${formatDate(birthDate, true)}`);
+            await setFlag(interaction.user.id, flags.Birthday.Date, birthDate);
+            logs.logMessage(`🍰 Saved birthday of ${interaction.user}: ${formatDate(birthDate, true)}`);
 
-            interaction.reply(message(
+            interaction.reply(embedMessageObject(
                 await templateString("birthday.add.success", [formatDate(birthDate, true)]),
                 "birthday • success",
                 title,
@@ -270,7 +256,7 @@ export async function modalSubmitted(formID, interaction) {
             ));
 
         } else {
-            interaction.reply(message(
+            interaction.reply(embedMessageObject(
                 await string("birthday.add.syntax"),
                 "birthday • incorrect format",
                 title,

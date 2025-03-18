@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import {SlashCommandBuilder, PermissionFlagsBits, MessageFlags} from "discord.js";
 import * as discord from "#src/modules/discord";
 
 
@@ -14,7 +14,7 @@ export function init() {
 }
 
 export async function react(interaction) {
-    await interaction.reply({content: "Speaking...", ephemeral: true});
+    await interaction.reply({content: "Speaking...", flags: MessageFlags.Ephemeral});
     await interaction.deleteReply();
 
     const channel = await discord.getChannel(interaction.channelId);

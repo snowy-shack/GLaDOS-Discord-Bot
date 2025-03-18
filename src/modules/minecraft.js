@@ -1,14 +1,19 @@
 import fetch from "node-fetch";
+import * as logs from "#src/modules/logs";
 
-export async function getUuid(username) {
-    fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
-        .then(res => res.json())
-        .then(json => {
-            return({
-                uuid: json.id,
-                username: json.name
-            });
-        });
+export async function getAccount(username) {
+    const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+
+    if (!response.ok) {
+        await logs.logError("fetching Minecraft user", response.statusText);
+    }
+
+    const ObjectJSON = await response.json();
+
+    return {
+        uuid: ObjectJSON.id,
+        username: ObjectJSON.name
+    }
 }
 
 export function getSkin(uuid) {

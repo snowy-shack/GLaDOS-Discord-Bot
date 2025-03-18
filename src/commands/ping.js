@@ -9,5 +9,3 @@ export function init() {
 export async function react(interaction) {
     await interaction.reply(logs.formatMessage(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
 }
-
-export default { react, init };

@@ -27,7 +27,7 @@ export async function reply(interaction) {
         if (commandName === command.split('/').pop()) {
             const commandModule = await import(`#src/commands/${command}`);
 
-            if ("react" in commandModule) {
+            if (typeof commandModule.react === "function") {
                 commandModule.react(interaction);
             } else {
                 await logs.logError("handling command", Error(`${command} command has no react functionality`));

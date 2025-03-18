@@ -1,16 +1,18 @@
 import { getClient } from "#src/modules/client";
+import {guildID} from "#src/consts/phantys_home";
+import {flags, setFlag} from "#src/agents/flagAgent";
 
-export let phantys_home;
-export let channels;
-export let users;
+let phantys_home;
+let channels;
+let users;
 
 /* private */ async function init() {
     const client = await getClient();
 
-    phantys_home = await client.guilds.fetch(process.env.GUILDID);
+    phantys_home = await client.guilds.fetch(guildID);
 
-    channels = await phantys_home.channels.fetch();
-    users = await phantys_home.members.fetch();
+    await phantys_home.channels.fetch();
+    await phantys_home.members.fetch();
 }
 
 await init();
@@ -20,19 +22,20 @@ export function getGuild() {
 }
 
 export async function getMember(id) {
-    const cachedUser = users.get(id);
+    const cachedUser = phantys_home.members.cache.get(id);
 
     if (cachedUser) return cachedUser;
 
     try {
         return await phantys_home.members.fetch(id);
     } catch {
+        setFlag(id, flags.Ghost);
         return undefined;
     }
 }
 
 export async function getChannel(id) {
-    const cachedChannel = channels.get(id);
+    const cachedChannel = phantys_home.channels.cache.get(id);
 
     if (cachedChannel) return cachedChannel;
 

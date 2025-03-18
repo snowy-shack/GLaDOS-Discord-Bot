@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
 import * as logs from "#src/modules/logs";
-import emojis from "#src/consts/emojis";
+import { emojis } from "#src/consts/phantys_home";
 
 import { getClient } from "#src/modules/client";
 
@@ -18,43 +18,35 @@ export function init() {
             )
 }
 
-import faqJSON from "#src/strings/faqs.json" with { type: "json" };
-import rulesJSON from "#src/strings/rules.json" with { type: "json" };
+import faqJSON from "#src/consts/faqs.json" with { type: "json" };
+import rulesJSON from "#src/consts/rules.json" with { type: "json" };
 import * as discord from "#src/modules/discord";
-
-function getCurrentDate() {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear().toString().substr(-2);
-
-    return `${day}.${month}.${year}`;
-}
+import {channels} from "#src/consts/phantys_home";
+import {dateToString, formatDate} from "#src/modules/util";
 
 export async function react(interaction) {
-    let entries, channelName, channelID, emoji;
+    let entries, channelName, channel, emoji;
 
     switch (interaction.options.getSubcommand()) {
         case "faq": {
             entries = faqJSON;
             channelName = "FAQ";
-            channelID = process.env.FAQ_CHANNEL_ID;
-            emoji = emojis.portalmod;
-            break;
-        }
+            channel = channels.Faq;
+            emoji = emojis.PortalMod;
+        } break;
         case "rules": {
             entries = rulesJSON;
             channelName = "Rules";
-            channelID = process.env.RULES_CHANNEL_ID;
-            emoji = emojis.home;
-            break;
-        }
+            channel = channels.Rules;
+            emoji = emojis.Home;
+        } break;
     }
 
     interaction.reply(logs.formatMessage("🔄️ Updating " + channelName + " Channel"));
-    logs.logMessage("🔄️ Updating FAQ" + channelName + " Channel");
+    logs.logMessage("🔄️ Updating " + channelName + " Channel");
 
-    const channel = await discord.getChannel(channelID);
+    // Redefine channel to the actual channel object
+    channel = await discord.getChannel(channel);
 
     const fetchedMessages = await channel.messages.fetch({ limit: 100 });
 
@@ -64,7 +56,7 @@ export async function react(interaction) {
         // }
     }
 
-    const formattedDate = getCurrentDate();
+    const formattedDate = formatDate(dateToString(new Date()), true);
 
     setTimeout(() => {
         channel.send(logs.formatMessage(`Last ${channelName} update: ${formattedDate}`))

@@ -30,10 +30,10 @@ export async function react(interaction) {
             const skin_type = interaction.options.getString('skin_type');
             const target_user = interaction.options.getUser('user');
 
-            await skinForm.sendFormMessage(target_user, 0, skin_type);
+            await skinForm.sendFormMessage(target_user, 0, undefined, skin_type);
 
-            await logs.logMessage(`❓ Asking \`${target_user}\` about their Minecraft UUID to add the ${skin_type} skin.`);
-            await interaction.reply(logs.formatMessage(`💎 DM'ing \`${target_user}\` with a form for the ${skin_type} skin.`));
-        }
+            await logs.logMessage(`❓ Asking @${target_user.username} about their Minecraft UUID to add the ${skin_type} skin.`);
+            await interaction.reply(logs.formatMessage(`💎 DM'ing @${target_user.username} with a form for the ${skin_type} skin.`));
+        } break;
     }
 }

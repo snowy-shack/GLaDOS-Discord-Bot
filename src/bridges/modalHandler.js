@@ -9,7 +9,7 @@ async function reply(interaction) {
     // Dynamic import
     const module = await import(path);
 
-    if ("modalSubmitted" in module) {
+    if (typeof module.modalSubmitted === "function") {
         await module.modalSubmitted(formID, interaction);
     } else {
         await logs.logError("handling modal", Error(`${modulePath} modal has no submit functionality`));

@@ -8,13 +8,14 @@ import buttonHandler from "#src/bridges/buttonHandler";
 import modalHandler from "#src/bridges/modalHandler";
 
 import * as messageHandler from "#src/bridges/messageHandler";
-import * as reactionHandler from "#src/functions/reactionHandler";
+import * as reactionHandler from "#src/functions/emojiReactionHandler";
 import registerSlashCommands from "#src/registerSlashCommands";
 
 import ready from "#src/events/ready";
 import daily from "#src/events/daily";
-import {getRoleUsers} from "#src/modules/discord";
 import {spamKick} from "#src/actions/spamKick";
+import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home";
+import {flags, getFlag, setFlag} from "#src/agents/flagAgent";
 
 const { getClient } = await import("#src/modules/client");
 
@@ -40,6 +41,9 @@ async function main() {
     client.on(Events.MessageCreate, async (message) => {
         if (message.author.bot) return;
 
+        let wasGhost = await getFlag(message.author.id, flags.Ghost);
+        if (wasGhost) setFlag(message.author.id, flags.Ghost, false);
+
         try {
             if (message.guild) {
                 await messageHandler.handleMessage(message);
@@ -51,25 +55,29 @@ async function main() {
         }
     });
 
-    // TODO this below is a mess
     // Emoji reaction handling
-    client.on(Events.MessageReactionAdd, async (messageReaction, author) => {
-        const message = await messageReaction.message.channel.messages.fetch(messageReaction.message.id); // Fetch message in channel by ID
-        const authorID = message.author.id;
+    client.on(Events.MessageReactionAdd, async (reaction, author) => {
+        const message = await reaction.message.channel.messages.fetch(reaction.message.id); // Fetch message in channel by ID
 
-        let inArtChannel = ['981527027142262824', '1235600701602791455'].includes(messageReaction.message.channelId);
-        let bySameUser = author.id === authorID;
-        let isDeleteReaction = ['1265683388069707776', '1264171028125323327'].includes(messageReaction.emoji.id);
+        // If user adds Delete to their message, remove likes
+        if (addLikesToMedia(reaction.message.channelId)
+            && reaction.emoji.id === serverEmojis.Delete
+            && author.id === message.author.id) {
 
-        if (inArtChannel && isDeleteReaction) {
-            await reactionHandler.removeReactions(messageReaction, bySameUser);
+            await reactionHandler.removeReactions(reaction);
         }
     });
 
-    client.on(Events.GuildMemberUpdate, async (memberOld, memberNew) => {
-        if (memberNew.roles.cache.has(process.env.SPAMBOT_ROLE_ID)) {
-            await spamKick(memberNew.id, false);
+    client.on(Events.GuildMemberUpdate, async (_, member) => {
+        if (member.roles.cache.has(roles.SpamBot)) {
+            await spamKick(member.id, "User selected Spam Bot role");
         }
+    });
+
+    client.on(Events.GuildMemberAdd, async (member) => {
+        // Make sure the user isn't considered a ghost
+        let wasGhost = await getFlag(member.id, flags.Ghost);
+        if (wasGhost) setFlag(member.id, flags.Ghost, false);
     });
 }
 

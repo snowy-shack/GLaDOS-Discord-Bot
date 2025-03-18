@@ -1,4 +1,4 @@
-import emojis from "#src/consts/emojis";
+import {addLikes, addLikesToMedia, addVotes, emojiId, emojis, serverEmojis} from "#src/consts/phantys_home";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
 import * as logs from "#src/modules/logs";
 
@@ -8,15 +8,14 @@ import * as logs from "#src/modules/logs";
  * @param reactionChannel
  * @returns {Promise<void>}
  */
-export async function react(message, reactionChannel) {
-    // This is fucked up, but it's convenient and it works.
-    let [channelID, reactLikeToImages, reactLike, reactVotes] = reactionChannel;
+export async function react(message) {
 
-    if (reactLikeToImages) {
+    if (addLikesToMedia(message.channelId)) {
         let hasImage = false;
 
         let linkRegEx = /https?:\/\/(www\.)?([^\/]+)\/.*$/; // Extracts domains from links present in the message.
         const linkMatches = message.content.match(linkRegEx);
+
         if (linkMatches) {
             const domain = linkMatches[2];
             if (artLinks.links.includes(domain)) hasImage = true;
@@ -26,24 +25,23 @@ export async function react(message, reactionChannel) {
             let contentType = attachment.contentType || null;
             if (['image','video'].includes(contentType.split('/')[0])) hasImage = true;
         }));
+
         if (hasImage) message.react(getRandomLikeReaction());
+        return;
     }
 
-    if (reactLike)
-        await message.react(emojis.like);
-    if (reactVotes)
-        await message.react(emojis.upvote).then(() => message.react(emojis.downvote));
-    if (!reactLikeToImages)
-        await logs.logMessage(`⬆️ Adding automatic reactions to \`<#${channelID}>\``);
+    if (addLikes(message.channelId)) await message.react(emojis.Like);
+    if (addVotes(message.channelId)) await message.react(emojis.Upvote).then(() => message.react(emojis.Downvote));
+
+    await logs.logMessage(`⬆️ Adding automatic reactions to message in <#${message.channelId}>.`);
 }
 
-export async function removeReactions(messageReaction, bySameUser) {
-    if (bySameUser) {
-        await logs.logMessage(`🗑️ Removing ❤️ reaction on message in \`<#${messageReaction.message.channel.id}>\`.`);
+export async function removeReactions(messageReaction) {
+    await logs.logMessage(`🗑️ Removing ❤️ reaction on message in <#${messageReaction.message.channel.id}>.`);
 
-        messageReaction.message.reactions.cache.get('1235590078064234537')?.remove(); // Dev
-        messageReaction.message.reactions.cache.get('1264163067655229510')?.remove(); // Main
-    }
+    await messageReaction.message.fetch();
+    // Remove the like and delete emojis
+    messageReaction.message.reactions.cache.get(emojiId(emojis.Like))?.remove();
     messageReaction.remove();
 }
 
@@ -51,8 +49,8 @@ function getRandomLikeReaction() {
     const random = Math.random();
 
     if (random < 0.01) {
-        return emojis.yo;
+        return emojis.Yo;
     }
 
-    return emojis.like;
+    return emojis.Like;
 }

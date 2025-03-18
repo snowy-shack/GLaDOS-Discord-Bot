@@ -132,3 +132,4 @@ dist
 *.env
 .history/
 .idea/
+userData/

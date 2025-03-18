@@ -1,19 +1,9 @@
 import { PermissionFlagsBits } from "discord.js";
 import * as DMFormHandler from "#src/functions/DMFormHandler";
-import * as reactionHandler from "#src/functions/reactionHandler";
+import * as emojiReactionHandler from "#src/functions/emojiReactionHandler";
 import * as countingHandler from "#src/functions/countingHandler";
 import { replyFunctions } from "#src/functions/autoReplies";
-
-let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes]
-    ['1235600733093761156', false, true,  false], // Dev announcements
-    ['1253797518555353239', false, true,  true ], // Dev updates
-    ['1235600701602791455', true,  false, false], // Dev art
-
-    ['878221699844309033',  false, true,  false], // #News
-    ['876132326101360670',  false, true,  false], // #Announcements
-    ['981527027142262824',  true,  false, false], // #Art
-    ['1005103628882804776', false, true,  true ]  // #Updates
-]
+import {addLikes, addLikesToMedia, addVotes, channels} from "#src/consts/phantys_home";
 
 /* private */ function isAdmin(message) {
     return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.Administrator);
@@ -22,11 +12,12 @@ let reactionChannels = [ // [channelID, reactLikeToImages, reactLike, reactVotes
 export async function handleMessage(message) {
     if (!message.channel.isSendable()) return;
 
-    for (const i in reactionChannels) {
-        let reactionChannel = reactionChannels[i];
-
-        if (reactionChannel[0] !== message.channelId) continue;
-        await reactionHandler.react(message, reactionChannel);
+    // If automatic emoji reaction should be added
+    if (Object.values(channels).includes(message.channelId)
+           && (addLikesToMedia(message.channelId))
+            || addLikes(message.channelId)
+            || addVotes(message.channelId)) {
+        await emojiReactionHandler.react(message);
     }
 
     // Try all replies until one succeeds

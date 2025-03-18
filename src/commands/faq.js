@@ -1,8 +1,8 @@
-import { SlashCommandBuilder } from "discord.js";
-import emojis from "#src/consts/emojis";
+import {MessageFlags, SlashCommandBuilder} from "discord.js";
+import { emojis } from "#src/consts/phantys_home";
 import * as logs from "#src/modules/logs";
 
-import faqsJSON from "#src/strings/faqs.json" with { type: "json" };
+import faqsJSON from "#src/consts/faqs.json" with { type: "json" };
 const options = faqsJSON.map(object => ({name: object.title, value: object.id})); // Get a list of FAQ titles for the FAQ command
 
 export function init() {
@@ -29,13 +29,13 @@ export async function react(interaction) {
     const targetMessage = interaction.options.getString("message_id");
     const targetUser    = interaction.options.getUser("reply_user");
 
-    logs.logMessage(`Sending requested FAQ message in \`${interaction.channel}\`.`);
+    logs.logMessage(`Sending requested FAQ message in ${interaction.channel}.`);
     let object = faqsJSON.find(object => object.id === faqId)
 
-    let faqBlock = `# ${emojis.portalmod} ` + object.title.replace("___", " *\\_\\_\\_\\_*") + "\n> " + object.description;
+    let faqBlock = `# ${emojis.PortalMod} ` + object.title.replace("___", " *\\_\\_\\_\\_*") + "\n> " + object.description;
 
     if (targetUser && targetMessage) {
-        interaction.reply({content: logs.formatMessage("❌ Please provide either a user or a message ID"), ephemeral: true});
+        interaction.reply({content: logs.formatMessage("❌ Please provide either a user or a message ID"), flags: MessageFlags.Ephemeral});
         return;
     }
 
@@ -49,7 +49,7 @@ export async function react(interaction) {
                 if (!replied) {
                     await scannedMessage[1].reply(faqBlock);
                     replied = true;
-                    interaction.reply({content: "replying!", ephemeral: true});
+                    interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
                     setTimeout(() => {
                         interaction.deleteReply();
                     }, 1000);
@@ -58,7 +58,7 @@ export async function react(interaction) {
         }
 
         if (replied === false) {
-            interaction.reply({content: logs.formatMessage("❌ Couldn't find recent message by user!"), ephemeral: true});
+            interaction.reply({content: logs.formatMessage("❌ Couldn't find recent message by user!"), flags: MessageFlags.Ephemeral});
             return;
         }
         return;
@@ -69,7 +69,7 @@ export async function react(interaction) {
             const message = await interaction.channel.messages.fetch(targetMessage);
             if (message) {
                 message.reply(faqBlock);
-                interaction.reply({content: "replying!", ephemeral: true});
+                interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
                 setTimeout(() => {
                     interaction.deleteReply();
                 }, 1000);
@@ -79,7 +79,7 @@ export async function react(interaction) {
                 throw new Error("Message could not be found");
             }
         } catch (error) {
-            interaction.reply({content: logs.formatMessage("❌ Unknown message ID!"), ephemeral: true});
+            interaction.reply({content: logs.formatMessage("❌ Unknown message ID!"), flags: MessageFlags.Ephemeral});
             return;
         }
     }

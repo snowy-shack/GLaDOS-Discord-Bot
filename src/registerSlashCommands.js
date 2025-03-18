@@ -2,6 +2,7 @@ import { REST, Routes } from "discord.js";
 import { getCommandList } from "#src/bridges/commandHandler";
 import { getClient } from "#src/modules/client";
 import * as logs from "#src/modules/logs";
+import {guildID} from "#src/consts/phantys_home";
 
 // Define the commands
 let commandList = getCommandList();
@@ -24,15 +25,13 @@ export async function register() {
         console.log(`Started refreshing ${commands.length} slash commands.`);
 
         const data = await rest.put(
-            Routes.applicationGuildCommands(client.application.id, process.env.GUILDID),
+            Routes.applicationGuildCommands(client.application.id, guildID),
             { body: commands }
         );
 
         rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
         console.log(`Succesfully refreshed ${data.length} slash commands.`);
-
-        logs.logMessage(`👁️‍🗨️ Reloaded ${commands.length} slash commands.`);
     } catch(error) {
         console.error(error);
     }

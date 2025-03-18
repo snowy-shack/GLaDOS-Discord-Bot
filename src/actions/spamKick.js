@@ -4,11 +4,9 @@ import * as styledEmbed from "#src/factories/styledEmbed";
 import colors from "#src/consts/colors";
 import * as stringAgent from "#src/agents/stringAgent";
 
-export async function spamKick(userID, manual) {
-    const member = await discord.getMember(userID);
-
+export async function spamKick(member, reason) {
     try {
-        await member.send(styledEmbed.message(
+        await member.send(styledEmbed.embedMessageObject(
             await stringAgent.string("server.notification.spam_kicked"),
             "spam",
             "Phanty's Home Spam prevention",
@@ -19,14 +17,13 @@ export async function spamKick(userID, manual) {
     }
 
     try {
-        await member.kick({
-            reason: `Suspected spam or hacked account - ${manual ? "manual" : "automated"}`
-        });
-        await logs.logMessage(`👋 Spam kicked \`<@${userID}>\`.`);
+        await member.kick({ reason: `Suspected spam or hacked account - reason: ${reason}` });
+
+        await logs.logMessage(`👋 Spam kicked ${member} - Reason: ${reason}.`);
 
         return true;
     } catch (error) {
-        await logs.logMessage(`❌ Could not kick \`<@${userID}>\`.`);
+        await logs.logMessage(`❌ Could not kick ${member}.`);
 
         return false;
     }
