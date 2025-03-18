@@ -68,16 +68,16 @@ async function main() {
         }
     });
 
-    client.on(Events.GuildMemberUpdate, async (_, member) => {
+    client.on(Events.GuildMemberUpdate, async (oldMember, member) => {
         if (member.roles.cache.has(roles.SpamBot)) {
-            await spamKick(member.id, "User selected Spam Bot role");
+            await spamKick(member, "User selected Spam Bot role");
         }
     });
 
     client.on(Events.GuildMemberAdd, async (member) => {
         // Make sure the user isn't considered a ghost
         let wasGhost = await getFlag(member.id, flags.Ghost);
-        if (wasGhost) setFlag(member.id, flags.Ghost, false);
+        if (wasGhost) await setFlag(member.id, flags.Ghost, false);
     });
 }
 

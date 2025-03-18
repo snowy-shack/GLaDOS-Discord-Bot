@@ -1,6 +1,7 @@
 import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
 import {spamKick} from "#src/actions/spamKick";
 import * as logs from "#src/modules/logs";
+import {getMember} from "#src/modules/discord";
 
 export function init() {
     return new SlashCommandBuilder().setName("kick")
@@ -25,8 +26,10 @@ export function init() {
 export async function react(interaction) {
     switch (interaction.options.getSubcommand()) {
         case "spam": {
-            const member = interaction.options.getMember("user");
-            const reason = interaction.options.getString("reason");
+            let member = interaction.options.getUser("user");
+            let reason = interaction.options.getString("reason");
+
+            member = await getMember(member.id);
 
             const kicked = await spamKick(member, reason ?? "None provided");
 

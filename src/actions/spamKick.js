@@ -6,7 +6,7 @@ import * as stringAgent from "#src/agents/stringAgent";
 
 export async function spamKick(member, reason) {
     try {
-        await member.send(styledEmbed.embedMessageObject(
+        await member.user.send(styledEmbed.embedMessageObject(
             await stringAgent.string("server.notification.spam_kicked"),
             "spam",
             "Phanty's Home Spam prevention",
