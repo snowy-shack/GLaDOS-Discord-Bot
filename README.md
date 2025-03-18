@@ -1,13 +1,48 @@
 # GLaDOS bot for Phanty's Home
-Management and quality of life bot for PortalMod and Phanty's Home  
+Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
 `Current Version: 2.00.0`
-
 
 # Known issues
 - Reaction removing logs even if it couldn't remove anything
 
 # Changelog
+## Release 2.00.0 - March 18th 2025
+Major rewrite of the bot's infrastructure, switching to ESM standards and overall improving stability,
+readability, and performance.
+### Changes
+- Logs and generic interaction replies are now formatted in embeds
+- Introduced new `/kick` command, which kicks and notifies the user kicked 
+- Better support and error handling for commands, buttons and modals
+- Merged `/refresh_faqs` and `/refresh_rules` into `/refresh <faq|rules>`
+- Added `bsky.app` to the recognized art domains
+- Introduced a new `styledEmbed` module for creating embeds in a generalized way
+- Overall refactors and name changes
+
+#### FLAGS
+Introduced a new flags system, which can locally keep track of variables per user
+- Added 'ghost' tracking, when members are no longer in the server, so that GLaDOS can ignore them
+- Replaced booster and birthday implementations to use flags rather than the database
+- Keeps track of user's Minecraft UUID to skip the skin form the second time around
+- New `/flags <set|get|remove>` admin command to change the value of flags
+
+#### STRINGS
+Introduced a new strings system, which keeps all long text responses in one place.
+- Moved long strings to string files
+- Allows for potential future multi-language support
+
+#### CONSTS
+Introduced new constant modules which provide easy access to values for emojis, icons, colors, channel and role IDs, etc.
+- Moved emojis, channels and roles from `.env` files to `phantys_home.js`
+
+#### AUTOMATIC RESPONSES
+GLaDOS can now automatically respond to messages randomly
+- Now responds to `calc` with a humorous response, as a reference to a meme
+- Now responds to `<nr>!` at the end of a sentence with the factorial of that number
+- Now responds to `glados` with a random voice line
+- Has a 1/500 chance to count the next number in `#counting`
+- Has a 1/5 chance to steal the next number after a number ending in `999`
+
 ## Release 1.09.0 - January 31st 2025
 ### Changes
 - Added general chat pings for when it's someone's birthday
