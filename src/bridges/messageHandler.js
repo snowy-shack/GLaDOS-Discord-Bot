@@ -25,7 +25,7 @@ export async function handleMessage(message) {
         if (replyFunction(message)) break;
     }
 
-    if (message.channelId === process.env.COUNTING_CHANNEL_ID) {
+    if (message.channelId === channels.Counting) {
         countingHandler.onCountingMessage(message);
     }
 }
