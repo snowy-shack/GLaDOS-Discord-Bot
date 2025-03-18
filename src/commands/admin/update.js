@@ -4,6 +4,9 @@ import path from "path";
 import { getVersion } from "#src/modules/version";
 import * as logs from "#src/modules/logs";
 
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export function init() {
     return new SlashCommandBuilder().setName('update')
             .setDescription('Updates GLaDOS')
