@@ -16,7 +16,7 @@
     "author": "PhantomEye",
     "license": "ISC",
     "dependencies": {
-        "axios": "^1.7.9",
+        "axios": "^1.8.2",
         "chalk": "^4.1.2",
         "cron": "^3.1.6",
         "discord-api-types": "^0.37.77",
