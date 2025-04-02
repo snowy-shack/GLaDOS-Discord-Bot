@@ -17,6 +17,7 @@ export async function templateString(key, replacements, local = "en_us") {
     // String templates
     return base.replace(/%(\d+)%/g, (match, num) => {
         const index = parseInt(num, 10) - 1;
-        return replacements[index] ? replacements[index] : match; // Keep original if out of range
+        // Keep original if out of range
+        return replacements[index] !== undefined ? replacements[index] : match; // Explicitly check for undefined (#4)
     });
 }
