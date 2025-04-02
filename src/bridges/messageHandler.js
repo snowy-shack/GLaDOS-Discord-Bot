@@ -2,7 +2,7 @@ import { PermissionFlagsBits } from "discord.js";
 import * as DMFormHandler from "#src/functions/DMFormHandler";
 import * as emojiReactionHandler from "#src/functions/emojiReactionHandler";
 import * as countingHandler from "#src/functions/countingHandler";
-import { replyFunctions } from "#src/functions/autoReplies";
+import { replyFunctions } from "#src/functions/autoResponses";
 import {addLikes, addLikesToMedia, addVotes, channels} from "#src/consts/phantys_home";
 
 /* private */ function isAdmin(message) {
