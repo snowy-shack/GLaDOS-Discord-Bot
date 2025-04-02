@@ -3,8 +3,6 @@ import {guildID} from "#src/consts/phantys_home";
 import {flags, setFlag} from "#src/agents/flagAgent";
 
 let phantys_home;
-let channels;
-let users;
 
 /* private */ async function init() {
     const client = await getClient();
@@ -47,6 +45,7 @@ export async function getChannel(id) {
 }
 
 export async function getRoleUsers(id) {
+    await phantys_home.members.fetch(); // Ensure all members are cached (#3)
     const role = await phantys_home.roles.fetch(id);
 
     return await role.members.map(member => member.user.id);
