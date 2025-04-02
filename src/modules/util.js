@@ -35,7 +35,7 @@ export function formatDate(date, includeYear = false) {
             (day % 10 === 2 && day !== 12) ? "nd" :
                 (day % 10 === 3 && day !== 13) ? "rd" : "th";
 
-    return (year == 1900 || !includeYear) ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
+    return (year === "1900" || !includeYear) ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
 }
 
 // Returns true if today is the input date
