@@ -1,12 +1,20 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 2.00.0`
-
-# Known issues
-- Reaction removing logs even if it couldn't remove anything
+`Current Version: 2.00.1`
 
 # Changelog
+## Release 2.00.1 - April 4th 2025
+### Changes
+- Logs now use the 'body' field rather than the 'title' of an embed
+- Errors in the logs now ping `@PhantomEye`
+- More automatic responses
+### Fixes
+- Fetching members by role now first fetches the members rather than relying on a potentially outdated cache (#3)
+- Checking whether a day is today now parses the string date correctly (#4)
+- Template string replacement now checks if array values are undefined rather than being falsy
+
+
 ## Release 2.00.0 - March 18th 2025
 Major rewrite of the bot's infrastructure, switching to ESM standards and overall improving stability,
 readability, and performance.
