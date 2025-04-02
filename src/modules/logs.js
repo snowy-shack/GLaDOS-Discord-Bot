@@ -14,21 +14,21 @@ import {DEPRECATION_WARNING_PREFIX} from "discord.js";
  */
 export function formatMessage(message) {
     // return '> **\`' + message.replace('\n', ' ') + '\`**';
-    return embedMessageObject("", "", message, colors.Primary);
+    return embedMessageObject("### " + message, "", "", colors.Primary);
 }
 
 export async function logWarning(message) {
     console.log(`[WARN]: ${message}`);
     const logChannel = await getLogChannel();
 
-    await logChannel.send(embedMessageObject("", "", message, colors.Warning));
+    await logChannel.send(embedMessageObject("### " + message, "", "", colors.Warning));
 }
 
 export async function logMessage(message) {
     console.log(`[LOGS]: ${message}`);
 
     const logChannel = await getLogChannel();
-    await logChannel.send(embedMessageObject("", "", message, colors.Success));
+    await logChannel.send(embedMessageObject("### " + message, "", "", colors.Success));
 }
 
 export async function logError(location, error) {
@@ -36,7 +36,7 @@ export async function logError(location, error) {
 
     try {
         const logChannel = await getLogChannel();
-        await logChannel.send(embedMessageObject("", "", message, colors.Error));
+        await logChannel.send({text: "<@382524802491219969>", embeds: [embedObject("### " + error.message, "", "", colors.Error)]});
     } catch (error) {
         console.error("An error occurred logging the error. Ironic.");
     }

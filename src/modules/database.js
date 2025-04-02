@@ -4,7 +4,9 @@ import {delayInMilliseconds} from "#src/modules/util";
 
 let pgClient;
 
+let initialized = false;
 await ensureDBConnection();
+initialized = true;
 
 /* private */ async function ensureDBConnection(retries = 5, delay = 1000) {
     let reconnect = false;
@@ -19,7 +21,7 @@ await ensureDBConnection();
             if (retries < 4) {
                 console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
             } else {
-                await logs.logMessage("❓ Attempting Database (re)connection.");
+                if (initialized) await logs.logMessage("❓ Attempting Database (re)connection.");
             }
 
             pgClient?.end().catch(() => {});
