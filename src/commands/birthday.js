@@ -144,7 +144,8 @@ export async function react(interaction) {
                     await templateString("birthday.get.success", [
                         `<@${birthdayUser.id}>`,
                         daysUntilBirthday(userBirthday) % 365,
-                        dateIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)]),
+                        dateIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)
+                    ]),
                     "birthday • success",
                     title,
                     colors.Primary,

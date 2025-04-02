@@ -41,7 +41,7 @@ export function formatDate(date, includeYear = false) {
 // Returns true if today is the input date
 export function dateIsToday(stringDate) {
     const today = new Date();
-    const [month, day] = stringDate.split('-').map(Number);
+    const [day, month] = stringDate.split('-').map(Number);
 
     return today.getDate() === day && today.getMonth() + 1 === month;
 }
