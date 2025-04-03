@@ -226,9 +226,8 @@ export async function modalSubmitted(formID, interaction) {
 
         const matches = birthDate.match(/^(\d{2})-(\d{2})(?:-(\d{4}))?$/);
 
-        let [_, day, month, year] = matches;
-
         if (matches) {
+            let [_, day, month, year] = matches;
             year = year && /^\d{4}$/.test(year) ? year : "1900"; // Default to 1900 if missing/invalid
 
             // Convert to numbers
