@@ -200,7 +200,7 @@ export async function react(interaction) {
                 ));
             // Multiple birthdays
             } else {
-                let nr = Math.min(birthdayCount, userEntries.usernames.length);
+                let nr = Math.min(birthdayCount, userEntries.usernames?.length ?? 10);
 
                 await interaction.editReply(embedMessageObject(
                     await templateString("birthday.next.multiple", [nr]),
