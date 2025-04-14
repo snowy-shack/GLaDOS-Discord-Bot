@@ -11,10 +11,10 @@ import {getChannel} from "#src/modules/discord";
 import {dateToString} from "#src/modules/util";
 
 export async function checkBirthdays() {
-    const today = dateToString(new Date());
+    const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
     const birthdays = (await getAllFlagValues(flags.Birthday.Date))
-        .filter(item => item.value === today)
-        .map(item => item.user); // Check if it's today
+        .filter(item => item.value.split("-").slice(0, 2).join("-") === today) // Check if it's today
+        .map(item => item.user);
 
     await logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
 

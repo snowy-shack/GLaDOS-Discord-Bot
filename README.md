@@ -1,9 +1,13 @@
 # GLaDOS bot for Phanty's Home
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 2.00.1`
+`Current Version: 2.00.2`
 
 # Changelog
+## Release 2.00.2 - April 14th 2025
+### Fixes
+- Corrected daily birthday detected
+
 ## Release 2.00.1 - April 4th 2025
 ### Changes
 - Logs now use the 'body' field rather than the 'title' of an embed
