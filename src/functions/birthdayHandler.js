@@ -34,7 +34,7 @@ export async function checkBirthdays() {
             await channel.send({ content: `<@${discord_id}>`, embeds: [happy_birthday] })
                 .then(message => message.react(emojis.Tada));
 
-            await util.delayInMilliseconds(600000);
+            await util.delayInMinutes(10);
         })();
     }
 }

@@ -5,7 +5,11 @@ export function delayInMilliseconds(time) {
 }
 
 export function delayInSeconds(time) {
-    return new Promise(resolve => setTimeout(resolve, time / 1000));
+    return delayInMilliseconds(time * 1000)
+}
+
+export function delayInMinutes(time) {
+    return delayInSeconds(time * 60)
 }
 
 // Cap a string str at len length
