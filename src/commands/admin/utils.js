@@ -13,10 +13,10 @@ export function init() {
                 .setDescription("Increments boosting days of all boosters")
         )
 
-        // .addSubcommand(subcommand =>
-        //     subcommand.setName("test")
-        //         .setDescription("TEST COMMAND")
-        // )
+        .addSubcommand(subcommand =>
+            subcommand.setName("daily_birthday")
+                .setDescription("Reevaluate daily birthdays")
+        )
 }
 
 export async function react(interaction) {
@@ -28,9 +28,9 @@ export async function react(interaction) {
             await boosterHandler.incrementAndDM();
         } break;
 
-        case "test": {
+        case "daily_birthday": {
             await checkBirthdays();
-            interaction.reply("dun");
+            interaction.reply(logs.formatMessage("🍰 Reevaluated daily birthdays"));
         }
     }
 }
