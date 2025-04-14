@@ -34,8 +34,8 @@ export async function logError(location, error) {
     console.error(`Error occurred ${location}: ${error.message}`);
 
     try {
-        const logChannel = await getLogChannel();
-        await logChannel.send({text: "<@382524802491219969>", embeds: [embedObject(`**${error.message}**`, "", "", colors.Error)]});
+        const logChannel = await getLogChannel(); // v @PhantomEye
+        await logChannel.send({content: "<@382524802491219969>", embeds: [embedObject(`**${error.message}**`, "", "", colors.Error)]});
     } catch (error) {
         console.error("An error occurred logging the error. Ironic.");
     }

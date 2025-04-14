@@ -30,7 +30,7 @@ export function embedObject(body, footer, title, color = colors.Primary, thumbna
     }
 
     if (thumbnail !== "") embed.setThumbnail(thumbnail);
-    if (fields.length > 0) embed.addFields(...fields);
+    if (fields?.length > 0) embed.addFields(...fields);
 
     return embed;
 }

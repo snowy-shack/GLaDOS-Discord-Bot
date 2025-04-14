@@ -56,7 +56,7 @@ export async function sendFormMessage(targetUser, previousField, textInput = "",
         }
 
         if (!retried) { // Error: "Cannot send messages to this user"
-            logs.logMessage(`🎭 Ran into an issue DM'ing ${targetUser}.`);
+            logs.logWarning(`🎭 Ran into an issue DM'ing ${targetUser}.`);
 
             const channel = await getChannel(channels.General);
 
