@@ -5,6 +5,7 @@ export const guildID = isBeta ? "1221613837384417300" : "704266427577663548";
 
 export const channels = { // BETA : PRODUCTION
     Announcements: isBeta ? "1235600733093761156" : "876132326101360670",
+    Arcade:        isBeta ? "1366358167159701594" : "704308600784420904",
     Art:           isBeta ? "1235600701602791455" : "981527027142262824",
     Counting:      isBeta ? "1349405350859640852" : "987038089144860765",
     Exclusive:     isBeta ? "1300736193524273192" : "1014798819306786856",
