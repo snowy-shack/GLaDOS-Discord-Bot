@@ -18,7 +18,7 @@ export async function checkBirthdays() {
 
     await logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
 
-    const channel = await getChannel(channels.General);
+    const channel = await getChannel(channels.Arcade);
     for (const discord_id of birthdays) {
         await (async () => {
             await logs.logMessage(`🎉 It's <@${discord_id}>'s birthday!`);
