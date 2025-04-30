@@ -1,4 +1,4 @@
-# GLaDOS bot for Phanty's Home
+# GLaDOS discord.js bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
 `Current Version: 2.00.2`
