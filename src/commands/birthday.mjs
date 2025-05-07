@@ -1,13 +1,13 @@
 import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
     TextInputBuilder, TextInputStyle, } from "discord.js";
 
-import * as logs from "#src/modules/logs";
-import colors from "#src/consts/colors";
-import { getMember } from "#src/modules/discord";
-import {embedMessageObject} from "#src/factories/styledEmbed";
-import {string, templateString} from "#src/agents/stringAgent";
-import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent";
-import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util";
+import * as logs from "#src/modules/logs.mjs";
+import colors from "#src/consts/colors.mjs";
+import { getMember } from "#src/modules/discord.mjs";
+import {embedMessageObject} from "#src/factories/styledEmbed.mjs";
+import {string, templateString} from "#src/agents/stringAgent.mjs";
+import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
+import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util.mjs";
 
 export function init() {
     return new SlashCommandBuilder()

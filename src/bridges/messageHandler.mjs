@@ -1,9 +1,9 @@
 import { PermissionFlagsBits } from "discord.js";
-import * as DMFormHandler from "#src/functions/DMFormHandler";
-import * as emojiReactionHandler from "#src/functions/emojiReactionHandler";
-import * as countingHandler from "#src/functions/countingHandler";
-import { replyFunctions } from "#src/functions/autoResponses";
-import {addLikes, addLikesToMedia, addVotes, channels} from "#src/consts/phantys_home";
+import * as DMFormHandler from "#src/functions/DMFormHandler.mjs";
+import * as emojiReactionHandler from "#src/functions/emojiReactionHandler.mjs";
+import * as countingHandler from "#src/functions/countingHandler.mjs";
+import { replyFunctions } from "#src/functions/autoResponses.mjs";
+import {addLikes, addLikesToMedia, addVotes, channels} from "#src/consts/phantys_home.mjs";
 
 /* private */ function isAdmin(message) {
     return message.member.permissionsIn(message.channel).has(PermissionFlagsBits.Administrator);

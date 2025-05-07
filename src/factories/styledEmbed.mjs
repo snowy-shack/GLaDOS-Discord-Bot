@@ -1,6 +1,6 @@
 import {EmbedBuilder, MessageFlags} from "discord.js";
-import colors from "#src/consts/colors";
-import {icons} from "#src/consts/icons";
+import colors from "#src/consts/colors.mjs";
+import {icons} from "#src/consts/icons.mjs";
 
 /**
  * Generates a styled Embed.

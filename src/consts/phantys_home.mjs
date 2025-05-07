@@ -1,4 +1,4 @@
-import { isBeta } from "#src/envloader";
+import { isBeta } from "#src/envloader.mjs";
 
 // BETA : PRODUCTION
 export const guildID = isBeta ? "1221613837384417300" : "704266427577663548";

@@ -1,4 +1,4 @@
-import {factorials, voiceLines} from "#src/consts/miscellaneous";
+import {factorials, voiceLines} from "#src/consts/miscellaneous.mjs";
 
 export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
 

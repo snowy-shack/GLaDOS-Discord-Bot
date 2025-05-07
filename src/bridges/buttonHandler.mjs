@@ -1,11 +1,11 @@
-import * as logs from "#src/modules/logs";
+import * as logs from "#src/modules/.mjs";
 
 async function reply(interaction) {
     const { customId } = interaction;
 
     const [modulePath, buttonID] = customId.split('#');
 
-    let path = `#src/${modulePath.replace(/\./g, '/')}`;
+    let path = `#src/${modulePath.replace(/\./g, '/')}.mjs`;
     // Dynamic import
     const module = await import(path);
 

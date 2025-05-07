@@ -1,13 +1,13 @@
-import "#src/envloader";
 import { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
-import * as minecraft from "#src/modules/minecraft";
+import * as minecraft from "#src/modules/minecraft.mjs";
+import "#src/envloader.mjs";
 
-import colors from "#src/consts/colors";
-import * as logs from "#src/modules/logs";
-import { embedObject, embedMessageObject } from "#src/factories/styledEmbed";
-import { string, templateString } from "#src/agents/stringAgent";
-import {getChannel} from "#src/modules/discord";
-import {channels} from "#src/consts/phantys_home";
+import colors from "#src/consts/colors.mjs";
+import * as logs from "#src/modules/logs.mjs";
+import { embedObject, embedMessageObject } from "#src/factories/styledEmbed.mjs";
+import { string, templateString } from "#src/agents/stringAgent.mjs";
+import {getChannel} from "#src/modules/discord.mjs";
+import {channels} from "#src/consts/phantys_home.mjs";
 
 const title = "PortalMod Portal Gun skin form";
 
