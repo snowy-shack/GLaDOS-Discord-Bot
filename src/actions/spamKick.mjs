@@ -1,6 +1,6 @@
 import * as logs from "#src/modules/logs.mjs";
 import * as styledEmbed from "#src/factories/styledEmbed.mjs";
-import colors from "#src/consts/colors.mjs";
+import colors from "#src/consts/colors.mts";
 import * as stringAgent from "#src/agents/stringAgent.mjs";
 
 export async function spamKick(member, reason) {

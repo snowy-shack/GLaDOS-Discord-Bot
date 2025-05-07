@@ -4,7 +4,7 @@ import * as logs from "#src/modules/logs.mjs";
 import * as skinForm from "#src/functions/skinFormHandler.mjs";
 import {skinTypeFromFooter} from "#src/functions/skinFormHandler.mjs";
 import {flags, setFlag} from "#src/agents/flagAgent.mjs";
-import {gun_skins} from "#src/consts/gun_skins.mjs";
+import {gun_skins} from "#src/consts/gun_skins.mts";
 import {capitalize} from "#src/modules/util.mjs";
 import {getMember} from "#src/modules/discord.mjs";
 

@@ -1,5 +1,5 @@
 import { embedObject } from "#src/factories/styledEmbed.mjs";
-import { gun_skins as skins } from "#src/consts/gun_skins.mjs";
+import { gun_skins as skins } from "#src/consts/gun_skins.mts";
 import { channels } from "#src/consts/phantys_home.mjs";
 import { emojis } from "#src/consts/phantys_home.mjs";
 import * as logs from "#src/modules/logs.mjs";

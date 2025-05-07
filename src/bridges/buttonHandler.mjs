@@ -1,4 +1,4 @@
-import * as logs from "#src/modules/.mjs";
+import * as logs from "#src/modules/logs.mjs";
 
 async function reply(interaction) {
     const { customId } = interaction;

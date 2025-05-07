@@ -2,7 +2,7 @@ import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
     TextInputBuilder, TextInputStyle, } from "discord.js";
 
 import * as logs from "#src/modules/logs.mjs";
-import colors from "#src/consts/colors.mjs";
+import colors from "#src/consts/colors.mts";
 import { getMember } from "#src/modules/discord.mjs";
 import {embedMessageObject} from "#src/factories/styledEmbed.mjs";
 import {string, templateString} from "#src/agents/stringAgent.mjs";

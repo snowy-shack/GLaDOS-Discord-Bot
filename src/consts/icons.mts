@@ -1,4 +1,4 @@
-export const icons = {
+export const icons: { [key: string]: string } = {
     arcade:     "https://portalmod.net/images/icons/arcade.png",
     booster:    "https://portalmod.net/images/icons/booster.png",
     counting:   "https://portalmod.net/images/icons/counting.png",

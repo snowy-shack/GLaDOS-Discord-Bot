@@ -2,7 +2,7 @@ import { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "disc
 import * as minecraft from "#src/modules/minecraft.mjs";
 import "#src/envloader.mjs";
 
-import colors from "#src/consts/colors.mjs";
+import colors from "#src/consts/colors.mts";
 import * as logs from "#src/modules/logs.mjs";
 import { embedObject, embedMessageObject } from "#src/factories/styledEmbed.mjs";
 import { string, templateString } from "#src/agents/stringAgent.mjs";
