@@ -1,6 +1,6 @@
-import {MessageFlags, SlashCommandBuilder} from "discord.js";
-import { emojis } from "#src/consts/phantys_home";
-import * as logs from "#src/modules/logs";
+import {MessageFlags, SlashCommandBuilder} from "discord.js.mjs";
+import { emojis } from "#src/consts/phantys_home.mjs";
+import * as logs from "#src/modules/logs.mjs";
 
 import faqsJSON from "#src/consts/faqs.json" with { type: "json" };
 const options = faqsJSON.map(object => ({name: object.title, value: object.id})); // Get a list of FAQ titles for the FAQ command

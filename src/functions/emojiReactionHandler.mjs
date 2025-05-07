@@ -1,6 +1,6 @@
-import {addLikes, addLikesToMedia, addVotes, emojiId, emojis, serverEmojis} from "#src/consts/phantys_home";
+import {addLikes, addLikesToMedia, addVotes, emojiId, emojis, serverEmojis} from "#src/consts/phantys_home.mjs";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
-import * as logs from "#src/modules/logs";
+import * as logs from "#src/modules/logs.mjs";
 
 /**
  * Module for automatic emoji reactions on messages

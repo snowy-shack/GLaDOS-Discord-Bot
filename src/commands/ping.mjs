@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import * as logs from "#src/modules/logs";
+import * as logs from "#src/modules/logs.mjs";
 
 export function init() {
     return new SlashCommandBuilder().setName('ping')

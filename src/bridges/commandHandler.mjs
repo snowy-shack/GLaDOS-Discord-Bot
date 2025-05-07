@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import { fileURLToPath } from "url";
-import * as logs from "#src/modules/logs";
+import * as logs from "#src/modules/logs.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,7 +25,7 @@ export async function reply(interaction) {
         const { commandName } = interaction;
 
         if (commandName === command.split('/').pop()) {
-            const commandModule = await import(`#src/commands/${command}`);
+            const commandModule = await import(`#src/commands/${command}.mjs`);
 
             if (typeof commandModule.react === "function") {
                 commandModule.react(interaction);

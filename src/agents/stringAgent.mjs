@@ -1,4 +1,4 @@
-import { emojis } from "#src/consts/phantys_home";
+import { emojis } from "#src/consts/phantys_home.mjs";
 
 export async function string(key, local = "en_us") {
     const strings = await import(`#src/consts/strings/${local}.json`, { assert: { type: "json" } });

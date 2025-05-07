@@ -1,8 +1,7 @@
-import * as logs from "#src/modules/logs";
-import * as discord from "#src/modules/discord";
-import * as styledEmbed from "#src/factories/styledEmbed";
-import colors from "#src/consts/colors";
-import * as stringAgent from "#src/agents/stringAgent";
+import * as logs from "#src/modules/logs.mjs";
+import * as styledEmbed from "#src/factories/styledEmbed.mjs";
+import colors from "#src/consts/colors.mjs";
+import * as stringAgent from "#src/agents/stringAgent.mjs";
 
 export async function spamKick(member, reason) {
     try {

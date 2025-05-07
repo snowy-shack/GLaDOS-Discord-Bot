@@ -1,15 +1,14 @@
 import { REST, Routes } from "discord.js";
-import { getCommandList } from "#src/bridges/commandHandler";
-import { getClient } from "#src/modules/client";
-import * as logs from "#src/modules/logs";
-import {guildID} from "#src/consts/phantys_home";
+import { getCommandList } from "#src/bridges/commandHandler.mjs";
+import { getClient } from "#src/modules/client.mjs";
+import {guildID} from "#src/consts/phantys_home.mjs";
 
 // Define the commands
 let commandList = getCommandList();
 
 const commands = await Promise.all(
     commandList.map(async commandName => {
-        const { init } = await import(`#src/commands/${commandName}`);
+        const { init } = await import(`#src/commands/${commandName}.mjs`);
         let initialization = init();
 
         return initialization.toJSON();

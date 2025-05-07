@@ -1,11 +1,10 @@
-import * as database from "#src/modules/database";
-import * as skinForm from "#src/functions/skinFormHandler";
-import * as logs from "#src/modules/logs";
-import {getGuild, getMember, getRoleUsers} from "#src/modules/discord";
-import {flags, getUserData, setFlag} from "#src/agents/flagAgent";
-import {delayInMilliseconds, delayInSeconds} from "#src/modules/util";
-import {gun_skins} from "#src/consts/gun_skins";
-import {roles} from "#src/consts/phantys_home";
+import * as skinForm from "#src/functions/skinFormHandler.mjs";
+import * as logs from "#src/modules/logs.mjs";
+import {getMember, getRoleUsers} from "#src/modules/discord.mjs";
+import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mjs";
+import {delayInSeconds} from "#src/modules/util.mjs";
+import {gun_skins} from "#src/consts/gun_skins.mjs";
+import {roles} from "#src/consts/phantys_home.mjs";
 
 export async function incrementAndDM() {
     try {

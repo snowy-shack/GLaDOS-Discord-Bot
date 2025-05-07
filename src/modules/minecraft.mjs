@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import * as logs from "#src/modules/logs";
+import * as logs from "#src/modules/logs.mjs";
 
 export async function getAccount(username) {
     const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);

@@ -1,7 +1,7 @@
-import {getChannel} from "#src/modules/discord";
-import {channels} from "#src/consts/phantys_home";
-import {embedMessageObject, embedObject} from "#src/factories/styledEmbed";
-import colors from "#src/consts/colors";
+import {getChannel} from "#src/modules/discord.mjs";
+import {channels} from "#src/consts/phantys_home.mjs";
+import {embedMessageObject, embedObject} from "#src/factories/styledEmbed.mjs";
+import colors from "#src/consts/colors.mjs";
 
 /* private */ async function getLogChannel() {
     return await getChannel(channels.Logs);

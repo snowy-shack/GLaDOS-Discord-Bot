@@ -1,6 +1,6 @@
-import boosterHandler from "#src/functions/boosterHandler";
-import birthdayHandler from "#src/functions/birthdayHandler";
-import * as logs from "#src/modules/logs";
+import boosterHandler from "#src/functions/boosterHandler.mjs";
+import birthdayHandler from "#src/functions/birthdayHandler.mjs";
+import * as logs from "#src/modules/logs.mjs";
 
 async function run() {
     try {

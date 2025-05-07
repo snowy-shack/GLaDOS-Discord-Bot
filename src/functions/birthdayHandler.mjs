@@ -1,14 +1,14 @@
-import { embedObject } from "#src/factories/styledEmbed";
-import { gun_skins as skins } from "#src/consts/gun_skins";
-import { channels } from "#src/consts/phantys_home";
-import { emojis } from "#src/consts/phantys_home";
-import * as logs from "#src/modules/logs";
-import * as guild from "#src/modules/discord";
-import * as skinForm from "#src/functions/skinFormHandler";
-import * as util from "#src/modules/util";
-import {flags, getAllFlagValues} from "#src/agents/flagAgent";
-import {getChannel} from "#src/modules/discord";
-import {dateToString} from "#src/modules/util";
+import { embedObject } from "#src/factories/styledEmbed.mjs";
+import { gun_skins as skins } from "#src/consts/gun_skins.mjs";
+import { channels } from "#src/consts/phantys_home.mjs";
+import { emojis } from "#src/consts/phantys_home.mjs";
+import * as logs from "#src/modules/logs.mjs";
+import * as guild from "#src/modules/discord.mjs";
+import * as skinForm from "#src/functions/skinFormHandler.mjs";
+import * as util from "#src/modules/util.mjs";
+import {flags, getAllFlagValues} from "#src/agents/flagAgent.mjs";
+import {getChannel} from "#src/modules/discord.mjs";
+import {dateToString} from "#src/modules/util.mjs";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
