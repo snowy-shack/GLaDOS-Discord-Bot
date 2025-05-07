@@ -1,8 +1,10 @@
-import {MessageFlags, SlashCommandBuilder} from "discord.js";
+import {ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder} from "discord.js";
 import { emojis } from "#src/consts/phantys_home.mts";
 import * as logs from "#src/modules/logs.mts";
 
 import rulesJSON from "#src/consts/rules.json" with { type: "json" };
+import {InteractionReplyEmbed} from "#src/factories/styledEmbed.mjs";
+import colors from "#src/consts/colors.mjs";
 const options = rulesJSON.map(object => ({name: object.title, value: object.id})); // Get a list of rules for the rule command
 
 export function init() {
@@ -24,22 +26,23 @@ export function init() {
         );
 }
 
-export async function react(interaction) {
+export async function react(interaction: ChatInputCommandInteraction) {
     const ruleId = interaction.options.getString("rule");
     const targetMessage = interaction.options.getString("message_id");
     const targetUser = interaction.options.getUser("reply_user");
 
-    logs.logMessage(`Sending requested rule message in ${interaction.channel}.`);
+    void logs.logMessage(`Sending requested rule message in ${interaction.channel}.`);
     const object = rulesJSON.find(object => object.id === ruleId)
+    if (!object) return;
 
     const ruleBlock = `# ${emojis.Home} ` + object.title + '\n> ' + object.description;
 
     if (targetUser && targetMessage) {
-        interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Please provide either a user or a message ID"), flags: MessageFlags.Ephemeral});
+        void interaction.reply(InteractionReplyEmbed("", "", "❌ Please provide either a user or a message ID", colors.Error, true));
         return;
     }
 
-    if (targetUser) {
+    if (targetUser && interaction.channel) {
         let replied = false;
 
         let scannedMessages = await interaction.channel.messages.fetch({ limit: 50 });
@@ -49,7 +52,7 @@ export async function react(interaction) {
                 if (!replied) {
                     await scannedMessage[1].reply(ruleBlock);
                     replied = true;
-                    interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
+                    await interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
                     setTimeout(() => {
                         interaction.deleteReply();
                     }, 1000);
@@ -57,19 +60,19 @@ export async function react(interaction) {
             }
         }
 
-        if (replied === false) {
-            interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Couldn't find recent message by user!"), flags: MessageFlags.Ephemeral});
+        if (!replied) {
+            await interaction.reply(InteractionReplyEmbed("", "", "❌ Couldn't find recent message by user!", colors.Error, true));
             return;
         }
         return;
     }
 
-    if (targetMessage) {
+    if (targetMessage && interaction.channel) {
         try {
             const message = await interaction.channel.messages.fetch(targetMessage);
             if (message) {
-                message.reply(ruleBlock);
-                interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
+                await message.reply(ruleBlock);
+                await interaction.reply({content: "replying!", flags: MessageFlags.Ephemeral});
                 setTimeout(() => {
                     interaction.deleteReply();
                 }, 1000);
@@ -79,7 +82,7 @@ export async function react(interaction) {
                 throw new Error("Message could not be found");
             }
         } catch (error) {
-            interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Unknown message ID!"), flags: MessageFlags.Ephemeral});
+            await interaction.reply(InteractionReplyEmbed("", "", "❌ Unknown message ID", colors.Error, true));
             return;
         }
     }
@@ -87,6 +90,6 @@ export async function react(interaction) {
     if (object) {
         await interaction.reply(ruleBlock)
     } else {
-        await interaction.reply(logs.FormatMessageReplyEmbed("❌ Unknown rule ID!"));
+        await interaction.reply(InteractionReplyEmbed("", "", "❌ Unknown message ID", colors.Error, true));
     }
 }

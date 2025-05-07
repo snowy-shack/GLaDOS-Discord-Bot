@@ -1,4 +1,5 @@
 import {
+    APIEmbedField,
     ColorResolvable,
     EmbedBuilder,
     InteractionReplyOptions,
@@ -17,7 +18,7 @@ import {icons} from "#src/consts/icons.mts";
  * @param thumbnail Image URL.
  * @returns An Embed object
  */
-export function embed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = null, fields = []) {
+export function embed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = null, fields: APIEmbedField[] = []) {
     const isPortalModEmbed = title.includes("PortalMod");
     const formTitle = { 
         name: title, 
@@ -51,7 +52,7 @@ export function embed(body: string, footer: string, title: string, color: ColorR
  * @param thumbnail Image URL.
  * @returns A message object that can directly be used with <code>.send</code> and <code>.reply</code>.
  */
-export function InteractionReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, ephemeral = false, thumbnail: string|null = "", fields = []): InteractionReplyOptions {
+export function InteractionReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, ephemeral = false, thumbnail: string|null = "", fields: APIEmbedField[] = []): InteractionReplyOptions {
 
     return { embeds: [ embed(body, footer, title, color, thumbnail, fields) ],
         ...(ephemeral && {flags: MessageFlags.Ephemeral })
