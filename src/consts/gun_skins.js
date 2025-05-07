@@ -1,7 +1,14 @@
 export const gun_skins = {
-    Booster:    {id: 'booster'   , uuid: '2ba60975-4f3f-47c7-981b-e0d938115288', name: 'Booster Skin'},
-    Translator: {id: 'translator', uuid: 'c14e9ce7-1d48-4e00-af27-4a232c959f8a', name: 'Translator Skin'},
-    Birthday:   {id: 'birthday',   uuid: '3d8ded0b-cf82-4121-867e-59896cfb899c', name: 'Birthday Skin'},
+    Birthday:   {id: 'birthday',   name: 'Birthday Skin'},
+    Booster:    {id: 'booster',    name: 'Booster Skin'},
+    Default:    {id: 'default',    name: 'Default Skin'},
+    Developer:  {id: 'developer',  name: 'Developer Skin'},
+    Gelocity:   {id: 'gelocity',   name: 'Gelocity Skin'},
+    Playtester: {id: 'playtester', name: 'Playtester Skin'},
+    Redacted:   {id: 'redacted',   name: '[???]'},
+    Tintable:   {id: 'tintable',   name: 'Tintable Skin'},
+    Translator: {id: 'translator', name: 'Translator Skin'},
+    Supporter:  {id: 'supporter',  name: 'Supporter Skin'}
 }
 
 export const all_skins =
