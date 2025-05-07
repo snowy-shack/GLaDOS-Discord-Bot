@@ -1,7 +1,7 @@
-import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import boosterHandler from "#src/functions/boosterHandler";
-import * as logs from "#src/modules/logs";
-import {checkBirthdays} from "#src/functions/birthdayHandler";
+import {SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction} from "discord.js";
+import boosterHandler from "#src/functions/boosterHandler.mts";
+import * as logs from "#src/modules/logs.mts";
+import {checkBirthdays} from "#src/functions/birthdayHandler.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("utils")
@@ -19,10 +19,10 @@ export function init() {
         )
 }
 
-export async function react(interaction) {
+export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
         case "booster_inc": {
-            interaction.reply(logs.formatMessage("➕ Incrementing boosters"));
+            void interaction.reply(logs.FormatInteractionReplyEmbed("➕ Incrementing boosters"));
             console.log("Manually incrementing boosters");
 
             await boosterHandler.incrementAndDM();
@@ -30,7 +30,7 @@ export async function react(interaction) {
 
         case "daily_birthday": {
             await checkBirthdays();
-            interaction.reply(logs.formatMessage("🍰 Reevaluated daily birthdays"));
+            void interaction.reply(logs.FormatInteractionReplyEmbed("🍰 Reevaluated daily birthdays"));
         }
     }
 }
