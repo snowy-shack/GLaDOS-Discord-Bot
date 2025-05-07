@@ -1,8 +1,8 @@
 import pg from "pg";
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
 import {delayInMilliseconds} from "#src/modules/util.mts";
 
-let pgClient;
+let pgClient: pg.Client;
 
 let initialized = false;
 await ensureDBConnection();
@@ -27,11 +27,11 @@ initialized = true;
             pgClient?.end().catch(() => {});
 
             pgClient = new pg.Client({
-                host:     process.env.DBHOST,
-                port:     process.env.DBPORT,
-                database: process.env.DBNAME,
-                user:     process.env.DBUSER,
-                password: process.env.DBPASS,
+                host:        process.env.DBHOST,
+                port: Number(process.env.DBPORT),
+                database:    process.env.DBNAME,
+                user:        process.env.DBUSER,
+                password:    process.env.DBPASS,
             });
 
             await pgClient.connect();
@@ -41,8 +41,9 @@ initialized = true;
     throw new Error('Database reconnection failed');
 }
 
-export async function addGunSkin(minecraftUuid, skinUUID) {
+export async function addGunSkin(minecraftUuid: string, skinUUID: string) {
     await ensureDBConnection();
+
     await pgClient.query(`
         INSERT INTO players_skins (minecraft_id, skin_id)
         VALUES ($1, $2);

@@ -1,4 +1,9 @@
-import {EmbedBuilder, MessageFlags} from "discord.js";
+import {
+    ColorResolvable,
+    EmbedBuilder,
+    InteractionReplyOptions,
+    MessageFlags, MessageReplyOptions
+} from "discord.js";
 import colors from "#src/consts/colors.mts";
 import {icons} from "#src/consts/icons.mts";
 
@@ -12,7 +17,7 @@ import {icons} from "#src/consts/icons.mts";
  * @param thumbnail Image URL.
  * @returns An Embed object
  */
-export function embedObject(body, footer, title, color = colors.Primary, thumbnail = null, fields = []) {
+export function embed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = null, fields = []) {
     const isPortalModEmbed = title.includes("PortalMod");
     const formTitle = { 
         name: title, 
@@ -34,6 +39,7 @@ export function embedObject(body, footer, title, color = colors.Primary, thumbna
 
     return embed;
 }
+
 /**
  * Generates a message with a styled Embed.
  * @param body Body text of the Embed.
@@ -45,9 +51,24 @@ export function embedObject(body, footer, title, color = colors.Primary, thumbna
  * @param thumbnail Image URL.
  * @returns A message object that can directly be used with <code>.send</code> and <code>.reply</code>.
  */
-export function embedMessageObject(body, footer, title, color = colors.Primary, ephemeral = false, thumbnail = "", fields = []) {
+export function InteractionReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, ephemeral = false, thumbnail: string|null = "", fields = []): InteractionReplyOptions {
 
-    return { embeds: [ embedObject(body, footer, title, color, thumbnail, fields) ],
+    return { embeds: [ embed(body, footer, title, color, thumbnail, fields) ],
         ...(ephemeral && {flags: MessageFlags.Ephemeral })
     };
+}
+
+/**
+ * Generates a message with a styled Embed.
+ * @param body Body text of the Embed.
+ * @param footer Footer text of the Embed, excluding the timestamp.
+ * @param title The title of the Embed.
+ * @param color The color of the Embed, <code>colors.Primary</code> by default.
+ * @param fields Column fields of the Embed.
+ * @param thumbnail Image URL.
+ * @returns A message object that can directly be used with <code>.send</code> and <code>.reply</code>.
+ */
+export function MessageReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = "", fields = []): MessageReplyOptions {
+
+    return { embeds: [ embed(body, footer, title, color, thumbnail, fields) ]};
 }

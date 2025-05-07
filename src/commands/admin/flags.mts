@@ -1,7 +1,12 @@
-import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
-import {all_flags, getUserData, removeFlag, setFlag} from "#src/agents/flagAgent";
-import {embedMessageObject} from "#src/factories/styledEmbed";
-import colors from "#src/consts/colors";
+import {
+    ChatInputCommandInteraction,
+    HexColorString,
+    PermissionFlagsBits,
+    SlashCommandBuilder
+} from "discord.js";
+import {all_flags, getUserData, removeFlag, setFlag} from "#src/agents/flagAgent.mts";
+import {InteractionReplyEmbed} from "#src/factories/styledEmbed.mts";
+import colors from "#src/consts/colors.mts";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -58,30 +63,31 @@ export function init() {
         )
 }
 
-const flagsEmbedConfig = [
+const flagsEmbedConfig: [string, string, HexColorString] = [
     /* footer: */ "flags",
-    /* title: */  "Phanty's Home User data",
-    /* color: */  colors.Primary,
+    /* title:  */ "Phanty's Home User data",
+    /* color:  */ colors.Primary,
 ]
 
-export async function react(interaction) {
+export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
         // Flags get command
         case "get": {
             const user = interaction.options.getUser('user');
             const key = interaction.options.getString('key');
 
+            if (!user) return;
             const data = await getUserData(user.id);
 
             if (key) {
-                await interaction.reply(embedMessageObject(
+                await interaction.reply(InteractionReplyEmbed(
                     `User ${user} has the following value for flag \`${key}\`: \`${data[key]}\``,
                     ...flagsEmbedConfig
                 ));
                 break;
             }
 
-            await interaction.reply(embedMessageObject(
+            await interaction.reply(InteractionReplyEmbed(
                 `User ${user} has the following flags: \n${
                     Object.entries(data)
                         .map(([key, value]) => `**\`${key}\`**: \`${value}\``)
@@ -95,7 +101,9 @@ export async function react(interaction) {
             const user = interaction.options.getUser('user');
             const key = interaction.options.getString('key');
 
-            let value = interaction.options.getString('value') ?? true;
+            if (!user || !key) return;
+
+            let value: any = interaction.options.getString('value') ?? true;
 
             const original = await getUserData(user.id);
 
@@ -108,12 +116,12 @@ export async function react(interaction) {
             await setFlag(user.id, key, value);
 
             if (original[key] !== undefined) {
-                await interaction.reply(embedMessageObject(
+                await interaction.reply(InteractionReplyEmbed(
                     `Set flag **\`${key}\`** for user ${user}: \n### from: \t\`${original[key]}\` \n### to: \`${value}\``,
                     ...flagsEmbedConfig
                 ));
             } else {
-                await interaction.reply(embedMessageObject(
+                await interaction.reply(InteractionReplyEmbed(
                     `Set flag **\`${key}\`** for user ${user}: \n### \t\`${value}\``,
                     ...flagsEmbedConfig
                 ));
@@ -124,9 +132,11 @@ export async function react(interaction) {
             const user = interaction.options.getUser('user');
             const key = interaction.options.getString('key');
 
+            if (!user || !key) return;
+
             await removeFlag(user.id, key);
 
-            await interaction.reply(embedMessageObject(
+            await interaction.reply(InteractionReplyEmbed(
                 `Removed **\`${key}\`** flag from user ${user}`,
                 ...flagsEmbedConfig
             ));

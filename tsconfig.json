@@ -6,7 +6,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true, // This allows directly importing .mts and .ts files
+    "allowImportingTsExtensions": true, // This allows for directly importing .mts and .ts files
+    "resolveJsonModule": true,          // This allows for directly importing .json files
     "outDir": "./dist",     // Directory for compiled TypeScript
     "baseUrl": "./",        // Base directory when resolving file paths
     "declaration": true,

@@ -1,5 +1,5 @@
-import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import * as logs from "#src/modules/logs";
+import {SlashCommandBuilder, PermissionFlagsBits, CommandInteraction} from "discord.js";
+import * as logs from "#src/modules/logs.mts";
 
 
 export function init() {
@@ -8,11 +8,9 @@ export function init() {
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
-export async function react(interaction) {
-  await interaction.reply(logs.formatMessage("💀 Shutting down"));
+export async function react(interaction: CommandInteraction) {
+  await interaction.reply(logs.FormatInteractionReplyEmbed("💀 Shutting down"));
   await logs.logMessage("💀 Attempting to restart");
   console.log("💀 Shutting down after command request");
   process.exit();
 }
-
-export default { react, init };

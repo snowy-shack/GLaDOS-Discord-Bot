@@ -1,21 +1,21 @@
 import { Events } from "discord.js";
 import cron from "node-cron";
 
-import "#src/envloader.mjs";
-import * as logs from "#src/modules/logs.mjs";
-import commandHandler from "#src/bridges/commandHandler.mjs";
-import buttonHandler from "#src/bridges/buttonHandler.mjs";
-import modalHandler from "#src/bridges/modalHandler.mjs";
+import "#src/envloader.mts";
+import * as logs from "#src/modules/logs.mts";
+import commandHandler from "#src/bridges/commandHandler.mts";
+import buttonHandler from "#src/bridges/buttonHandler.mts";
+import modalHandler from "#src/bridges/modalHandler.mts";
 
-import * as messageHandler from "#src/bridges/messageHandler.mjs";
-import * as reactionHandler from "#src/functions/emojiReactionHandler.mjs";
-import registerSlashCommands from "#src/registerSlashCommands.mjs";
+import * as messageHandler from "#src/bridges/messageHandler.mts";
+import * as reactionHandler from "#src/functions/emojiReactionHandler.mts";
+import registerSlashCommands from "#src/registerSlashCommands.mts";
 
-import ready from "#src/events/ready.mjs";
-import daily from "#src/events/daily.mjs";
-import {spamKick} from "#src/actions/spamKick.mjs";
-import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home.mjs";
-import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
+import ready from "#src/events/ready.mts";
+import daily from "#src/events/daily.mts";
+import {spamKick} from "#src/actions/spamKick.mts";
+import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home.mts";
+import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mts";
 
 const { getClient } = await import("#src/modules/client.mts");
 

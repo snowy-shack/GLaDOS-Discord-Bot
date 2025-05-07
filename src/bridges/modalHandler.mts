@@ -1,6 +1,7 @@
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
+import {ModalSubmitInteraction} from "discord.js";
 
-async function reply(interaction) {
+async function reply(interaction: ModalSubmitInteraction) {
     const { customId } = interaction;
 
     const [modulePath, formID] = customId.split('#');

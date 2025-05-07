@@ -1,6 +1,6 @@
 import {MessageFlags, SlashCommandBuilder} from "discord.js";
-import { emojis } from "#src/consts/phantys_home.mjs";
-import * as logs from "#src/modules/logs.mjs";
+import { emojis } from "#src/consts/phantys_home.mts";
+import * as logs from "#src/modules/logs.mts";
 
 import faqsJSON from "#src/consts/faqs.json" with { type: "json" };
 const options = faqsJSON.map(object => ({name: object.title, value: object.id})); // Get a list of FAQ titles for the FAQ command
@@ -35,7 +35,7 @@ export async function react(interaction) {
     let faqBlock = `# ${emojis.PortalMod} ` + object.title.replace("___", " *\\_\\_\\_\\_*") + "\n> " + object.description;
 
     if (targetUser && targetMessage) {
-        interaction.reply({content: logs.formatMessage("❌ Please provide either a user or a message ID"), flags: MessageFlags.Ephemeral});
+        interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Please provide either a user or a message ID"), flags: MessageFlags.Ephemeral});
         return;
     }
 
@@ -58,7 +58,7 @@ export async function react(interaction) {
         }
 
         if (replied === false) {
-            interaction.reply({content: logs.formatMessage("❌ Couldn't find recent message by user!"), flags: MessageFlags.Ephemeral});
+            interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Couldn't find recent message by user!"), flags: MessageFlags.Ephemeral});
             return;
         }
         return;
@@ -79,7 +79,7 @@ export async function react(interaction) {
                 throw new Error("Message could not be found");
             }
         } catch (error) {
-            interaction.reply({content: logs.formatMessage("❌ Unknown message ID!"), flags: MessageFlags.Ephemeral});
+            interaction.reply({content: logs.FormatMessageReplyEmbed("❌ Unknown message ID!"), flags: MessageFlags.Ephemeral});
             return;
         }
     }
@@ -87,6 +87,6 @@ export async function react(interaction) {
     if (object) {
         await interaction.reply(faqBlock)
     } else {
-        await interaction.reply(logs.formatMessage("❌ Unknown faq ID!"));
+        await interaction.reply(logs.FormatMessageReplyEmbed("❌ Unknown faq ID!"));
     }
 }

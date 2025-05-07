@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
-import { getCommandList } from "#src/bridges/commandHandler.mjs";
+import { getCommandList } from "#src/bridges/commandHandler.mts";
 import { getClient } from "#src/modules/client.mts";
-import {guildID} from "#src/consts/phantys_home.mjs";
+import {guildID} from "#src/consts/phantys_home.mts";
 
 // Define the commands
 let commandList = getCommandList();
@@ -16,6 +16,7 @@ const commands = await Promise.all(
 );
 
 // Register the commands
+// @ts-ignore - the token shall NOT be undefined
 const rest = new REST().setToken(process.env.TOKEN);
 
 export async function register() {
@@ -23,14 +24,16 @@ export async function register() {
         const client = await getClient();
         console.log(`Started refreshing ${commands.length} slash commands.`);
 
-        const data = await rest.put(
+        const data = await rest.put( // @ts-ignore
             Routes.applicationGuildCommands(client.application.id, guildID),
             { body: commands }
         );
 
+        // @ts-ignore
         rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
-        console.log(`Succesfully refreshed ${data.length} slash commands.`);
+        // @ts-ignore
+        console.log(`Successfully refreshed ${data.length} slash commands.`);
     } catch(error) {
         console.error(error);
     }

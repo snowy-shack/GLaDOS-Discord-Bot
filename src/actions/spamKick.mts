@@ -1,11 +1,12 @@
-import * as logs from "#src/modules/logs.mjs";
-import * as styledEmbed from "#src/factories/styledEmbed.mjs";
+import * as logs from "#src/modules/logs.mts";
 import colors from "#src/consts/colors.mts";
-import * as stringAgent from "#src/agents/stringAgent.mjs";
+import * as stringAgent from "#src/agents/stringAgent.mts";
+import {GuildMember} from "discord.js";
+import {MessageReplyEmbed} from "#src/factories/styledEmbed.mts";
 
-export async function spamKick(member, reason) {
+export async function spamKick(member: GuildMember, reason: string) {
     try {
-        await member.user.send(styledEmbed.embedMessageObject(
+        await member.user.send(MessageReplyEmbed(
             await stringAgent.string("server.notification.spam_kicked"),
             "spam",
             "Phanty's Home Spam prevention",
@@ -16,7 +17,7 @@ export async function spamKick(member, reason) {
     }
 
     try {
-        await member.kick({ reason: `Suspected spam or hacked account - reason: ${reason}` });
+        await member.kick(`Suspected spam or hacked account - reason: ${reason}`);
 
         await logs.logMessage(`👋 Spam kicked ${member} - Reason: ${reason}.`);
 

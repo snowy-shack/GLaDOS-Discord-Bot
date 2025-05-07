@@ -1,13 +1,14 @@
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
+import {ButtonInteraction} from "discord.js";
 
-async function reply(interaction) {
+async function reply(interaction: ButtonInteraction): Promise<void> {
     const { customId } = interaction;
 
     const [modulePath, buttonID] = customId.split('#');
 
     let path = `#src/${modulePath.replace(/\./g, '/')}.mjs`;
     // Dynamic import
-    const module = await import(path);
+    const module: {buttonPressed: Function} = await import(path);
 
     if (typeof module.buttonPressed === "function") {
         await module.buttonPressed(buttonID, interaction);
