@@ -1,8 +1,8 @@
-import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
+import {SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction} from "discord.js";
 import { exec } from "child_process";
 import path from "path";
-import { getVersion } from "#src/modules/version";
-import * as logs from "#src/modules/logs";
+import { getVersion } from "#src/modules/version.mts";
+import * as logs from "#src/modules/logs.mts";
 
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -13,8 +13,8 @@ export function init() {
             .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
-export async function react(interaction) {
-    await interaction.reply(logs.formatMessage("⏬ Updating to the latest version"));
+export async function react(interaction: ChatInputCommandInteraction) {
+    await interaction.reply(logs.FormatInteractionReplyEmbed("⏬ Updating to the latest version"));
     await logs.logMessage("⏬ Downloading latest changes");
 
     console.log('⏬ Pulling from git');

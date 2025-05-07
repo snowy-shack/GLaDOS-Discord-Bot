@@ -1,5 +1,7 @@
-import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
-    TextInputBuilder, TextInputStyle, } from "discord.js";
+import {
+    ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
+    TextInputBuilder, TextInputStyle, ChatInputCommandInteraction, ModalSubmitInteraction,
+} from "discord.js";
 
 import * as logs from "#src/modules/logs.mts";
 import colors from "#src/consts/colors.mts";
@@ -62,13 +64,13 @@ const birthdayInput = new TextInputBuilder()
     .setRequired(true)
     .setMaxLength(10);
 
-form.addComponents(new ActionRowBuilder().addComponents(birthdayInput));
+form.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(birthdayInput));
 
 // Returns the number of days until the input birthday
-function daysUntilBirthday(stringDate) {
+function daysUntilBirthday(date: string) {
     const today = new Date();
 
-    const [day, month] = stringDate.split('-').map(Number);
+    const [day, month] = date.split('-').map(Number);
 
     let nextBirthday = new Date(today.getFullYear(), month - 1, day);
 
@@ -77,11 +79,11 @@ function daysUntilBirthday(stringDate) {
         nextBirthday.setFullYear(today.getFullYear() + 1);
     }
 
-    return Math.ceil((nextBirthday - today) / DAY_IN_MS); // Convert ms to days
+    return Math.ceil((Number(nextBirthday) - Number(today)) / DAY_IN_MS); // Convert ms to days
 }
 
 // Format row details
-async function getUserDetails(users) {
+async function getUserDetails(users: { [key: string]: string }[]) {
     const usernames     = [];
     const dates         = [];
     const daysRemaining = [];
@@ -97,14 +99,14 @@ async function getUserDetails(users) {
 
             if (!lastMember) lastMember = member;
 
-            const displayName   = member.nickname || member.user.globalName;
+            const displayName = (member.nickname || member.user.globalName) ?? "Unknown";
             const formattedDate = formatDate(entry.value, false);
             const remainingDays = daysUntilBirthday(entry.value);
 
             usernames.push(trimString(displayName, 20));
             dates.push(formattedDate);
             daysRemaining.push(remainingDays);
-        } catch (error) {
+        } catch (error: any) {
             await logs.logError("indexing birthdays", error)
         }
     }
@@ -112,7 +114,7 @@ async function getUserDetails(users) {
     return { usernames, dates, daysRemaining, lastMember };
 }
 
-export async function react(interaction) {
+export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
         // Birthday Add command
         case "add": {
@@ -123,7 +125,7 @@ export async function react(interaction) {
                 return;
             }
 
-            interaction.reply(InteractionReplyEmbed(
+            void interaction.reply(InteractionReplyEmbed(
                 await templateString("birthday.add.duplicate", [ formatDate(userBirthday, true) ]),
                 "birthday • duplicate",
                 title,
@@ -137,13 +139,16 @@ export async function react(interaction) {
             await interaction.deferReply();
 
             const birthdayUser = interaction.options.getUser("user");
+            if (!birthdayUser) return;
+
             const userBirthday = await getFlag(birthdayUser.id, flags.Birthday.Date);
 
             if (userBirthday) {
-                interaction.editReply(InteractionReplyEmbed(
+                await interaction.editReply({
+                    ...InteractionReplyEmbed(
                     await templateString("birthday.get.success", [
                         `<@${birthdayUser.id}>`,
-                        daysUntilBirthday(userBirthday) % 365,
+                        String(daysUntilBirthday(userBirthday) % 365),
                         dateIsToday(userBirthday) ? "Today! 🎉" : formatDate(userBirthday, true)
                     ]),
                     "birthday • success",
@@ -151,17 +156,22 @@ export async function react(interaction) {
                     colors.Primary,
                     false,
                     birthdayUser.displayAvatarURL()
-                ));
+                ),
+                flags: undefined
+            });
 
             } else {
-                interaction.editReply(InteractionReplyEmbed(
-                    await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
-                    "birthday • not found",
-                    title,
-                    colors.Primary,
-                    false,
-                    birthdayUser.displayAvatarURL()
-                ));
+                await interaction.editReply({
+                    ...InteractionReplyEmbed(
+                        await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
+                        "birthday • not found",
+                        title,
+                        colors.Primary,
+                        false,
+                        birthdayUser.displayAvatarURL()
+                    ),
+                    flags: undefined
+                });
             }
         } break;
 
@@ -170,57 +180,62 @@ export async function react(interaction) {
         case "next": {
             await interaction.deferReply();
 
-            let users = await getAllFlagValues(flags.Birthday.Date);
-
-            users = sortDatesUpcoming(users);
+            const users = await getAllFlagValues(flags.Birthday.Date);
+            const users_sorted = sortDatesUpcoming(users);
 
             const birthdayCount = interaction.options.getInteger("count") || 1;
 
-            const userEntries = await getUserDetails(users);
+            const userEntries = await getUserDetails(users_sorted);
 
             // Single birthday
             if (birthdayCount === 1) {
-                let url = emojiIcons.mark;
-                let name = userEntries.usernames[0];
+                let url:  string|undefined = emojiIcons.mark;
+                let name: string|undefined = userEntries.usernames[0];
                 try {
-                    url = userEntries.lastMember.displayAvatarURL();
-                    name = `<@${userEntries.lastMember.id}>`;
+                    url = userEntries.lastMember?.displayAvatarURL();
+                    name = `<@${userEntries.lastMember?.id}>`;
                 } catch {}
 
-                await interaction.editReply(InteractionReplyEmbed(
-                    await templateString(
-                        "birthday.next.single",
-                        [name, userEntries.daysRemaining[0], userEntries.daysRemaining[0] === 0 ? "Today! 🎉" : userEntries.dates[0]]
+                await interaction.editReply({
+                    ...InteractionReplyEmbed(
+                        await templateString(
+                            "birthday.next.single",
+                            [name, String(userEntries.daysRemaining[0]), userEntries.daysRemaining[0] === 0 ? "Today! 🎉" : userEntries.dates[0]]
+                        ),
+                        "birthday • success",
+                        title,
+                        colors.Primary,
+                        false,
+                        url
                     ),
-                    "birthday • success",
-                    title,
-                    colors.Primary,
-                    false,
-                    url
-                ));
+                    flags: undefined
+                });
             // Multiple birthdays
             } else {
                 let nr = Math.min(birthdayCount, userEntries.usernames?.length ?? 10);
 
-                await interaction.editReply(InteractionReplyEmbed(
-                    await templateString("birthday.next.multiple", [nr]),
-                    `birthday • next ${birthdayCount}`,
-                    title,
-                    colors.Primary,
-                    false,
-                    emojiIcons.home,
-                    [
-                        { name: '**Name:**',      value: `**\`\`\`\n${userEntries.usernames.slice(0, birthdayCount).join('\n')    }\n\`\`\`**`, inline: true },
-                        { name:   'Date:',        value:   `\`\`\`\n${userEntries.dates.slice(0, birthdayCount).join('\n')        }\n\`\`\``,   inline: true },
-                        { name:   'Days left:',   value:   `\`\`\`\n${userEntries.daysRemaining.slice(0, birthdayCount).join('\n')}\n\`\`\``,   inline: true }
-                    ]
-                ));
+                await interaction.editReply({
+                    ...InteractionReplyEmbed(
+                        await templateString("birthday.next.multiple", [nr]),
+                        `birthday • next ${birthdayCount}`,
+                        title,
+                        colors.Primary,
+                        false,
+                        emojiIcons.home,
+                        [
+                            { name: '**Name:**',      value: `**\`\`\`\n${userEntries.usernames.slice(0, birthdayCount).join('\n')    }\n\`\`\`**`, inline: true },
+                            { name:   'Date:',        value:   `\`\`\`\n${userEntries.dates.slice(0, birthdayCount).join('\n')        }\n\`\`\``,   inline: true },
+                            { name:   'Days left:',   value:   `\`\`\`\n${userEntries.daysRemaining.slice(0, birthdayCount).join('\n')}\n\`\`\``,   inline: true }
+                        ]
+                    ),
+                    flags: undefined
+                });
             }
         } break;
     }
 }
 
-export async function modalSubmitted(formID, interaction) {
+export async function modalSubmitted(formID: string, interaction: ModalSubmitInteraction) {
     if (formID === "birthday") {
         let birthDate = interaction.fields.getTextInputValue('birthday');
 
@@ -236,17 +251,17 @@ export async function modalSubmitted(formID, interaction) {
             const yearNum = parseInt(year, 10);
 
             // Check whether the date is valid
-            birthDate = isValidDate(dayNum, monthNum, yearNum) ? `${day}-${month}-${year}` : undefined;
+            birthDate = isValidDate(dayNum, monthNum, yearNum) ? `${day}-${month}-${year}` : "";
         } else {
-            birthDate = undefined;
+            birthDate = "";
         }
 
         // Valid input
         if (birthDate) {
             await setFlag(interaction.user.id, flags.Birthday.Date, birthDate);
-            logs.logMessage(`🍰 Saved birthday of ${interaction.user}: ${formatDate(birthDate, true)}`);
+            void logs.logMessage(`🍰 Saved birthday of ${interaction.user}: ${formatDate(birthDate, true)}`);
 
-            interaction.reply(InteractionReplyEmbed(
+            await interaction.reply(InteractionReplyEmbed(
                 await templateString("birthday.add.success", [formatDate(birthDate, true)]),
                 "birthday • success",
                 title,
@@ -256,7 +271,7 @@ export async function modalSubmitted(formID, interaction) {
             ));
 
         } else {
-            interaction.reply(InteractionReplyEmbed(
+            await interaction.reply(InteractionReplyEmbed(
                 await string("birthday.add.syntax"),
                 "birthday • incorrect format",
                 title,
