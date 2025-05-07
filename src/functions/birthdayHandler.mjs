@@ -5,10 +5,10 @@ import { emojis } from "#src/consts/phantys_home.mjs";
 import * as logs from "#src/modules/logs.mjs";
 import * as guild from "#src/modules/discord.mjs";
 import * as skinForm from "#src/functions/skinFormHandler.mjs";
-import * as util from "#src/modules/util.mjs";
+import * as util from "#src/modules/util.mts";
 import {flags, getAllFlagValues} from "#src/agents/flagAgent.mjs";
 import {getChannel} from "#src/modules/discord.mjs";
-import {dateToString} from "#src/modules/util.mjs";
+import {dateToString} from "#src/modules/util.mts";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"

@@ -7,7 +7,7 @@ import { getMember } from "#src/modules/discord.mjs";
 import {embedMessageObject} from "#src/factories/styledEmbed.mjs";
 import {string, templateString} from "#src/agents/stringAgent.mjs";
 import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
-import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util.mjs";
+import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util.mts";
 
 export function init() {
     return new SlashCommandBuilder()

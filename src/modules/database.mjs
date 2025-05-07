@@ -1,6 +1,6 @@
 import pg from "pg";
 import * as logs from "#src/modules/logs.mjs";
-import {delayInMilliseconds} from "#src/modules/util.mjs";
+import {delayInMilliseconds} from "#src/modules/util.mts";
 
 let pgClient;
 

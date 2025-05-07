@@ -1,11 +1,11 @@
-import {getClient} from "#src/modules/client.mjs";
+import {getClient} from "#src/modules/client.mts";
 import * as database from "#src/modules/database.mjs";
 import * as logs from "#src/modules/logs.mjs";
 import * as skinForm from "#src/functions/skinFormHandler.mjs";
 import {skinTypeFromFooter} from "#src/functions/skinFormHandler.mjs";
 import {flags, setFlag} from "#src/agents/flagAgent.mjs";
 import {gun_skins} from "#src/consts/gun_skins.mts";
-import {capitalize} from "#src/modules/util.mjs";
+import {capitalize} from "#src/modules/util.mts";
 import {getMember} from "#src/modules/discord.mjs";
 
 export async function getLastBotMessage(message) {
