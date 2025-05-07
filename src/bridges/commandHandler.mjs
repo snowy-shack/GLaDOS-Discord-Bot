@@ -24,8 +24,8 @@ export async function reply(interaction) {
     for (const command of commandList) {
         const { commandName } = interaction;
 
-        if (commandName === command.split('/').pop()) {
-            const commandModule = await import(`#src/commands/${command}.mjs`);
+        if (commandName === command.split('/').pop().split('.')[0]) {
+            const commandModule = await import(`#src/commands/${command}`);
 
             if (typeof commandModule.react === "function") {
                 commandModule.react(interaction);
