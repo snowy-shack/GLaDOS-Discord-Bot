@@ -1,4 +1,4 @@
-import {MessageFlags, SlashCommandBuilder} from "discord.js.mjs";
+import {MessageFlags, SlashCommandBuilder} from "discord.js";
 import { emojis } from "#src/consts/phantys_home.mjs";
 import * as logs from "#src/modules/logs.mjs";
 

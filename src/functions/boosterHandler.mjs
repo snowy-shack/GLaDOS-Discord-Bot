@@ -3,7 +3,7 @@ import * as logs from "#src/modules/logs.mjs";
 import {getMember, getRoleUsers} from "#src/modules/discord.mjs";
 import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mjs";
 import {delayInSeconds} from "#src/modules/util.mjs";
-import {gun_skins} from "#src/consts/gun_skins.mjs";
+import {gun_skins} from "#src/consts/gun_skins.mts";
 import {roles} from "#src/consts/phantys_home.mjs";
 
 export async function incrementAndDM() {

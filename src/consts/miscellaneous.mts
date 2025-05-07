@@ -1,4 +1,4 @@
-export const voiceLines = [
+export const voiceLines: string[] = [
     "Go fling yourself.",
     "You will be missed.",
     "Thank you for helping us help you help us all.",

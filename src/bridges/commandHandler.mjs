@@ -9,10 +9,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export function getCommandList() {
     const normalCommandsList = fs
         .readdirSync(path.join(__dirname, "../commands"))
-        .filter(file => file.endsWith(".js"));
+        .filter(file => file.endsWith(".mjs"));
     const adminCommandsList = fs
         .readdirSync(path.join(__dirname, "../commands/admin"))
-        .filter(file => file.endsWith(".js"));
+        .filter(file => file.endsWith(".mjs"));
 
     return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
 }

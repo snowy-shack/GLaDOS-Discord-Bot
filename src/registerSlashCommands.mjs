@@ -7,8 +7,8 @@ import {guildID} from "#src/consts/phantys_home.mjs";
 let commandList = getCommandList();
 
 const commands = await Promise.all(
-    commandList.map(async commandName => {
-        const { init } = await import(`#src/commands/${commandName}.mjs`);
+    commandList.map(async commandName => { // <id>.mjs
+        const { init } = await import(`#src/commands/${commandName}`);
         let initialization = init();
 
         return initialization.toJSON();
