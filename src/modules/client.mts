@@ -1,6 +1,6 @@
 import {GatewayIntentBits, Partials, Client, ActivityType} from "discord.js";
 
-export async function getClient() {
+export async function getClient(): Promise<Client> {
     const client = new Client({
         intents: [
             GatewayIntentBits.Guilds,

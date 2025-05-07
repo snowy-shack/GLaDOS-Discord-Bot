@@ -1,4 +1,4 @@
-import { getClient } from "#src/modules/client.mjs";
+import { getClient } from "#src/modules/client.mts";
 import {guildID} from "#src/consts/phantys_home.mjs";
 import {flags, setFlag} from "#src/agents/flagAgent.mjs";
 

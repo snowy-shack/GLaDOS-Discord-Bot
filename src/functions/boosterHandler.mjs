@@ -2,7 +2,7 @@ import * as skinForm from "#src/functions/skinFormHandler.mjs";
 import * as logs from "#src/modules/logs.mjs";
 import {getMember, getRoleUsers} from "#src/modules/discord.mjs";
 import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mjs";
-import {delayInSeconds} from "#src/modules/util.mjs";
+import {delayInSeconds} from "#src/modules/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
 import {roles} from "#src/consts/phantys_home.mjs";
 

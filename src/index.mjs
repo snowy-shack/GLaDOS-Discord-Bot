@@ -17,7 +17,7 @@ import {spamKick} from "#src/actions/spamKick.mjs";
 import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home.mjs";
 import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
 
-const { getClient } = await import("#src/modules/client.mjs");
+const { getClient } = await import("#src/modules/client.mts");
 
 registerSlashCommands.register();
 
