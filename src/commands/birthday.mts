@@ -216,7 +216,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
                 await interaction.editReply({
                     ...InteractionReplyEmbed(
-                        await templateString("birthday.next.multiple", [nr]),
+                        await templateString("birthday.next.multiple", [String(nr)]),
                         `birthday • next ${birthdayCount}`,
                         title,
                         colors.Primary,

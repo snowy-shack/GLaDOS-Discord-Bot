@@ -1,7 +1,7 @@
 import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/consts/phantys_home.mts";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
 import * as logs from "#src/modules/logs.mts";
-import {Message, MessageReaction} from "discord.js";
+import {Message, MessageReaction, PartialMessageReaction} from "discord.js";
 
 /**
  * Module for automatic emoji reactions on messages
@@ -35,7 +35,7 @@ export async function react(message: Message): Promise<void> {
     await logs.logMessage(`⬆️ Adding automatic reactions to message in <#${message.channelId}>.`);
 }
 
-export async function removeReactions(messageReaction: MessageReaction): Promise<void> {
+export async function removeReactions(messageReaction: MessageReaction | PartialMessageReaction): Promise<void> {
     await logs.logMessage(`🗑️ Removing ❤️ reaction on message in <#${messageReaction.message.channel.id}>.`);
 
     await messageReaction.message.fetch();
