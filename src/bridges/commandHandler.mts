@@ -10,12 +10,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export function getCommandList() {
     const normalCommandsList = fs
         .readdirSync(path.join(__dirname, "../commands"))
-        .filter(file => file.endsWith(".mjs"));
+        .filter(file => file.endsWith(".mts"));
     const adminCommandsList = fs
         .readdirSync(path.join(__dirname, "../commands/admin"))
-        .filter(file => file.endsWith(".mjs"));
+        .filter(file => file.endsWith(".mts"));
 
-    return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
+    return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.mts$/, ''));
 }
 
 export async function reply(interaction: CommandInteraction) {
