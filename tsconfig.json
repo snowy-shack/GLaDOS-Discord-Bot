@@ -1,6 +1,21 @@
 {
   "compilerOptions": {
-    "module": "ES2022",
-    "moduleResolution": "NodeNext"
-  }
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true, // This allows directly importing .mts and .ts files
+    "outDir": "./dist",     // Directory for compiled TypeScript
+    "baseUrl": "./",        // Base directory when resolving file paths
+    "declaration": true,
+    "paths": {
+      "#src/*": ["src/*"]   // Map #src/ to the src directory, absolutely
+    }
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.mts"]
 }
