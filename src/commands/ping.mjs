@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('ping')
@@ -7,5 +7,5 @@ export function init() {
 }
 
 export async function react(interaction) {
-    await interaction.reply(logs.formatMessage(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
+    await interaction.reply(logs.FormatMessageReplyEmbed(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
 }

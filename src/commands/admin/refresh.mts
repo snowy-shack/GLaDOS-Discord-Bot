@@ -1,8 +1,9 @@
-import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import * as logs from "#src/modules/logs";
-import { emojis } from "#src/consts/phantys_home";
-
-import { getClient } from "#src/modules/client";
+import {Channel, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
+import * as logs from "#src/modules/logs.mts";
+import {emojis} from "#src/consts/phantys_home.mts";
+import * as discord from "#src/modules/discord.mts";
+import {channels} from "#src/consts/phantys_home.mts";
+import {dateToString, formatDate} from "#src/modules/util.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('refresh')
@@ -18,48 +19,41 @@ export function init() {
             )
 }
 
-import faqJSON from "#src/consts/faqs.json" with { type: "json" };
-import rulesJSON from "#src/consts/rules.json" with { type: "json" };
-import * as discord from "#src/modules/discord";
-import {channels} from "#src/consts/phantys_home";
-import {dateToString, formatDate} from "#src/modules/util";
-
-export async function react(interaction) {
-    let entries, channelName, channel, emoji;
+export async function react(interaction: ChatInputCommandInteraction) {
+    let entries: any[], channelName: string = "", channelID: string = "", emoji: string;
 
     switch (interaction.options.getSubcommand()) {
         case "faq": {
-            entries = faqJSON;
+            entries = (await import("#src/consts/faqs.json")).default;
             channelName = "FAQ";
-            channel = channels.Faq;
+            channelID = channels.Faq;
             emoji = emojis.PortalMod;
         } break;
         case "rules": {
-            entries = rulesJSON;
+            entries = (await import("#src/consts/rules.json")).default;
             channelName = "Rules";
-            channel = channels.Rules;
+            channelID = channels.Rules;
             emoji = emojis.Home;
         } break;
     }
 
-    interaction.reply(logs.formatMessage("🔄️ Updating " + channelName + " Channel"));
-    logs.logMessage("🔄️ Updating " + channelName + " Channel");
+    void interaction.reply(logs.FormatInteractionReplyEmbed("🔄️ Updating " + channelName + " Channel"));
+    void logs.logMessage("🔄️ Updating " + channelName + " Channel");
 
     // Redefine channel to the actual channel object
-    channel = await discord.getChannel(channel);
+    const channel = await discord.getChannel(channelID);
+    if (!channel?.isTextBased()) return;
 
     const fetchedMessages = await channel.messages.fetch({ limit: 100 });
 
     for (const message of fetchedMessages) {
-        // if (message[1].author.id === client.application.id) { // If the message was sent by the bot
-            message[1].delete();
-        // }
+        message[1].delete();
     }
 
     const formattedDate = formatDate(dateToString(new Date()), true);
 
     setTimeout(() => {
-        channel.send(logs.formatMessage(`Last ${channelName} update: ${formattedDate}`))
+        channel.send(logs.FormatMessageReplyEmbed(`Last ${channelName} update: ${formattedDate}`))
         for (let entry of entries) {
             channel.send(`# ${emoji} ` + entry.title.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + entry.description + '\n** **');
         }

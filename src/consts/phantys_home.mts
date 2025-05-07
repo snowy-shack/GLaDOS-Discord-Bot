@@ -1,9 +1,9 @@
-import { isBeta } from "#src/envloader.mjs";
+import { isBeta } from "#src/envloader.mts";
 
 // BETA : PRODUCTION
-export const guildID = isBeta ? "1221613837384417300" : "704266427577663548";
+export const guildID: string = isBeta ? "1221613837384417300" : "704266427577663548";
 
-export const channels = { // BETA : PRODUCTION
+export const channels: {[key: string]: string} = { // BETA : PRODUCTION
     Announcements: isBeta ? "1235600733093761156" : "876132326101360670",
     Arcade:        isBeta ? "1366358167159701594" : "704308600784420904",
     Art:           isBeta ? "1235600701602791455" : "981527027142262824",
@@ -18,14 +18,14 @@ export const channels = { // BETA : PRODUCTION
     ModDiscussion: isBeta ? "1325419973186682930" : "876477593245868114",
 }
 
-export const roles = { // BETA : PRODUCTION
+export const roles: {[key: string]: string} = { // BETA : PRODUCTION
     Booster: isBeta ? "1221614507466686574" : "852838462469308428",
     Donator: isBeta ? "1350808190400335935" : "925025905166938162",
     SpamBot: isBeta ? "1344660484984410132" : "1332249541705207901",
 }
 
 // Actual markdown emojis - BETA : PRODUCTION
-export const emojis = {
+export const emojis: {[key: string]: string} = {
     Booster:    isBeta ? "<:booster:1266753101793198144>"      : "<:booster:1264162949753212928>",
     Downvote:   isBeta ? "<:downvote:1266753173784100865>"     : "<:downvote:1264163504173224006>",
     Home:       isBeta ? "<:phantys_home:1266753148794703954>" : "<:phantys_home:1264163401962229780>",
@@ -38,23 +38,38 @@ export const emojis = {
     Tada:       isBeta ? "<:tada:1351512055059972157>"         : "<:tada:1351511867503149117>",
 }
 
-export function emojiId(str) {
-    return str.match(/\d+/)[0];
+/**
+ * Extract the ID part of a markdown emoji
+ * @param input - The emoji in Markdown format
+ * @return the emoji ID
+ */
+export function emojiId(input: string): string|null {
+    const match = input.match(/\d+/);
+    return match ? match[0] : null;
 }
 
-// NOT markdown! - BETA : PRODUCTION
+/**
+ * Server emojis in ID form, **not** Markdown
+ */
 export const serverEmojis = {
     Delete: isBeta ? "1265683388069707776" : "1264171028125323327",
 }
 
-export function addLikesToMedia(channel) {
+/**
+ * Whether likes should be added to media in a channel
+ * @param channel - The input channel in ID form
+ */
+export function addLikesToMedia(channel: string): boolean {
     return [
         channels.Art,
-        // showcases?
     ].includes(channel);
 }
 
-export function addLikes(channel) {
+/**
+ * Whether likes should be added to any message in a channel
+ * @param channel - The input channel in ID form
+ */
+export function addLikes(channel: string): boolean {
     return [
         channels.Announcements,
         channels.News,
@@ -62,7 +77,11 @@ export function addLikes(channel) {
     ].includes(channel);
 }
 
-export function addVotes(channel) {
+/**
+ * Whether up- and downvotes should be added to any message in a channel
+ * @param channel - The input channel in ID form
+ */
+export function addVotes(channel: string): boolean {
     return [
         channels.Updates,
     ].includes(channel);

@@ -1,14 +1,15 @@
-import { embedObject } from "#src/factories/styledEmbed.mjs";
+import { embed } from "#src/factories/styledEmbed.mts";
 import { gun_skins as skins } from "#src/consts/gun_skins.mts";
-import { channels } from "#src/consts/phantys_home.mjs";
-import { emojis } from "#src/consts/phantys_home.mjs";
-import * as logs from "#src/modules/logs.mjs";
-import * as guild from "#src/modules/discord.mjs";
-import * as skinForm from "#src/functions/skinFormHandler.mjs";
+import { channels } from "#src/consts/phantys_home.mts";
+import { emojis } from "#src/consts/phantys_home.mts";
+import * as logs from "#src/modules/logs.mts";
+import * as guild from "#src/modules/discord.mts";
+import * as skinForm from "#src/functions/skinFormHandler.mts";
 import * as util from "#src/modules/util.mts";
-import {flags, getAllFlagValues} from "#src/agents/flagAgent.mjs";
-import {getChannel} from "#src/modules/discord.mjs";
+import {flags, getAllFlagValues} from "#src/agents/flagAgent.mts";
+import {getChannel} from "#src/modules/discord.mts";
 import {dateToString} from "#src/modules/util.mts";
+import {GuildMember} from "discord.js";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
@@ -19,13 +20,18 @@ export async function checkBirthdays() {
     await logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
 
     const channel = await getChannel(channels.General);
+    if (!channel || !channel.isTextBased()) return;
+
     for (const discord_id of birthdays) {
         await (async () => {
             await logs.logMessage(`🎉 It's <@${discord_id}>'s birthday!`);
-            
-            await skinForm.sendFormMessage(await guild.getMember(discord_id), 0, undefined, skins.Birthday.id); // Start a DM form
 
-            const happy_birthday = embedObject(
+            const guildMember: GuildMember | undefined = await guild.getMember(discord_id);
+            if (!guildMember) return;
+
+            await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
+
+            const happy_birthday = embed(
                 `Hey! If our data is correct, that means today is your birthday 🍰!\n\nThe Enrichment Center would like to, on behalf of the **Phanty's Home server** & **PortalMod team**, say: \n# CONGRATULATIONS!!! 🎉\nMake sure to make today a lovely day! ${emojis.Like}`,
                 "birthday • yay", 
                 "Phanty's Home Birthdays"

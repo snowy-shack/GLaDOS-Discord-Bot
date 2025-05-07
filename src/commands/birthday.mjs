@@ -1,12 +1,12 @@
 import { ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
     TextInputBuilder, TextInputStyle, } from "discord.js";
 
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
 import colors from "#src/consts/colors.mts";
-import { getMember } from "#src/modules/discord.mjs";
-import {embedMessageObject} from "#src/factories/styledEmbed.mjs";
-import {string, templateString} from "#src/agents/stringAgent.mjs";
-import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
+import { getMember } from "#src/modules/discord.mts";
+import {InteractionReplyEmbed} from "#src/factories/styledEmbed.mts";
+import {string, templateString} from "#src/agents/stringAgent.mts";
+import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent.mts";
 import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util.mts";
 
 export function init() {
@@ -123,7 +123,7 @@ export async function react(interaction) {
                 return;
             }
 
-            interaction.reply(embedMessageObject(
+            interaction.reply(InteractionReplyEmbed(
                 await templateString("birthday.add.duplicate", [ formatDate(userBirthday, true) ]),
                 "birthday • duplicate",
                 title,
@@ -140,7 +140,7 @@ export async function react(interaction) {
             const userBirthday = await getFlag(birthdayUser.id, flags.Birthday.Date);
 
             if (userBirthday) {
-                interaction.editReply(embedMessageObject(
+                interaction.editReply(InteractionReplyEmbed(
                     await templateString("birthday.get.success", [
                         `<@${birthdayUser.id}>`,
                         daysUntilBirthday(userBirthday) % 365,
@@ -154,7 +154,7 @@ export async function react(interaction) {
                 ));
 
             } else {
-                interaction.editReply(embedMessageObject(
+                interaction.editReply(InteractionReplyEmbed(
                     await templateString("birthday.get.unknown", [`<@${birthdayUser.id}>`]),
                     "birthday • not found",
                     title,
@@ -187,7 +187,7 @@ export async function react(interaction) {
                     name = `<@${userEntries.lastMember.id}>`;
                 } catch {}
 
-                await interaction.editReply(embedMessageObject(
+                await interaction.editReply(InteractionReplyEmbed(
                     await templateString(
                         "birthday.next.single",
                         [name, userEntries.daysRemaining[0], userEntries.daysRemaining[0] === 0 ? "Today! 🎉" : userEntries.dates[0]]
@@ -202,7 +202,7 @@ export async function react(interaction) {
             } else {
                 let nr = Math.min(birthdayCount, userEntries.usernames?.length ?? 10);
 
-                await interaction.editReply(embedMessageObject(
+                await interaction.editReply(InteractionReplyEmbed(
                     await templateString("birthday.next.multiple", [nr]),
                     `birthday • next ${birthdayCount}`,
                     title,
@@ -246,7 +246,7 @@ export async function modalSubmitted(formID, interaction) {
             await setFlag(interaction.user.id, flags.Birthday.Date, birthDate);
             logs.logMessage(`🍰 Saved birthday of ${interaction.user}: ${formatDate(birthDate, true)}`);
 
-            interaction.reply(embedMessageObject(
+            interaction.reply(InteractionReplyEmbed(
                 await templateString("birthday.add.success", [formatDate(birthDate, true)]),
                 "birthday • success",
                 title,
@@ -256,7 +256,7 @@ export async function modalSubmitted(formID, interaction) {
             ));
 
         } else {
-            interaction.reply(embedMessageObject(
+            interaction.reply(InteractionReplyEmbed(
                 await string("birthday.add.syntax"),
                 "birthday • incorrect format",
                 title,

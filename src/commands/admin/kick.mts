@@ -1,7 +1,7 @@
-import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
-import {spamKick} from "#src/actions/spamKick";
-import * as logs from "#src/modules/logs";
-import {getMember} from "#src/modules/discord";
+import {ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
+import {spamKick} from "#src/actions/spamKick.mts";
+import * as logs from "#src/modules/logs.mts";
+import {getMember} from "#src/modules/discord.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("kick")
@@ -23,17 +23,17 @@ export function init() {
         )
 }
 
-export async function react(interaction) {
+export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
         case "spam": {
-            let member = interaction.options.getUser("user");
+            let member: GuildMember | undefined = await getMember(interaction.options.getUser("user")?.id ?? "");
             let reason = interaction.options.getString("reason");
 
-            member = await getMember(member.id);
+            if (!member) return;
 
             const kicked = await spamKick(member, reason ?? "None provided");
 
-            interaction.reply(logs.formatMessage(kicked ? "👋 Kicked user." : "❌ Failed to kick user."))
+            await interaction.reply(logs.FormatInteractionReplyEmbed(kicked ? "👋 Kicked user." : "❌ Failed to kick user."))
         } break;
     }
 }

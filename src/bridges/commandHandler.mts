@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 
 import { fileURLToPath } from "url";
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
+import {CommandInteraction} from "discord.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,14 +18,15 @@ export function getCommandList() {
     return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.js$/, ''));
 }
 
-export async function reply(interaction) {
+export async function reply(interaction: CommandInteraction) {
     let commandList = getCommandList();
 
     // Find the command associated
     for (const command of commandList) {
         const { commandName } = interaction;
 
-        if (commandName === command.split('/').pop().split('.')[0]) {
+        var commandModule = command.split('/').pop();
+        if (commandModule && commandName === commandModule.split('.')[0]) {
             const commandModule = await import(`#src/commands/${command}`);
 
             if (typeof commandModule.react === "function") {
@@ -36,4 +38,4 @@ export async function reply(interaction) {
     }
 }
 
-export default { reply, getCommandList };
+export default { reply };

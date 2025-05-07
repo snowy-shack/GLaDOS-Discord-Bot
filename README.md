@@ -1,4 +1,4 @@
-# GLaDOS discord.mjs bot
+# GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
 `Current Version: 2.00.2`
@@ -46,7 +46,7 @@ Introduced a new strings system, which keeps all long text responses in one plac
 
 #### CONSTS
 Introduced new constant modules which provide easy access to values for emojis, icons, colors, channel and role IDs, etc.
-- Moved emojis, channels and roles from `.env` files to `phantys_home.mjs`
+- Moved emojis, channels and roles from `.env` files to `phantys_home.mts`
 
 ## Release 1.09.0 - January 31st 2025
 ### Changes

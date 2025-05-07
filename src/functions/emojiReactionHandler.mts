@@ -1,14 +1,13 @@
-import {addLikes, addLikesToMedia, addVotes, emojiId, emojis, serverEmojis} from "#src/consts/phantys_home.mjs";
+import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/consts/phantys_home.mts";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/modules/logs.mts";
+import {Message, MessageReaction} from "discord.js";
 
 /**
  * Module for automatic emoji reactions on messages
- * @param message
- * @param reactionChannel
- * @returns {Promise<void>}
+ * @param message - Message to potentially react to
  */
-export async function react(message) {
+export async function react(message: Message): Promise<void> {
 
     if (addLikesToMedia(message.channelId)) {
         let hasImage = false;
@@ -23,10 +22,10 @@ export async function react(message) {
 
         message.attachments.forEach((attachment => {
             let contentType = attachment.contentType || null;
-            if (['image','video'].includes(contentType.split('/')[0])) hasImage = true;
+            if (contentType && ['image','video'].includes(contentType.split('/')[0])) hasImage = true;
         }));
 
-        if (hasImage) message.react(getRandomLikeReaction());
+        if (hasImage) await message.react(getRandomLikeReaction());
         return;
     }
 
@@ -36,21 +35,15 @@ export async function react(message) {
     await logs.logMessage(`⬆️ Adding automatic reactions to message in <#${message.channelId}>.`);
 }
 
-export async function removeReactions(messageReaction) {
+export async function removeReactions(messageReaction: MessageReaction): Promise<void> {
     await logs.logMessage(`🗑️ Removing ❤️ reaction on message in <#${messageReaction.message.channel.id}>.`);
 
     await messageReaction.message.fetch();
-    // Remove the like and delete emojis
+    // @ts-ignore - Remove the like and delete emojis
     messageReaction.message.reactions.cache.get(emojiId(emojis.Like))?.remove();
-    messageReaction.remove();
+    await messageReaction.remove();
 }
 
 function getRandomLikeReaction() {
-    const random = Math.random();
-
-    if (random < 0.01) {
-        return emojis.Yo;
-    }
-
-    return emojis.Like;
+    return Math.random() < 0.05 ? emojis.Yo : emojis.Like;
 }

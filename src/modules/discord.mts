@@ -1,8 +1,9 @@
 import { getClient } from "#src/modules/client.mts";
-import {guildID} from "#src/consts/phantys_home.mjs";
-import {flags, setFlag} from "#src/agents/flagAgent.mjs";
+import {guildID} from "#src/consts/phantys_home.mts";
+import {flags, setFlag} from "#src/agents/flagAgent.mts";
+import { Guild } from "discord.js";
 
-let phantys_home;
+let phantys_home: Guild;
 
 /* private */ async function init() {
     const client = await getClient();
@@ -19,7 +20,7 @@ export function getGuild() {
     return phantys_home;
 }
 
-export async function getMember(id) {
+export async function getMember(id: string) {
     const cachedUser = phantys_home.members.cache.get(id);
 
     if (cachedUser) return cachedUser;
@@ -32,7 +33,7 @@ export async function getMember(id) {
     }
 }
 
-export async function getChannel(id) {
+export async function getChannel(id: string) {
     const cachedChannel = phantys_home.channels.cache.get(id);
 
     if (cachedChannel) return cachedChannel;
@@ -44,9 +45,11 @@ export async function getChannel(id) {
     }
 }
 
-export async function getRoleUsers(id) {
+export async function getRoleUsers(id: string): Promise<string[] | null> {
     await phantys_home.members.fetch(); // Ensure all members are cached (#3)
     const role = await phantys_home.roles.fetch(id);
 
-    return await role.members.map(member => member.user.id);
+    if (!role) return null;
+
+    return role.members.map(member => member.user.id); // TODO: This mapping shouldn't occur here, but rather at usages that need it in this format.
 }
