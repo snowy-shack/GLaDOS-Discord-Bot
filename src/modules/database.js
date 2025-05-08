@@ -44,7 +44,7 @@ initialized = true;
 export async function addGunSkin(minecraftUuid, skinUUID) {
     await ensureDBConnection();
     await pgClient.query(`
-        INSERT INTO players_skins (player_id, skin_id)
+        INSERT INTO players_skins (minecraft_id, skin_id)
         VALUES ($1, $2);
     `,
     [ minecraftUuid, skinUUID ]);
