@@ -22,6 +22,7 @@ export const roles: {[key: string]: string} = { // BETA : PRODUCTION
     Booster: isBeta ? "1221614507466686574" : "852838462469308428",
     Donator: isBeta ? "1350808190400335935" : "925025905166938162",
     SpamBot: isBeta ? "1344660484984410132" : "1332249541705207901",
+    Silly:   isBeta ? "1372130773435416687" : "1115577781632368772",
 }
 
 // Actual markdown emojis - BETA : PRODUCTION
