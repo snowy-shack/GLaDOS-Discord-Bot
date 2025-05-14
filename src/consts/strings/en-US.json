@@ -21,5 +21,7 @@
     "skins.form.finished": "Perfect! Your Portal Gun skin has been linked to this Minecraft account. Thank you for your support!!",
 
     "skins.form.fail.again": "It seems I still wasn't able to message you, please try again!\nIf this issue persists please notify **`@phantomeye`**.",
-    "skins.form.fail": "%1% It seems **I couldn't DM you** for your %2% Portal Gun skin!\n\nCould you try (temporarily) changing your **Privacy Settings** on this server? \n(Right click the server icon)`"
+    "skins.form.fail": "%1% It seems **I couldn't DM you** for your %2% Portal Gun skin!\n\nCould you try (temporarily) changing your **Privacy Settings** on this server? \n(Right click the server icon)`",
+
+    "server.message.exclusive.welcome": "## Welcome!\n\n**Thanks for supporting the project!** We really appreciate it. We hope you like the exclusive showcases!"
 }

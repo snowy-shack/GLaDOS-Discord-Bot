@@ -66,7 +66,6 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
             void logs.logWarning(`🎭 Ran into an issue DM'ing ${targetUser}.`);
 
             const channel = await getChannel(channels.General);
-
             if (!channel || !channel.isTextBased()) return false;
 
             void logs.logMessage(`🔁 Asking them to retry in ${channel}.`);
