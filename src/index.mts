@@ -78,7 +78,7 @@ async function main() {
             const username = member.nickname ?? member.displayName;
 
             // Add the role if their username contains 'silly'
-            if (username.toUpperCase().indexOf("SILLY") !== -1 ) {
+            if (username.toUpperCase().indexOf("SILLY") !== -1 && !member.roles.cache.has(roles.Silly)) {
                 await member.roles.add(sillyRole);
                 await logs.logMessage(`Added Silly role to <@${member.user.id}>`);
 
