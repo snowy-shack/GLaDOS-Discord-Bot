@@ -14,8 +14,11 @@ import registerSlashCommands from "#src/registerSlashCommands.mts";
 import ready from "#src/events/ready.mts";
 import daily from "#src/events/daily.mts";
 import {spamKick} from "#src/actions/spamKick.mts";
-import {addLikesToMedia, roles, serverEmojis} from "#src/consts/phantys_home.mts";
+import {addLikesToMedia, channels, roles, serverEmojis} from "#src/consts/phantys_home.mts";
 import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mts";
+import {getChannel} from "#src/modules/discord.mjs";
+import {embed} from "#src/factories/styledEmbed.mjs";
+import {string, templateString} from "#src/agents/stringAgent.mjs";
 
 const { getClient } = await import("#src/modules/client.mts");
 
@@ -80,16 +83,41 @@ async function main() {
             // Add the role if their username contains 'silly'
             if (username.toUpperCase().indexOf("SILLY") !== -1 && !member.roles.cache.has(roles.Silly)) {
                 await member.roles.add(sillyRole);
-                await logs.logMessage(`Added Silly role to <@${member.user.id}>`);
+                await logs.logMessage(`😝 Added Silly role to <@${member.user.id}>`);
 
             // Remove the role if their username doesn't
-            } else if (member.roles.cache.has(roles.Silly)) {
+            } else if (username.toUpperCase().indexOf("SILLY") === -1 && member.roles.cache.has(roles.Silly)) {
                 await member.roles.remove(sillyRole);
-                await logs.logMessage(`Removed Silly role from <@${member.user.id}>`);
+                await logs.logMessage(`😝 Removed Silly role from <@${member.user.id}>`);
             }
 
         } catch (error: any) {
             await logs.logError("Managing Silly role", error);
+        }
+
+        try {
+            const supporterRole = roles.Donator;
+            const boosterRole   = roles.Booster;
+
+            // Check if the member didn't have a supporter role, but does now
+            if ((member.roles.cache.has(supporterRole) || member.roles.cache.has(boosterRole))
+                    && !oldMember.roles.cache.has(supporterRole) && !oldMember.roles.cache.has(boosterRole)) {
+
+                const channel = await getChannel(channels.Exclusive);
+                if (!channel || !channel.isTextBased()) return false;
+
+                void logs.logMessage(`🙋‍♂️ Welcoming <@${member.user.id}> to ${channel}.`);
+
+                const welcome_message = embed(
+                    await string("server.message.exclusive.welcome"),
+                    "messages.welcome",
+                    "Phanty's Home exclusive chat"
+                );
+
+                channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` });
+            }
+        } catch (error: any) {
+            await logs.logError("Welcoming user", error);
         }
     });
 
