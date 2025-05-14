@@ -7,7 +7,7 @@ async function run() {
         void boosterHandler.incrementAndDM();
         void birthdayHandler.checkBirthdays();
     } catch (error: any) {
-        await logs.logError("Error running daily events", error);
+        await logs.logError("running daily events", error);
     }
 }
 
