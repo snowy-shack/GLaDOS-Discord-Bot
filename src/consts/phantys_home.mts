@@ -19,11 +19,21 @@ export const channels: {[key: string]: string} = { // BETA : PRODUCTION
 }
 
 export const roles: {[key: string]: string} = { // BETA : PRODUCTION
-    Booster: isBeta ? "1221614507466686574" : "852838462469308428",
-    Donator: isBeta ? "1350808190400335935" : "925025905166938162",
-    SpamBot: isBeta ? "1344660484984410132" : "1332249541705207901",
-    Silly:   isBeta ? "1372130773435416687" : "1115577781632368772",
+    Booster:   isBeta ? "1221614507466686574" : "852838462469308428",
+    Donator:   isBeta ? "1350808190400335935" : "925025905166938162",
+    SpamBot:   isBeta ? "1344660484984410132" : "1332249541705207901",
+    Silly:     isBeta ? "1372130773435416687" : "1115577781632368772",
+    Developer: isBeta ? "1235592306682364027" : "1116375124866777118",
 }
+
+// Roles in MarkDown form
+export const rolesMarkDown: { [key: string]: string } =
+    Object.keys(roles).reduce(
+        (roleValue, roleKey) => {
+            roleValue[roleKey] = `<@&${roles[roleKey]}>`;
+            return roleValue;
+        }, {} as { [key: string]: string }
+    );
 
 // Actual markdown emojis - BETA : PRODUCTION
 export const emojis: {[key: string]: string} = {

@@ -1,5 +1,5 @@
 import {getChannel} from "#src/modules/discord.mts";
-import {channels} from "#src/consts/phantys_home.mts";
+import {channels, rolesMarkDown} from "#src/consts/phantys_home.mts";
 import {embed, InteractionReplyEmbed, MessageReplyEmbed} from "#src/factories/styledEmbed.mjs";
 import colors from "#src/consts/colors.mts";
 import {GuildBasedChannel} from "discord.js";
@@ -43,7 +43,7 @@ export async function logError(location: string, error: Error) {
         let formattedError = `${location} - **${error.message}**`;
         formattedError += ` \n \`\`\` \n${error.stack || "No stack trace available"}\n\`\`\``;
 
-        await logChannel.send({content: "@phantomeye", embeds: [
+        await logChannel.send({content: rolesMarkDown.Developer, embeds: [
             embed(formattedError, "", "An error occurred", colors.Error)
         ]});
 
