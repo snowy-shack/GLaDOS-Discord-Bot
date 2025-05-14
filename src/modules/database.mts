@@ -4,24 +4,24 @@ import {delayInMilliseconds} from "#src/modules/util.mts";
 
 let pgClient: pg.Client;
 
+const RETRIES: number = 5;
+
 let initialized = false;
 await ensureDBConnection();
 initialized = true;
 
-/* private */ async function ensureDBConnection(retries = 5, delay = 1000) {
-    let reconnect = false;
+/* private */ async function ensureDBConnection(retries = RETRIES, delay = 1000) {
     while (retries--) {
         try {
             await pgClient.query('SELECT 1');
 
-            if (reconnect) await logs.logMessage("✅ Database connection successful.");
+            if (initialized) await logs.logMessage("✅ Database connection successful.");
             return;
         } catch {
-            reconnect = true;
-            if (retries < 4) {
+            if (retries < RETRIES - 1) {
                 console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
             } else {
-                if (initialized) await logs.logMessage("❓ Attempting Database (re)connection.");
+                if (initialized) await logs.logWarning("❌ Attempting Database reconnection.");
             }
 
             pgClient?.end().catch(() => {});
