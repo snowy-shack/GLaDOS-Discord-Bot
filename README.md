@@ -1,9 +1,18 @@
-# GLaDOS discord.js bot
+# GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 2.00.2`
+`Current Version: 3.00.0`
 
 # Changelog
+## Release 3.00.0 - May 14th 2025
+Major rewrite to TypeScript
+### Changes
+- Better error handling, now includes the error stack when logging
+- Refactored events to not be in `index.mts`
+- Overall stability improvement and fixes
+- Users with 'silly' in their (user)name will now automatically get a designated role
+- Automated module syncing
+
 ## Release 2.00.2 - April 14th 2025
 ### Fixes
 - Corrected daily birthday detected
@@ -46,7 +55,7 @@ Introduced a new strings system, which keeps all long text responses in one plac
 
 #### CONSTS
 Introduced new constant modules which provide easy access to values for emojis, icons, colors, channel and role IDs, etc.
-- Moved emojis, channels and roles from `.env` files to `phantys_home.js`
+- Moved emojis, channels and roles from `.env` files to `phantys_home.mts`
 
 ## Release 1.09.0 - January 31st 2025
 ### Changes

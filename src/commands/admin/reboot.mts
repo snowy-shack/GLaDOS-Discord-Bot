@@ -1,0 +1,16 @@
+import {SlashCommandBuilder, PermissionFlagsBits, CommandInteraction} from "discord.js";
+import * as logs from "#src/modules/logs.mts";
+
+
+export function init() {
+  return new SlashCommandBuilder().setName("reboot")
+    .setDescription("Reboots GLaDOS")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+}
+
+export async function react(interaction: CommandInteraction) {
+  await interaction.reply(logs.FormatInteractionReplyEmbed("💀 Shutting down"));
+  await logs.logMessage("💀 Attempting to restart");
+  console.log("💀 Shutting down after command request");
+  process.exit();
+}

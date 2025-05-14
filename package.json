@@ -1,21 +1,20 @@
 {
-    "name": "phantys-home-bot",
-    "description": "",
-    "version": "1.0.0",
     "type": "module",
-    "imports": {
-        "#src/*.json": "./src/*.json",
-        "#src/*.ts": "./src/*.ts",
-        "#src/*": "./src/*.js"
-    },
-    "main": "src/index.js",
     "scripts": {
-        "test": "node ."
+        "start": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts",
+        "debug": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --beta"
     },
-    "keywords": [],
-    "author": "PhantomEye",
-    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^22.15.14",
+        "@types/node-cron": "^3.0.11",
+        "@types/node-fetch": "^2.6.12",
+        "@types/pg": "^8.15.0",
+        "ts-node": "^10.0.0",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.0.0"
+    },
     "dependencies": {
+        "@types/node": "^22.15.14",
         "axios": "^1.8.2",
         "chalk": "^4.1.2",
         "cron": "^3.1.6",
@@ -25,6 +24,12 @@
         "node-cron": "^3.0.3",
         "node-fetch": "^2.7.0",
         "node-ts": "^8.0.0",
-        "pg": "^8.11.4"
+        "pg": "^8.11.4",
+        "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.8.3"
+    },
+    "imports": {
+        "#src/*": "./src/*"
     }
 }
