@@ -1,7 +1,7 @@
 import { embed } from "#src/factories/styledEmbed.mts";
 import { gun_skins as skins } from "#src/consts/gun_skins.mts";
-import { channels } from "#src/consts/phantys_home.mts";
-import { emojis } from "#src/consts/phantys_home.mts";
+import { channels } from "#src/modules/phantys_home.mts";
+import { emojis } from "#src/modules/phantys_home.mts";
 import * as logs from "#src/modules/logs.mts";
 import * as guild from "#src/modules/discord.mts";
 import * as skinForm from "#src/functions/skinFormHandler.mts";

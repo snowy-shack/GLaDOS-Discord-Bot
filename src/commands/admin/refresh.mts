@@ -1,8 +1,8 @@
 import {Channel, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
 import * as logs from "#src/modules/logs.mts";
-import {emojis} from "#src/consts/phantys_home.mts";
+import {emojis} from "#src/modules/phantys_home.mts";
 import * as discord from "#src/modules/discord.mts";
-import {channels} from "#src/consts/phantys_home.mts";
+import {channels} from "#src/modules/phantys_home.mts";
 import {dateToString, formatDate} from "#src/modules/util.mts";
 
 export function init() {

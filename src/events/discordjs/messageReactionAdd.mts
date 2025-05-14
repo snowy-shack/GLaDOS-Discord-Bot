@@ -1,5 +1,5 @@
 import {Client, Events} from "discord.js";
-import {addLikesToMedia, serverEmojis} from "#src/consts/phantys_home.mjs";
+import {addLikesToMedia, serverEmojis} from "#src/modules/phantys_home.mjs";
 import {removeReactions} from "#src/functions/emojiReactionHandler.mjs";
 
 export function init(client: Client) {

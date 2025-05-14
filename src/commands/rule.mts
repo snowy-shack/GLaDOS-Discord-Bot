@@ -1,5 +1,5 @@
 import {ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder} from "discord.js";
-import { emojis } from "#src/consts/phantys_home.mts";
+import { emojis } from "#src/modules/phantys_home.mts";
 import * as logs from "#src/modules/logs.mts";
 
 import rulesJSON from "#src/consts/rules.json" with { type: "json" };

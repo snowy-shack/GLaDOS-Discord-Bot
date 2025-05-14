@@ -4,7 +4,7 @@ import {getMember, getRoleUsers} from "#src/modules/discord.mts";
 import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
 import {delayInSeconds} from "#src/modules/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
-import {roles} from "#src/consts/phantys_home.mts";
+import {roles} from "#src/modules/phantys_home.mts";
 
 export async function incrementAndDM() {
     try {

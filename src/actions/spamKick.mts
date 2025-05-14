@@ -3,18 +3,15 @@ import colors from "#src/consts/colors.mts";
 import * as stringAgent from "#src/agents/stringAgent.mts";
 import {GuildMember} from "discord.js";
 import {MessageReplyEmbed} from "#src/factories/styledEmbed.mts";
+import {dmUser} from "#src/modules/phantys_home.mjs";
 
 export async function spamKick(member: GuildMember, reason: string) {
-    try {
-        await member.user.send(MessageReplyEmbed(
-            await stringAgent.string("server.notification.spam_kicked"),
-            "spam",
-            "Phanty's Home Spam prevention",
-            colors.Error
-        ));
-    } catch (error) {
-        await logs.logMessage("❌ Could not notify user about the kick")
-    }
+    await dmUser(member.user, MessageReplyEmbed(
+        await stringAgent.string("server.notification.spam_kicked"),
+        "spam",
+        "Phanty's Home Spam prevention",
+        colors.Error
+    ));
 
     try {
         await member.kick(`Suspected spam or hacked account - reason: ${reason}`);

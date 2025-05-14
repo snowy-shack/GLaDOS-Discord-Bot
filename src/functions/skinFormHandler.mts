@@ -14,7 +14,7 @@ import * as logs from "#src/modules/logs.mts";
 import { embed, InteractionReplyEmbed } from "#src/factories/styledEmbed.mts";
 import { string, templateString } from "#src/agents/stringAgent.mts";
 import {getChannel} from "#src/modules/discord.mts";
-import {channels} from "#src/consts/phantys_home.mts";
+import {channels, dmUser} from "#src/modules/phantys_home.mts";
 
 const title = "PortalMod Portal Gun skin form";
 
@@ -52,49 +52,37 @@ export async function respond(previousField: number | null, fieldValue: string, 
 }
 
 export async function sendFormMessage(targetUser: User, previousField: number, textInput = "", type = "", retried = false) {
-    try {
-        // throw { code: 50007, message: "Emulated DM error" };
-        await targetUser.send({ embeds: await respond(previousField, textInput, type) });
-        return true;
+    const succeeded = await dmUser(targetUser, { embeds: await respond(previousField, textInput, type) });
+    if (succeeded) return true;
 
-    } catch (error: any) { // Unable to DM
-        if (error.code !== 50007) {
-            console.error(error);
-        }
+    if (retried || succeeded === null) return false;
 
-        if (!retried) { // Error: "Cannot send messages to this user"
-            void logs.logWarning(`🎭 Ran into an issue DM'ing ${targetUser}.`);
+    const channel = await getChannel(channels.General);
+    if (!channel || !channel.isTextBased()) return false;
 
-            const channel = await getChannel(channels.General);
-            if (!channel || !channel.isTextBased()) return false;
+    void logs.logMessage(`🔁 Asking ${targetUser} to DM them in ${channel}.`);
 
-            void logs.logMessage(`🔁 Asking them to retry in ${channel}.`);
+    const form_failed = embed(
+        await templateString("skins.form.fail",
+            [
+                targetUser.username,
+                type
+            ]
+        ),
+        `skin.${type} • DM error (${50007})`, // Error: "Cannot send messages to this user"
+        title
+    );
 
-            const form_failed = embed(
-                await templateString("skins.form.fail",
-                    [
-                        targetUser.username,
-                        type
-                    ]
-                ),
-                `skin.${type} • DM error (${error.code})`,
-                title
-            );
+    const retry = new ButtonBuilder()
+        .setCustomId('functions.skinFormHandler#retry')
+        .setLabel(`Retry`)
+        .setEmoji('🔄')
+        .setStyle(ButtonStyle.Secondary);
 
-            const retry = new ButtonBuilder()
-                .setCustomId('functions.skinFormHandler#retry')
-                .setLabel(`Retry`)
-                .setEmoji('🔄')
-                .setStyle(ButtonStyle.Secondary);
+    const buttons = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(retry);
 
-            const buttons = new ActionRowBuilder<ButtonBuilder>()
-                .addComponents(retry);
-
-            channel.send({ content: `${targetUser}`, embeds: [form_failed], components: [buttons] });
-            return false;
-        }
-    }
-    return false;
+    channel.send({ content: `${targetUser}`, embeds: [form_failed], components: [buttons] });
 }
 
 export function skinTypeFromFooter(message: Message): string | undefined {

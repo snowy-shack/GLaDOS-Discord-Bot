@@ -12,6 +12,9 @@ try {
 
 export const flags = {
     Ghost: "ghost",
+    Security: {
+        LockedUp:     "security.lockedUp",
+    },
     Booster: {
         BoostingDays: "booster.boostingDays",
         Messaged:     "booster.messaged",
