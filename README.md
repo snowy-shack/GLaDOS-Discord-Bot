@@ -1,9 +1,18 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 2.00.2`
+`Current Version: 3.00.0`
 
 # Changelog
+## Release 3.00.0 - May 14th 2025
+Major rewrite to TypeScript
+### Changes
+- Better error handling, now includes the error stack when logging
+- Refactored events to not be in `index.mts`
+- Overall stability improvement and fixes
+- Users with 'silly' in their (user)name will now automatically get a designated role
+- Automated module syncing
+
 ## Release 2.00.2 - April 14th 2025
 ### Fixes
 - Corrected daily birthday detected
