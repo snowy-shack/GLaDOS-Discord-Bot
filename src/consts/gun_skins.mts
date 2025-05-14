@@ -1,4 +1,4 @@
-export const gun_skins = {
+export const gun_skins: { [key: string]: { [key: string]: string } } = {
     Birthday:   {id: 'birthday',   name: 'Birthday Skin'},
     Booster:    {id: 'booster',    name: 'Booster Skin'},
     Default:    {id: 'default',    name: 'Default Skin'},
@@ -8,10 +8,9 @@ export const gun_skins = {
     Redacted:   {id: 'redacted',   name: '[???]'},
     Tintable:   {id: 'tintable',   name: 'Tintable Skin'},
     Translator: {id: 'translator', name: 'Translator Skin'},
-    Supporter:  {id: 'supporter',  name: 'Supporter Skin'}
 }
 
-export const all_skins =
+export const all_skins: { name: string, value: string }[] =
     Object.values(gun_skins).map(skin => ({
         name: skin.name,
         value: skin.id
