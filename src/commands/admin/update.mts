@@ -35,7 +35,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 setTimeout(async () => {
                     await logs.logMessage("🔁 Rebooting");
                     process.exit();
-                }, 2000);
+                }, 5000);
             } else if (stdout.includes("Already up to date")) {
                 await logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
             } else {
