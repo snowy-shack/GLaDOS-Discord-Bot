@@ -52,3 +52,5 @@ export async function logError(location: string, error: Error) {
         console.error(error);
     }
 }
+
+export default { logWarning, logMessage, logError };
