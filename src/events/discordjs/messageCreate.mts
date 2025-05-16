@@ -17,7 +17,7 @@ export function init(client: Client): void {
                 await messageHandler.handleDM(message);
             }
         } catch (error: any) {
-            await logs.logError(`handling ${message.guild ? "guild" : "DM"} message`, error);
+            await logs.logError(`handling ${message.guild ? "guild" : "DM"} message by <@${message.author.id}>`, error);
         }
     });
 }

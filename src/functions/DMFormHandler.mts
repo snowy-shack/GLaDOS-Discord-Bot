@@ -15,11 +15,10 @@ export async function getLastBotMessage(message: Message): Promise<Message | und
     const scanMessages = (await message.channel.messages.fetch({ limit: 10 })).reverse();
 
     // Goes from top to bottom to get the latest values
-    for (let scanMessage of scanMessages) {
-        const message = scanMessage[1];
+    for (let [_, message] of scanMessages) {
 
         try {
-            if (message.embeds[0]) lastMessage = message;
+            if (message.embeds.length > 0) lastMessage = message;
         } catch (error: any) {
             await logs.logError("fetching embeds for DM form", error);
         }
@@ -42,7 +41,7 @@ export async function replyToDM(message: Message) {
     if (client.application && lastMessage.author.id === client.application.id) {
         lastFormIndex = Math.min(parseInt(footerText?.split(' ')[1]?.split('/')[0]) || 3, 3);
 
-        if (lastMessage.embeds[1].description) {
+        if (lastMessage.embeds[1] && lastMessage.embeds[1].description) {
             const uuidMatch = /UUID: (.+?)`/.exec(lastMessage.embeds[1].description);
             uuidGot = uuidMatch ? uuidMatch[1] : "";
         }

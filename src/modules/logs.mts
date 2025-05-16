@@ -40,7 +40,7 @@ export async function logError(location: string, error: Error) {
         const logChannel = await getLogChannel();
         if (!logChannel || !logChannel.isTextBased()) return;
 
-        let formattedError = `${location} - **${error.message}**`;
+        let formattedError = `Error occurred ${location} - **\`${error.message}\`**`;
         formattedError += ` \n \`\`\` \n${error.stack || "No stack trace available"}\n\`\`\``;
 
         await logChannel.send({content: rolesMarkDown.Developer, embeds: [
