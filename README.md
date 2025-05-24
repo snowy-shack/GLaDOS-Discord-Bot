@@ -1,9 +1,15 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.00.0`
+`Current Version: 3.00.1`
 
 # Changelog
+## Release 3.00.1 - May 24th 2025
+## Changes
+- Now reacts 🎉 to welcome messages in exclusive chats
+- Now logs /babble uses
+- Now logs when adding a ♥️ reaction
+
 ## Release 3.00.0 - May 14th 2025
 Major rewrite to TypeScript
 ### Changes
