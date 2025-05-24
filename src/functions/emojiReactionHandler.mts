@@ -26,6 +26,8 @@ export async function react(message: Message): Promise<void> {
         }));
 
         if (hasImage) await message.react(getRandomLikeReaction());
+
+        await logs.logMessage(`♥️ Adding automatic heart reaction to message in <#${message.channelId}>.`);
         return;
     }
 
