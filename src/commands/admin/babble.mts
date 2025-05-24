@@ -5,6 +5,7 @@ import {
     ChatInputCommandInteraction
 } from "discord.js";
 import * as discord from "#src/modules/discord.mts";
+import logs from "#src/modules/logs.mjs";
 
 export function init() {
     return new SlashCommandBuilder().setName("babble")
@@ -24,5 +25,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     const channel = await discord.getChannel(interaction.channelId);
     if (!channel?.isSendable()) return;
 
-    channel.send(interaction.options.getString("message", true).replace(/\\n/g, "\n"));
+    const message = interaction.options.getString("message", true).replace(/\\n/g, "\n");
+    await logs.logMessage(`🗣️Babbling "${message}" by ${interaction.user}`)
+    channel.send(message);
 }
