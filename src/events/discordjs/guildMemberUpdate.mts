@@ -1,5 +1,5 @@
 import {Client, Events, GuildMember, PartialGuildMember} from "discord.js";
-import {channels, roles} from "#src/consts/phantys_home.mjs";
+import {channels, emojis, roles} from "#src/consts/phantys_home.mjs";
 import {spamKick} from "#src/actions/spamKick.mjs";
 import * as logs from "#src/modules/logs.mjs";
 import {getChannel} from "#src/modules/discord.mjs";
@@ -65,7 +65,8 @@ async function welcomeUser(oldMember: GuildMember|PartialGuildMember, member: Gu
                 "Phanty's Home exclusive chat"
             );
 
-            channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` });
+            channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` })
+                .then(message => message.react(emojis.Tada));
         }
     } catch (error: any) {
         await logs.logError("welcoming user", error);
