@@ -10,6 +10,7 @@ import {flags, getAllFlagValues} from "#src/agents/flagAgent.mts";
 import {getChannel} from "#src/modules/discord.mts";
 import {dateToString} from "#src/modules/util.mts";
 import {GuildMember} from "discord.js";
+import {string} from "#src/agents/stringAgent.mjs";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
@@ -32,7 +33,7 @@ export async function checkBirthdays() {
             await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
 
             const happy_birthday = embed(
-                `Hey! If our data is correct, that means today is your birthday 🍰!\n\nThe Enrichment Center would like to, on behalf of the **Phanty's Home server** & **PortalMod team**, say: \n# CONGRATULATIONS!!! 🎉\nMake sure to make today a lovely day! ${emojis.Like}`,
+                await string("birthday.notification"),
                 "birthday • yay", 
                 "Phanty's Home Birthdays"
             );

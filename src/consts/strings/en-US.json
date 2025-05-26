@@ -9,6 +9,8 @@
     "birthday.next.multiple": "Here's the upcoming **%1%** next birthdays! \n_ _\n_ _",
     "birthday.next.single":   "The next birthday is %1%'s, in **%2% days**!\n## %3%",
 
+    "birthday.notification": "Hey! If our data is correct, that means today is your birthday \uD83C\uDF70!\\n\\nThe Enrichment Center, on behalf of the **Phanty's Home server** & **PortalMod team**, would like to say: \\n# CONGRATULATIONS!!! \uD83C\uDF89\\nMake sure to make today a lovely day! $Like$",
+
     "skins.form.intro.booster":    "Hi!\n\nIt seems like you've**$Booster$boosted** Phanty's Home for **3 months**! Thank you so much!\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",
     "skins.form.intro.translator": "Hi!\n\nHey! Thanks for helping us**$Translator$translate** PortalMod. As a little thank you, we'd like to give you a Portal Gun skin.\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",
     "skins.form.intro.birthday":   "Hi!\n\nHey! **Happy birthday \uD83C\uDF70\uD83C\uDF89!!!**\nWe've got a (permanent) birthday Portal Gun skin for you to link to your account!\n\nIn order to apply your Portal Gun skin to your Minecraft account, we need your Minecraft username. **Please send your username in plain text below**.",

@@ -1,9 +1,13 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.00.1`
+`Current Version: 3.00.2`
 
 # Changelog
+## Release 3.00.2 - May 26th 2025
+## Changes
+- Moved birthday notifications to be localized.
+
 ## Release 3.00.1 - May 24th 2025
 ## Changes
 - Now reacts 🎉 to welcome messages in exclusive chats
