@@ -1,5 +1,5 @@
 import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/consts/phantys_home.mts";
-import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
+import artLinks from "#src/consts/links/art_links.json" with {type: "json"};
 import * as logs from "#src/modules/logs.mts";
 import {Message, MessageReaction, PartialMessageReaction} from "discord.js";
 
@@ -25,9 +25,11 @@ export async function react(message: Message): Promise<void> {
             if (contentType && ['image','video'].includes(contentType.split('/')[0])) hasImage = true;
         }));
 
-        if (hasImage) await message.react(getRandomLikeReaction());
+        if (hasImage) {
+            await message.react(getRandomLikeReaction());
+            await logs.logMessage(`♥️ Adding automatic heart reaction to message in <#${message.channelId}>.`);
+        }
 
-        await logs.logMessage(`♥️ Adding automatic heart reaction to message in <#${message.channelId}>.`);
         return;
     }
 
