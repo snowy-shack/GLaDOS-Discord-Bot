@@ -4,7 +4,7 @@ import * as emojiReactionHandler from "#src/functions/emojiReactionHandler.mts";
 import * as countingHandler from "#src/functions/countingHandler.mts";
 import { replyFunctions } from "#src/functions/autoResponses.mts";
 import {addLikes, addLikesToMedia, addVotes, channels} from "#src/modules/phantys_home.mts";
-import {checkMessage} from "#src/functions/detectSpam.mjs";
+import detectSpam from "#src/functions/detectSpam.mjs";
 
 /* private */ function isAdmin(message: Message) {
     const member = message.member;
@@ -16,7 +16,7 @@ import {checkMessage} from "#src/functions/detectSpam.mjs";
 export async function handleMessage(message: Message) {
     if (!message.channel.isSendable()) return;
 
-    await checkMessage(message);
+    await detectSpam.checkMessage(message);
 
     // If automatic emoji reaction should be added
     if (Object.values(channels).includes(message.channelId)

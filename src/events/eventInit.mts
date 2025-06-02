@@ -1,4 +1,3 @@
-import {Client, Events} from "discord.js";
 import ready from "#src/events/ready.mjs";
 
 import * as guildMemberUpdate  from "#src/events/discordjs/guildMemberUpdate.mjs";
@@ -11,15 +10,18 @@ import daily from "#src/events/daily.mjs";
 import {getClient} from "#src/modules/client.mjs";
 
 export async function init(): Promise<void> {
-    const client = await getClient();
-
-    client.once(Events.ClientReady, () => ready.execute(client));
+    console.log("Initializing events...");
+    const client = getClient();
 
     guildMemberUpdate.init(client);
     interactionCreate.init(client);
     messageCreate.init(client);
     messageReactionAdd.init(client);
     guildMemberAdd.init(client);
+
+    await ready.run();
+
+    console.log("Events initialized.");
 }
 
 // Do daily tasks every day at 10 AM Amsterdam Time

@@ -21,8 +21,8 @@ const rest = new REST().setToken(process.env.TOKEN);
 
 export async function register() {
     try {
-        const client = await getClient();
-        console.log(`Started refreshing ${commands.length} slash commands.`);
+        const client = getClient();
+        console.log(`Registering ${commands.length} slash commands.`);
 
         const data = await rest.put( // @ts-ignore
             Routes.applicationGuildCommands(client.application.id, guildID),

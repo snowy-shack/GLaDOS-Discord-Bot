@@ -1,7 +1,10 @@
 import {GatewayIntentBits, Partials, Client, ActivityType} from "discord.js";
 
-export async function getClient(): Promise<Client> {
-    const client = new Client({
+let client: Client;
+
+async function init() {
+    console.log("Initializing client...");
+    client = new Client({
         intents: [
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMembers,
@@ -24,10 +27,12 @@ export async function getClient(): Promise<Client> {
             }]
         }
     });
-
     await client.login(process.env.TOKEN);
+    console.log("Client initialized and logged in.");
+}
 
+export function getClient(): Client {
     return client;
 }
 
-export default await getClient();
+export default { init }

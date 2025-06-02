@@ -1,5 +1,5 @@
 import {getChannel} from "#src/modules/discord.mts";
-import {channels, rolesMarkDown} from "#src/consts/phantys_home.mts";
+import {channels, rolesMarkDown} from "#src/modules/phantys_home.mts";
 import {embed, InteractionReplyEmbed, MessageReplyEmbed} from "#src/factories/styledEmbed.mjs";
 import colors from "#src/consts/colors.mts";
 import {GuildBasedChannel} from "discord.js";

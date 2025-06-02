@@ -1,13 +1,13 @@
 import * as logs from "#src/modules/logs.mts";
-import {incrementAndDM} from "#src/functions/boosterHandler.mts";
-import {checkBirthdays} from "#src/functions/birthdayHandler.mts";
-import {refreshScamURLs} from "#src/functions/detectSpam.mjs";
+import boosterHandler from "#src/functions/boosterHandler.mts";
+import birthdayHandler from "#src/functions/birthdayHandler.mts";
+import detectSpam from "#src/functions/detectSpam.mjs";
 
 async function run() {
     try {
-        void incrementAndDM();
-        void checkBirthdays();
-        void refreshScamURLs();
+        void boosterHandler.incrementAndDM();
+        void birthdayHandler.checkBirthdays();
+        void detectSpam.refreshScamURLs();
     } catch (error: any) {
         await logs.logError("running daily events", error);
     }

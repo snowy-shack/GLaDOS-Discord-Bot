@@ -1,20 +1,20 @@
 import { getClient } from "#src/modules/client.mts";
-import {guildID} from "#src/consts/phantys_home.mts";
 import {flags, setFlag} from "#src/agents/flagAgent.mts";
 import { Guild } from "discord.js";
+import {guildID} from "#src/modules/phantys_home.mjs";
 
 let phantys_home: Guild;
 
-/* private */ async function init() {
-    const client = await getClient();
+async function init() {
+    console.log("Initializing discord server...");
+    const client = getClient();
 
     phantys_home = await client.guilds.fetch(guildID);
 
     await phantys_home.channels.fetch();
     await phantys_home.members.fetch();
+    console.log("Discord data initialized.")
 }
-
-await init();
 
 export function getGuild() {
     return phantys_home;
@@ -28,7 +28,7 @@ export async function getMember(id: string) {
     try {
         return await phantys_home.members.fetch(id);
     } catch {
-        setFlag(id, flags.Ghost);
+        void setFlag(id, flags.Ghost);
         return undefined;
     }
 }
@@ -53,3 +53,5 @@ export async function getRoleUsers(id: string): Promise<string[] | null> {
 
     return role.members.map(member => member.user.id); // TODO: This mapping shouldn't occur here, but rather at usages that need it in this format.
 }
+
+export default { init }

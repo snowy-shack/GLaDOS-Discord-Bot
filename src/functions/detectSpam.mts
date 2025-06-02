@@ -1,14 +1,10 @@
 import logs from "#src/modules/logs.mjs";
 import {Message, TextChannel} from "discord.js";
 import {userLockup} from "#src/actions/userLockup.mjs";
-import {getClient} from "#src/modules/client.mjs";
 
 let scamLinks: Set<string> = new Set();
 
-await getClient();
-void refreshScamURLs();
-
-export async function refreshScamURLs() {
+async function refreshScamURLs() {
     const linksResponse = await fetch("https://raw.githubusercontent.com/Discord-AntiScam/scam-links/refs/heads/main/list.json");
     const json: string[] = await linksResponse.json();
     scamLinks = new Set(json);
@@ -16,7 +12,7 @@ export async function refreshScamURLs() {
     await logs.logMessage(`⚔️ Scam URLs refreshed. ${scamLinks.size} links found.`);
 }
 
-export async function checkMessage(message: Message) {
+async function checkMessage(message: Message) {
     let linkRegEx = /https?:\/\/(www\.)?([^\/]+)\/.*$/; // Extracts domains from links present in the message.
     const linkMatches = message.content.match(linkRegEx);
 
@@ -27,3 +23,5 @@ export async function checkMessage(message: Message) {
             await userLockup(message.member, message.channel);
     }
 }
+
+export default { refreshScamURLs, checkMessage };
