@@ -17,9 +17,8 @@ async function lock(userId: string) {
             new Promise<void>((resolve) =>
                 setTimeout(() => {
                     unlock(userId);
-                    logs.logWarning(`⚠️Had to force unlock for user ${userId}`);
                     resolve();
-                }, 1000) // 1 second
+                }, 500) // .5 second
             )
         ]);
     }
