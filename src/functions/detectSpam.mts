@@ -1,26 +1,37 @@
 import logs from "#src/modules/logs.mjs";
 import {Message, TextChannel} from "discord.js";
 import {userLockup} from "#src/actions/userLockup.mjs";
+import {flags, getFlag} from "#src/agents/flagAgent.mjs";
 
 let scamLinks: Set<string> = new Set();
 
 async function refreshScamURLs() {
     const linksResponse = await fetch("https://raw.githubusercontent.com/Discord-AntiScam/scam-links/refs/heads/main/list.json");
     const json: string[] = await linksResponse.json();
+
+    json.push("discord.gg"); // Include Discord invites
+
     scamLinks = new Set(json);
 
     await logs.logMessage(`⚔️ Scam URLs refreshed. ${scamLinks.size} links found.`);
 }
 
 async function checkMessage(message: Message) {
-    let linkRegEx = /https?:\/\/(www\.)?([^\/]+)\/.*$/; // Extracts domains from links present in the message.
+    if (await getFlag(message.author.id, flags.Security.Whitelisted)) return;
+
+    let linkRegEx = /^(https?:\/\/)?(www\.)?([^\/\s]+)(\/.*)?$/; // Extracts domains from links present in the message.
     const linkMatches = message.content.match(linkRegEx);
 
-    if (linkMatches) {
-        const domain = linkMatches[2];
-
-        if (scamLinks.has(domain) &&  message.member && message.channel instanceof TextChannel)
+    for (let domain in linkMatches) {
+        domain = linkMatches[+domain];
+        if (scamLinks.has(domain) && message.member && message.channel instanceof TextChannel) {
             await userLockup(message.member, message.channel);
+            try {
+                await message.delete(); // Try to delete the message
+            } catch (e) {
+                await logs.logWarning(`Could not delete suspected spam message, ${e}`);
+            }
+        }
     }
 }
 

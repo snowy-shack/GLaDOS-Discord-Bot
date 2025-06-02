@@ -40,7 +40,7 @@ async function manageSillyRole(oldMember: GuildMember|PartialGuildMember, member
         }
 
     } catch (error: any) {
-        await logs.logError("managing Silly role", error);
+        await logs.logError(`managing Silly role for ${member}`, error);
     }
 }
 

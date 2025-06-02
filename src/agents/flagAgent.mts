@@ -10,11 +10,24 @@ const userLocks = new Map<string, Promise<void>>();
 const userLockKeys = new Map<string, Function>();
 
 async function lock(userId: string) {
-    await userLocks.get(userId);
-    const lock: Promise<void> = new Promise((resolve) =>
+    const lock = userLocks.get(userId);
+    if (lock) {
+        await Promise.race([
+            lock,
+            new Promise<void>((resolve) =>
+                setTimeout(() => {
+                    unlock(userId);
+                    logs.logWarning(`⚠️Had to force unlock for user ${userId}`);
+                    resolve();
+                }, 1000) // 1 second
+            )
+        ]);
+    }
+
+    const newLock: Promise<void> = new Promise((resolve) =>
         userLockKeys.set(userId, resolve)
     );
-    userLocks.set(userId, lock);
+    userLocks.set(userId, newLock);
 }
 
 function unlock(userId: string) {
@@ -36,6 +49,7 @@ export const flags = {
     Ghost: "ghost",
     Security: {
         LockedUp:     "security.lockedUp",
+        Whitelisted:  "security.whitelisted",
     },
     Booster: {
         BoostingDays: "booster.boostingDays",
@@ -95,7 +109,10 @@ export async function getAllFlagValues(key: string) {
 }
 
 export async function getFlag(userId: string, key: string) {
-    return (await getUserData(userId))[key];
+    let value = (await getUserData(userId))[key];
+    if (["true", "false"].includes(value)) value = value === "true"; // Replace "<bool>" with actual booleans
+
+    return value;
 }
 
 export async function getUserData(userId: string) {
@@ -109,9 +126,10 @@ export async function getUserData(userId: string) {
     } catch (error: any) {
         if (error?.code !== "ENOENT")
             await logs.logError(`getting user flags for user ${userId}`, error);
+    } finally {
+        unlock(userId); // Unlock the file again
     }
 
-    unlock(userId); // Unlock the file again
     return {};
 }
 

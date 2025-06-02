@@ -9,9 +9,10 @@ import colors from "#src/consts/colors.mjs";
 import {getChannel} from "#src/modules/discord.mjs";
 
 
-export async function userLockup(member: GuildMember, channel: TextChannel) {
+export async function userLockup(member: GuildMember, channel: TextChannel|null) {
     try {
-        if (await getFlag(member.user.id, flags.Security.LockedUp)) return;
+        const alreadyLockedUp = await getFlag(member.user.id, flags.Security.LockedUp);
+        if (alreadyLockedUp) return;
 
         // Mark the user as locked up
         await setFlag(member.user.id, flags.Security.LockedUp, "true");
@@ -19,6 +20,8 @@ export async function userLockup(member: GuildMember, channel: TextChannel) {
         // Auto-release the user after 6 hours
         await member.timeout(DAY_IN_MS / 4, "Suspicious URL detected");
         setTimeout(() => userUnlock(member), DAY_IN_MS / 4);
+
+        void logs.logWarning(`🚫Locked up user ${member}`);
 
         await dmUser(member.user, MessageReplyEmbed(
             await stringAgent.string("server.notification.locked_up"),
@@ -28,14 +31,14 @@ export async function userLockup(member: GuildMember, channel: TextChannel) {
         ));
 
         const mod_chat = await getChannel(channels.ModeratorChat);
-        if (mod_chat?.isSendable()) {
+        if (channel && mod_chat?.isSendable()) {
             await mod_chat.send({
                 content: `${rolesMarkDown.Moderator}`,
                 embeds: [embed(
                     await stringAgent.templateString("server.security.user_locked_up", [
                         member.user.id,
                         channel.id,
-                        `${(new Date().getTime() / 1000).toFixed(0)}`,
+                        `${(new Date().getTime() / 1000 + DAY_IN_MS / 4 / 1000).toFixed(0)}`,
                     ]),
                     "spam",
                     "Phanty's Home Spam prevention",

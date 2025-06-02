@@ -1,8 +1,8 @@
 {
     "server.notification.spam_kicked": "## Hey! \nWe detected suspicious behavior of your Discord account. Please ensure you haven't been hacked, and if you have, **make sure to change your password**.\n\nOnce you've assured you have full access over your account, **we invite you to rejoin**!\n## https://discord.gg/portalmod\n-# Please ensure your account is secure before joining back, or you will risk a ban",
-    "server.notification.locked_up": "## Hey! \nWe detected suspicious behavior of your Discord account in our server. To prevent harmful activity, **you have been temporarily timed out until a moderator can review your account**. Please ensure you haven't been hacked, and if you have, **change your password**..\n\nApologies for the inconvenience and thank you for your understanding!",
+    "server.notification.locked_up": "## Hey! \nWe (automatically) detected suspicious behavior of your Discord account in our server. To prevent harmful activity, **you have been temporarily timed out until a moderator can review your account**. Please ensure you haven't been hacked, and if you have, **change your password**..\n\nApologies for the inconvenience and thank you for your understanding!",
 
-    "server.security.user_locked_up": "## Hey! \nI saw <@%1%> sending suspicious links in <#%2%>. Could you please investigate? They're timed out until <t:%3%:t>.",
+    "server.security.user_locked_up": "## Hey! \nI saw <@%1%> sending suspicious links in <#%2%>. Could you please investigate? They're timed out until <t:%3%:t>.\n### Make sure to use `/moderator unlock` to remove the locked up status, or `/moderator spam-kick` if the behavior is indeed suspicious.",
 
     "birthday.add.syntax":    "I wasn't able to understand that description! Please enter your birthday in the **`dd-mm[-yyyy]`** format, and make sure **it's a valid date**!",
     "birthday.add.duplicate": "You already have your birthday set to **%1%**! For the time being, **you can't change your birthday**. If you made a mistake, please DM **`@phantomeye`**.",

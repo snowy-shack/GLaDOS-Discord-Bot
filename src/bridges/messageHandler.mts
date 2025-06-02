@@ -16,7 +16,7 @@ import detectSpam from "#src/functions/detectSpam.mjs";
 export async function handleMessage(message: Message) {
     if (!message.channel.isSendable()) return;
 
-    await detectSpam.checkMessage(message);
+    void detectSpam.checkMessage(message); // Check if this message contains a suspicious link
 
     // If automatic emoji reaction should be added
     if (Object.values(channels).includes(message.channelId)
