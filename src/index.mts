@@ -1,3 +1,4 @@
+console.log("index.mts running");
 import "#src/envloader.mts";
 import logs from "#src/modules/logs.mts";
 
@@ -23,4 +24,5 @@ process.on('uncaughtException', (error) => { // Error logging
     }
 });
 
+console.log("Finished imports, starting automatic tasks");
 await init();
