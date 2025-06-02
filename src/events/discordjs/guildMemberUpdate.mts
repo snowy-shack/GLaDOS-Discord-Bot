@@ -36,7 +36,7 @@ async function manageSillyRole(oldMember: GuildMember|PartialGuildMember, member
         // Remove the role if their username doesn't
         } else if (!containsSilly && hasSillyRole) {
             await member.roles.remove(sillyRole);
-            await logs.logMessage(`😝 Removed Silly role from <@${member.user.id}>`);
+            await logs.logMessage(`😔 Removed Silly role from <@${member.user.id}>`);
         }
 
     } catch (error: any) {
