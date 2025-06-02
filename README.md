@@ -1,15 +1,27 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.00.2`
+`Current Version: 3.01.0`
 
 # Changelog
+## Release 3.01.0 - June 2nd 2025
+### Changes
+- GLaDOS now automatically detects spam links and times users out when one is sent. The message is then deleted and moderators are notified.
+- `/kick` is now `/moderator` and includes new `lockup` and `unlock` subcommands for managing locked up users.
+- Structural changes
+- Logs are now colored for better readability.
+- Added more details to certain log calls.
+
+### Fixes
+- Added a locking system to user data management to prevent race conditions.
+- Birthday notification now has line breaks properly again.
+
 ## Release 3.00.2 - May 26th 2025
-## Changes
+### Changes
 - Moved birthday notifications to be localized.
 
 ## Release 3.00.1 - May 24th 2025
-## Changes
+### Changes
 - Now reacts 🎉 to welcome messages in exclusive chats
 - Now logs /babble uses
 - Now logs when adding a ♥️ reaction
