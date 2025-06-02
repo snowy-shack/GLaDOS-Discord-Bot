@@ -5,6 +5,7 @@ import { getVersion } from "#src/modules/version.mts";
 import * as logs from "#src/modules/logs.mts";
 
 import { fileURLToPath } from 'url';
+import chalk from "chalk";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function init() {
@@ -17,7 +18,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     await interaction.reply(logs.FormatInteractionReplyEmbed("⏬ Updating to the latest version"));
     await logs.logMessage("⏬ Downloading latest changes");
 
-    console.log('⏬ Pulling from git');
+    console.log(chalk.blueBright('⏬ Pulling from git'));
 
     exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, stderr) => {
 

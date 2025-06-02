@@ -5,6 +5,7 @@ import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
 import {delayInSeconds} from "#src/modules/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
 import {roles} from "#src/modules/phantys_home.mts";
+import chalk from "chalk";
 
 export async function incrementAndDM() {
     try {
@@ -17,7 +18,7 @@ export async function incrementAndDM() {
 
         // Incrementing boosters
         let successes = 0;
-        console.log("Updating boosting days for", boosters);
+        console.log(chalk.yellowBright("Updating boosting days for", boosters));
 
         for (const boosterId of boosters) {
             let boosterData = await getUserData(boosterId);

@@ -2,6 +2,7 @@ import { REST, Routes } from "discord.js";
 import { getCommandList } from "#src/bridges/commandHandler.mts";
 import { getClient } from "#src/modules/client.mts";
 import {guildID} from "#src/modules/phantys_home.mts";
+import chalk from "chalk";
 
 // Define the commands
 let commandList = getCommandList();
@@ -22,7 +23,7 @@ const rest = new REST().setToken(process.env.TOKEN);
 export async function register() {
     try {
         const client = getClient();
-        console.log(`Registering ${commands.length} slash commands.`);
+        console.log(chalk.gray(`Registering ${commands.length} slash commands.`));
 
         const data = await rest.put( // @ts-ignore
             Routes.applicationGuildCommands(client.application.id, guildID),
@@ -33,7 +34,7 @@ export async function register() {
         rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
         // @ts-ignore
-        console.log(`Successfully refreshed ${data.length} slash commands.`);
+        console.log(chalk.gray(`Successfully refreshed ${data.length} slash commands.`));
     } catch(error) {
         console.error(error);
     }

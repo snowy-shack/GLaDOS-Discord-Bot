@@ -5,8 +5,10 @@ import client from "#src/modules/client.mts";
 import discord from "#src/modules/discord.mts";
 import registerSlashCommands from "#src/registerSlashCommands.mts";
 import eventInit from "#src/events/eventInit.mjs";
+import flagAgent from "#src/agents/flagAgent.mjs";
 
 async function init() {
+    await flagAgent.init();
     await client.init();
     await discord.init();
     await registerSlashCommands.register();
@@ -21,5 +23,4 @@ process.on('uncaughtException', (error) => { // Error logging
     }
 });
 
-console.log("Hello cruel world");
 await init();

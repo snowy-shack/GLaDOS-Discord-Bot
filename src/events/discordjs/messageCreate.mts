@@ -7,8 +7,7 @@ export function init(client: Client): void {
     client.on(Events.MessageCreate, async (message) => {
         if (message.author.bot) return;
 
-        let wasGhost = await getFlag(message.author.id, flags.Ghost);
-        if (wasGhost) void setFlag(message.author.id, flags.Ghost, "false");
+        void setFlag(message.author.id, flags.Ghost, "false");
 
         try {
             if (message.guild) {

@@ -1,9 +1,10 @@
 import {GatewayIntentBits, Partials, Client, ActivityType} from "discord.js";
+import chalk from "chalk";
 
 let client: Client;
 
 async function init() {
-    console.log("Initializing client...");
+    console.log(chalk.gray("Initializing client..."));
     client = new Client({
         intents: [
             GatewayIntentBits.Guilds,
@@ -28,7 +29,7 @@ async function init() {
         }
     });
     await client.login(process.env.TOKEN);
-    console.log("Client initialized and logged in.");
+    console.log(chalk.gray("Client initialized and logged in."));
 }
 
 export function getClient(): Client {

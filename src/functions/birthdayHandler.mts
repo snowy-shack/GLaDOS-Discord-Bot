@@ -6,7 +6,7 @@ import * as logs from "#src/modules/logs.mts";
 import * as guild from "#src/modules/discord.mts";
 import * as skinForm from "#src/functions/skinFormHandler.mts";
 import * as util from "#src/modules/util.mts";
-import {flags, getAllFlagValues} from "#src/agents/flagAgent.mts";
+import {flags, getAllFlagValues, getFlag} from "#src/agents/flagAgent.mts";
 import {getChannel} from "#src/modules/discord.mts";
 import {dateToString} from "#src/modules/util.mts";
 import {GuildMember} from "discord.js";
@@ -28,7 +28,7 @@ export async function checkBirthdays() {
             await logs.logMessage(`🎉 It's <@${discord_id}>'s birthday!`);
 
             const guildMember: GuildMember | undefined = await guild.getMember(discord_id);
-            if (!guildMember) return;
+            if (!guildMember || await getFlag(guildMember.id, flags.Birthday.Unlocked)) return;
 
             await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
 

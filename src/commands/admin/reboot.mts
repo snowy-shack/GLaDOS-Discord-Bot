@@ -1,5 +1,6 @@
 import {SlashCommandBuilder, PermissionFlagsBits, CommandInteraction} from "discord.js";
 import * as logs from "#src/modules/logs.mts";
+import chalk from "chalk";
 
 
 export function init() {
@@ -11,6 +12,6 @@ export function init() {
 export async function react(interaction: CommandInteraction) {
   await interaction.reply(logs.FormatInteractionReplyEmbed("💀 Shutting down"));
   await logs.logMessage("💀 Attempting to restart");
-  console.log("💀 Shutting down after command request");
+  console.log(chalk.red("💀 Shutting down after command request"));
   process.exit();
 }

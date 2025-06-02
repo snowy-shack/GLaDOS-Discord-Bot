@@ -8,9 +8,10 @@ import * as guildMemberAdd     from "#src/events/discordjs/guildMemberAdd.mjs";
 import cron from "node-cron";
 import daily from "#src/events/daily.mjs";
 import {getClient} from "#src/modules/client.mjs";
+import chalk from "chalk";
 
 export async function init(): Promise<void> {
-    console.log("Initializing events...");
+    console.log(chalk.gray("Initializing events..."));
     const client = getClient();
 
     guildMemberUpdate.init(client);
@@ -21,7 +22,7 @@ export async function init(): Promise<void> {
 
     await ready.run();
 
-    console.log("Events initialized.");
+    console.log(chalk.gray("Events initialized."));
 }
 
 // Do daily tasks every day at 10 AM Amsterdam Time

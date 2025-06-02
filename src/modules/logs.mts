@@ -3,6 +3,7 @@ import {channels, rolesMarkDown} from "#src/modules/phantys_home.mts";
 import {embed, InteractionReplyEmbed, MessageReplyEmbed} from "#src/factories/styledEmbed.mjs";
 import colors from "#src/consts/colors.mts";
 import {GuildBasedChannel} from "discord.js";
+import chalk from "chalk";
 
 /* private */ async function getLogChannel(): Promise<GuildBasedChannel | null | undefined> {
     return await getChannel(channels.Logs);
@@ -17,7 +18,7 @@ export function FormatInteractionReplyEmbed(message: string) {
 }
 
 export async function logWarning(message: string) {
-    console.log(`[WARN]: ${message}`);
+    console.log(chalk.red(`[WARN]: ${message}`));
     const logChannel = await getLogChannel();
     if (!logChannel || !logChannel.isTextBased()) return;
 
@@ -25,7 +26,7 @@ export async function logWarning(message: string) {
 }
 
 export async function logMessage(message: string) {
-    console.log(`[LOGS]: ${message}`);
+    console.log(chalk.blueBright(`[LOGS]: ${message}`));
 
     const logChannel = await getLogChannel();
     if (!logChannel || !logChannel.isTextBased()) return;

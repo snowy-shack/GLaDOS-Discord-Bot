@@ -2,18 +2,19 @@ import { getClient } from "#src/modules/client.mts";
 import {flags, setFlag} from "#src/agents/flagAgent.mts";
 import { Guild } from "discord.js";
 import {guildID} from "#src/modules/phantys_home.mjs";
+import chalk from "chalk";
 
 let phantys_home: Guild;
 
 async function init() {
-    console.log("Initializing discord server...");
+    console.log(chalk.gray("Initializing discord server..."));
     const client = getClient();
 
     phantys_home = await client.guilds.fetch(guildID);
 
     await phantys_home.channels.fetch();
     await phantys_home.members.fetch();
-    console.log("Discord data initialized.")
+    console.log(chalk.gray("Discord data initialized."));
 }
 
 export function getGuild() {

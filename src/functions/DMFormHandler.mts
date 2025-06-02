@@ -55,7 +55,7 @@ export async function replyToDM(message: Message) {
             return;
         }
 
-        void setFlag(message.author.id, flags.Booster.Unlocked, "true");
+        void setFlag(message.author.id, `${skinType}.unlocked`, "true");
         void setFlag(message.author.id, flags.MinecraftUUID, uuidGot);
 
         let skinID = gun_skins[capitalize(skinType)].id;

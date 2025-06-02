@@ -6,9 +6,31 @@ import * as logs from "#src/modules/logs.mts";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const USERS_DIR = path.join(__dirname, "../../userData");
 
-try {
-    await promises.mkdir(USERS_DIR);
-} catch (e) {}
+const userLocks = new Map<string, Promise<void>>();
+const userLockKeys = new Map<string, Function>();
+
+async function lock(userId: string) {
+    await userLocks.get(userId);
+    const lock: Promise<void> = new Promise((resolve) =>
+        userLockKeys.set(userId, resolve)
+    );
+    userLocks.set(userId, lock);
+}
+
+function unlock(userId: string) {
+    const resolve = userLockKeys.get(userId);
+    if (resolve) {
+        resolve();
+        userLocks.delete(userId);
+        userLockKeys.delete(userId);
+    }
+}
+
+async function init() {
+    try {
+        await promises.mkdir(USERS_DIR);
+    } catch (ignored) {}
+}
 
 export const flags = {
     Ghost: "ghost",
@@ -79,6 +101,8 @@ export async function getFlag(userId: string, key: string) {
 export async function getUserData(userId: string) {
     const userFile = path.join(USERS_DIR, `${userId}.json`);
 
+    await lock(userId); // Lock the file to prevent race condition editing.
+
     try {
         const fileData = await promises.readFile(userFile, "utf8");
         return JSON.parse(fileData);
@@ -87,21 +111,29 @@ export async function getUserData(userId: string) {
             await logs.logError(`getting user flags for user ${userId}`, error);
     }
 
+    unlock(userId); // Unlock the file again
     return {};
 }
 
 /* private */ async function saveUserData(userId: string, data: string) {
     const userFile = path.join(USERS_DIR, `${userId}.json`);
 
+    await lock(userId); // Lock the file to prevent race condition editing.
+
     await promises.writeFile(
         userFile,
         JSON.stringify(data, null, 2),
         "utf8"
     );
+
+    unlock(userId); // Unlock the file again
 }
 
 export async function setFlag(userId: string, key: string, value = "true") {
     const userData = await getUserData(userId);
+
+    // If value is already so, don't replace it
+    if (userData[key] == value) return;
 
     // Set the flag
     userData[key] = value;
@@ -168,3 +200,5 @@ export async function popEntry(userId: string, key: string) {
         await logs.logError(`popping user entry for user '${userId}' and key '${key}'`, error);
     }
 }
+
+export default { init };
