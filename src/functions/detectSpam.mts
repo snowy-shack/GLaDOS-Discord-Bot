@@ -25,7 +25,7 @@ async function checkMessage(message: Message) {
     for (let domain in linkMatches) {
         domain = linkMatches[+domain];
         if (scamLinks.has(domain) && message.member && message.channel instanceof TextChannel) {
-            await userLockup(message.member, message.channel);
+            await userLockup(message.member, message.channel, message.content);
             try {
                 await message.delete(); // Try to delete the message
             } catch (e) {

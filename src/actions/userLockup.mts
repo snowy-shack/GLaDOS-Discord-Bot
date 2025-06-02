@@ -9,7 +9,7 @@ import colors from "#src/consts/colors.mjs";
 import {getChannel} from "#src/modules/discord.mjs";
 
 
-export async function userLockup(member: GuildMember, channel: TextChannel|null) {
+export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
     try {
         const alreadyLockedUp = await getFlag(member.user.id, flags.Security.LockedUp);
         if (alreadyLockedUp) return;
@@ -39,6 +39,7 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null)
                         member.user.id,
                         channel.id,
                         `${(new Date().getTime() / 1000 + DAY_IN_MS / 4 / 1000).toFixed(0)}`,
+                        message ?? "  * unknown *  "
                     ]),
                     "spam",
                     "Phanty's Home Spam prevention",
