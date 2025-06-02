@@ -83,7 +83,8 @@ export async function getUserData(userId: string) {
         const fileData = await promises.readFile(userFile, "utf8");
         return JSON.parse(fileData);
     } catch (error: any) {
-        if (error?.code !== "ENOENT") await logs.logError("getting user flags", error);
+        if (error?.code !== "ENOENT")
+            await logs.logError(`getting user flags for user ${userId}`, error);
     }
 
     return {};
@@ -109,7 +110,7 @@ export async function setFlag(userId: string, key: string, value = "true") {
         await saveUserData(userId, userData);
         console.log(`Set "${key}" for user ${userId} to`, value);
     } catch (error: any) {
-        await logs.logError("setting user flags", error);
+        await logs.logError(`setting user flags for user '${userId}', key '${key}' and value '${value}'`, error);
     }
 }
 
@@ -127,7 +128,7 @@ export async function removeFlag(userId: string, key: string) {
             console.log(`Key "${key}" not found for user ${userId}`);
         }
     } catch (error: any) {
-        await logs.logError("removing user flag", error);
+        await logs.logError(`removing user flag for user '${userId}', key '${key}'`, error);
     }
 }
 
@@ -137,7 +138,7 @@ export async function addEntry(userId: string, key: string, value: string) {
 
         if (!Array.isArray(userData[key])) {
             // noinspection ExceptionCaughtLocallyJS
-            throw Error("Tried adding entry to non-array");
+            throw Error(`Tried adding entry to non-array for user '${userId}'`);
         }
 
         userData[key] = userData[key].push(value);
@@ -146,7 +147,7 @@ export async function addEntry(userId: string, key: string, value: string) {
         console.log(`Added \`${value}\` to "${key}" for user ${userId}`);
 
     } catch (error: any) {
-        await logs.logError("adding user entry", error);
+        await logs.logError(`adding user entry for user '${userId}', and '${key}', and value '${value}'`, error);
     }
 }
 
@@ -164,6 +165,6 @@ export async function popEntry(userId: string, key: string) {
 
         return entry;
     } catch (error: any) {
-        await logs.logError("popping user entry", error);
+        await logs.logError(`popping user entry for user '${userId}' and key '${key}'`, error);
     }
 }
