@@ -1,5 +1,7 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
+import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
+import {delayInSeconds, trimString} from "#src/modules/util.mjs";
 
 export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
 
@@ -18,9 +20,21 @@ function factorial(message: Message) {
     return false;
 }
 
-function glados(message: Message) {
+async function glados(message: Message) {
     if (hasWord("glados", message.content)) {
-        message.reply(voiceLines[Math.floor(Math.random() * voiceLines.length)]);
+        if (Math.random() < 0.5) {
+            const resp = await Promise.race<string | null>([
+                getGPTResponse(message),
+                new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
+            ]);
+
+            if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
+                await message.reply(trimString(resp, 1900, false))
+                return true;
+            }
+        }
+
+        await message.reply(voiceLines[Math.floor(Math.random() * voiceLines.length)]);
         return true;
     }
     return false;

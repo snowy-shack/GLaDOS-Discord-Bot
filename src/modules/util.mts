@@ -10,7 +10,7 @@ export const DAY_IN_MS = 86400000;
  * await delayInMilliseconds(200);
  */
 export function delayInMilliseconds(time: number) {
-    return new Promise(resolve => setTimeout(resolve, time));
+    return new Promise(resolve => setTimeout(() => resolve(null), time));
 }
 
 /**
@@ -46,8 +46,8 @@ export function delayInMinutes(time: number) {
  * @param length - The maximum length of the resulting string including the ellipsis.
  * @return The trimmed string, potentially appended with an ellipsis if trimmed.
  */
-export function trimString(input: string, length: number) {
-    return input.length > length ? input.slice(0, length - 1) + '…' : input;
+export function trimString(input: string, length: number, includeDots = true) {
+    return input.length > length ? input.slice(0, length - 1) + (includeDots ? '…' : '') : input;
 }
 
 /**

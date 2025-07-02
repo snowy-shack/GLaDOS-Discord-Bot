@@ -28,7 +28,7 @@ export async function handleMessage(message: Message) {
 
     // Try all replies until one succeeds
     for (const replyFunction of replyFunctions) {
-        if (replyFunction(message)) break;
+        if (await replyFunction(message)) break;
     }
 
     if (message.channelId === channels.Counting) {
