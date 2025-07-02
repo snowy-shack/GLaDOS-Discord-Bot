@@ -22,7 +22,7 @@ function factorial(message: Message) {
 
 async function glados(message: Message) {
     if (hasWord("glados", message.content)) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.05) {
             const resp = await Promise.race<string | null>([
                 getGPTResponse(message),
                 new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
