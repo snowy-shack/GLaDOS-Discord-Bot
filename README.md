@@ -1,9 +1,13 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.01.0`
+`Current Version: 3.02.0`
 
 # Changelog
+## Release 3.02.0 - July 2nd 2025
+### Changes
+- GLaDOS now has a chance to answer intelligently.
+
 ## Release 3.01.0 - June 2nd 2025
 ### Changes
 - GLaDOS now automatically detects spam links and times users out when one is sent. The message is then deleted and moderators are notified.
