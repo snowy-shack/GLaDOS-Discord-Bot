@@ -25,7 +25,7 @@ async function glados(message: Message) {
         if (true) { // TODO: Store API failures for quicker fallback
             const resp = await Promise.race<string | null>([
                 getGPTResponse(message),
-                new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
+                new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
             ]);
 
             if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
