@@ -23,10 +23,12 @@ function factorial(message: Message) {
 async function glados(message: Message) {
     if (hasWord("glados", message.content)) {
         if (true) { // TODO: Store API failures for quicker fallback
-            const resp = await Promise.race<string | null>([
-                getGPTResponse(message),
-                new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
-            ]);
+            //const resp = await Promise.race<string | null>([
+            //    getGPTResponse(message),
+            //    new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
+            // ]);
+
+            const response = await getGPTResponse(message);
 
             if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
                 await message.reply(trimString(resp, 1900, false))
