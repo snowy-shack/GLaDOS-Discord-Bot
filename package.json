@@ -24,7 +24,7 @@
         "node-cron": "^3.0.3",
         "node-fetch": "^2.7.0",
         "node-ts": "^8.0.0",
-        "openai": "^5.8.2",
+        "openai": "^5.23.2",
         "pg": "^8.11.4",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",

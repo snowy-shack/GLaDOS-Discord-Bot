@@ -1,7 +1,8 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
 import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
-import {delayInSeconds, trimString} from "#src/modules/util.mjs";
+import {delayInSeconds, getAuthorName, trimString} from "#src/modules/util.mjs";
+import {getClient} from "#src/modules/client.mts";
 
 export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
 
@@ -21,19 +22,21 @@ function factorial(message: Message) {
 }
 
 async function glados(message: Message) {
-    if (hasWord("glados", message.content)) {
-        if (true) { // TODO: Store API failures for quicker fallback
-            //const resp = await Promise.race<string | null>([
-            //    getGPTResponse(message),
-            //    new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
-            // ]);
+    if (hasWord("glados", message.content) || message.mentions.has(getClient().user ?? '') ) {
+        const scanMessages = (await message.channel.messages.fetch({ limit: 10 })).reverse();
 
-            const resp = await getGPTResponse(message);
+        const test = scanMessages.map((m, _) =>
+                String(getAuthorName(m) + ": " + m.content)
+        ).join(", \n");
 
-            if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
-                await message.reply(trimString(resp, 1900, false))
-                return true;
-            }
+        const resp = await Promise.race<string | null>([
+           getGPTResponse(test),
+           new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
+        ]);
+
+        if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
+            await message.reply(trimString(resp, 1900, false))
+            return true;
         }
 
         await message.reply(voiceLines[Math.floor(Math.random() * voiceLines.length)]);

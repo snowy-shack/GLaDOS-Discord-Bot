@@ -1,3 +1,5 @@
+import {Message} from "discord.js";
+
 export const DAY_IN_MS = 86400000;
 
 /**
@@ -155,4 +157,12 @@ export function isValidDate(day: number, month: number, year: number) {
  */
 export function capitalize(input: string) {
     return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
+/**
+ * Get the name of the author of a message
+ * @param message - Input message
+ */
+export function getAuthorName(message: Message) {
+    return message.member?.nickname ?? message.member?.displayName ?? "unknown";
 }
