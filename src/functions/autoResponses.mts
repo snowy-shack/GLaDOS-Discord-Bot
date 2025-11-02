@@ -28,7 +28,7 @@ async function glados(message: Message) {
             //    new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
             // ]);
 
-            const response = await getGPTResponse(message);
+            const resp = await getGPTResponse(message);
 
             if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
                 await message.reply(trimString(resp, 1900, false))
