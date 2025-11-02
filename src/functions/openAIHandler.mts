@@ -11,7 +11,7 @@ const prompt = atob(String(process.env.PROMPT64));
 export async function getGPTResponse(message: Message): Promise<string | null> {
     try {
         const completion = openai.chat.completions.create({
-            model: "deepseek/deepseek-chat-v3-0324:free",
+            model: "google/gemini-2.0-flash-exp:free",
             store: true,
             messages: [
                 {"role": "user", "content": prompt.replace(
