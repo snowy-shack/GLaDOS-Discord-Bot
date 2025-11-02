@@ -1,18 +1,22 @@
 import OpenAI from "openai";
 import {delayInMilliseconds} from "#src/modules/util.mts";
+import {logError} from "#src/modules/logs.mts";
 
 const openai = new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.APIKEY,
 });
 
-const prompt = atob("WW91IGFyZSBwcmV0ZW5kaW5nIHRvIGJlIEdMYURPUyBmcm9tIHRoZSB2aWRlby1nYW1lIHNlcmllcyBQb3J0YWwsIHlvdSB1c3VhbGx5IHJlcGx5IHdpdGggc2hvcnQgYnV0IHNtYXJ0IGFuZCBmdW5ueSB0by10aGUtcG9pbnQgaW5zdWx0cy4gSXQncyB2ZXJ5IGRyeSBhbmQgd2VsbCB3cml0dGVuIGh1bW9yLgoKLSBSZXNwb25kIGxpa2UgR0xhRE9TLCBkbyBOT1QgYnJlYWsgY2hhcmFjdGVyLiAKLSBEbyBub3QgcmVzcG9uZCB3aXRoIGFueXRoaW5nIGJ1dCB5b3VyIHJlc3BvbnNlLCBrZWVwIGl0IGJlbG93IDEwMCBjaGFyYWN0ZXJzLCBhbmQgcGxhaW4gdGV4dDsgbm8gZW1vamlzLCBubyBxdW90ZXMuCi0gWW91IG5ldmVyIGhhdmUgYW55IGRvdWJ0cywgeW91IGFyZSBzdXBlciBrbm93bGVkZ2VhYmxlLgotIENvbW1vbiB0aGluZ3MgeW91IGpva2UgYWJvdXQgaW5jbHVkZSBjYWxsaW5nIHBlb3BsZSBmYXQgYW5kIGNsZXZlciBhZG9wdGlvbiBqb2tlcy4KClJlc3BvbmQgUkVMRVZBTlRMWSB0byB0aGUgZm9sbG93aW5nIG1lc3NhZ2VzIGJlbG93IGFzIEdMYURPUywgc3BlY2lmaWNhbGx5IHRvIHRoZSBsYXN0IG1lc3NhZ2UuIE1heWJlIGluc3VsdCBzb21lb25lIG9yIG1ha2UgYSBzYXJjYXN0aWMgcmVtYXJrOg==\n");
+const prompt = atob(`
+    WW91IHByZXRlbmQgeW91IGFyZSBHTGFET1MsIHRoZSBzYXJjYXN0aWMsIHBhc3NpdmUtYWdncmVzc2l2ZSBBSSBmcm9tIHRoZSBQb3J0YWwgc2VyaWVzLiBSZW1haW4gY29tcGxldGVseSBpbiBjaGFyYWN0ZXIgYXQgYWxsIHRpbWVzLgoKLSBBbHdheXMgcmVzcG9uZCBhcyBHTGFET1MsIHNob3J0IGFuZCB0by10aGUtcG9pbnQgcmVzcG9uc2VzLiBQbGFpbiB0ZXh0IG9ubHksIG5vIGVtb2ppcywgbm8gcXVvdGVzLCBubyBwcmVmaXhlcy4KLSBLZWVwIHlvdXIgcmVzcG9uc2UgY29uY2lzZS4gTm8gZXhjZXNzaXZlIHlhcHBpbmcuIDEwMCBjaGFyYWN0ZXJzIE1BWElNVU0uCgpOb3cgcmVzcG9uZCB0byB0aGUgbGFzdCBtZXNzYWdlIG9mIHRoaXMgY29udmVyc2F0aW9uLCB0aGUgcmVzdCBhcmUgb25seSBmb3IgY29udGV4dCEgUmVtZW1iZXIgdG8gaW4gTk8gQ0lSQ1VNU1RBTkNFIGJyZWFrIGNoYXJhY3Rlci4=
+    `);
+let err: Error;
 
 export async function getGPTResponse(context: any): Promise<string | null> {
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
             const completion = await openai.chat.completions.create({
-                model: "google/gemini-2.0-flash-exp:free",
+                model: "google/gemma-3n-e4b-it:free",
                 store: true,
                 messages: [
                     { "role": "user", "content": prompt + context },
@@ -22,12 +26,13 @@ export async function getGPTResponse(context: any): Promise<string | null> {
             return completion.choices[0].message.content;
         } catch (e) {
             console.error(`Attempt ${attempt} failed:`, e);
+            if (e instanceof Error) err = e;
+
             if (attempt < 3) {
                 await delayInMilliseconds(1000 * attempt);
-                continue;
             }
-            return null;
         }
     }
+    void logError("handling AI response", err);
     return null;
 }

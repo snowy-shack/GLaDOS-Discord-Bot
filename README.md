@@ -6,7 +6,7 @@ Management and quality of life bot for **PortalMod** and **Phanty's Home**
 # Changelog
 ## Release 3.03.0 - November 2nd 2025
 ### Changes
-- GLaDOS now uses a different AI model, and gets 10 messages of context when responding to messages
+- GLaDOS now uses a different AI model, and gets 3 messages of context when responding to messages
 - GLaDOS now also responds when pinged, including replies
 - GLaDOS now retries 3 times when replying to messages if an error is hit, in the case of the AI model being temporarily unavailable.
 

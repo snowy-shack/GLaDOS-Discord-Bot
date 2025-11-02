@@ -23,7 +23,7 @@ function factorial(message: Message) {
 
 async function glados(message: Message) {
     if (hasWord("glados", message.content) || message.mentions.has(getClient().user ?? '') ) {
-        const scanMessages = (await message.channel.messages.fetch({ limit: 10 })).reverse();
+        const scanMessages = (await message.channel.messages.fetch({ limit: 3 })).reverse();
 
         const test = scanMessages.map((m, _) =>
                 String(getAuthorName(m) + ": " + m.content)
