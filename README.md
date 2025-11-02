@@ -1,9 +1,14 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.02.0`
+`Current Version: 3.03.0`
 
 # Changelog
+## Release 3.03.0 - November 2nd 2025
+### Changes
+- GLaDOS now uses a different AI model, and gets 10 messages of context when responding to messages
+- GLaDOS now also responds when pinged, including replies
+
 ## Release 3.02.0 - July 2nd 2025
 ### Changes
 - GLaDOS now has a chance to answer intelligently.
