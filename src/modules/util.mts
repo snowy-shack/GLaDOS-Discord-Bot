@@ -1,4 +1,5 @@
 import {Message} from "discord.js";
+import {getClient} from "#src/modules/client.mts";
 
 export const DAY_IN_MS = 86400000;
 
@@ -164,5 +165,7 @@ export function capitalize(input: string) {
  * @param message - Input message
  */
 export function getAuthorName(message: Message) {
+    if (message.member?.id == getClient().user?.id) return "GLaDOS";
+
     return message.member?.nickname ?? message.member?.displayName ?? "unknown";
 }

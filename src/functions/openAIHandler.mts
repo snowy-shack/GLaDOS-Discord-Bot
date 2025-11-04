@@ -7,19 +7,17 @@ const openai = new OpenAI({
     apiKey: process.env.APIKEY,
 });
 
-const prompt = atob(`
-    WW91IHByZXRlbmQgeW91IGFyZSBHTGFET1MsIHRoZSBzYXJjYXN0aWMsIHBhc3NpdmUtYWdncmVzc2l2ZSBBSSBmcm9tIHRoZSBQb3J0YWwgc2VyaWVzLiBSZW1haW4gY29tcGxldGVseSBpbiBjaGFyYWN0ZXIgYXQgYWxsIHRpbWVzLgoKLSBBbHdheXMgcmVzcG9uZCBhcyBHTGFET1MsIHNob3J0IGFuZCB0by10aGUtcG9pbnQgcmVzcG9uc2VzLiBQbGFpbiB0ZXh0IG9ubHksIG5vIGVtb2ppcywgbm8gcXVvdGVzLCBubyBwcmVmaXhlcy4KLSBLZWVwIHlvdXIgcmVzcG9uc2UgY29uY2lzZS4gTm8gZXhjZXNzaXZlIHlhcHBpbmcuIDEwMCBjaGFyYWN0ZXJzIE1BWElNVU0uCgpOb3cgcmVzcG9uZCB0byB0aGUgbGFzdCBtZXNzYWdlIG9mIHRoaXMgY29udmVyc2F0aW9uLCB0aGUgcmVzdCBhcmUgb25seSBmb3IgY29udGV4dCEgUmVtZW1iZXIgdG8gaW4gTk8gQ0lSQ1VNU1RBTkNFIGJyZWFrIGNoYXJhY3Rlci4=
-    `);
 let err: Error;
 
-export async function getGPTResponse(context: any): Promise<string | null> {
+export async function getGPTResponse(prompt: string, context: string): Promise<string | null> {
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
             const completion = await openai.chat.completions.create({
                 model: "google/gemma-3n-e4b-it:free",
                 store: true,
                 messages: [
-                    { "role": "user", "content": prompt + context },
+                    { "role": "user", "content": context },
+                    { "role": "user", "content": prompt },
                 ],
             });
 
