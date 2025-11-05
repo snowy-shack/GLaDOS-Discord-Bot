@@ -52,15 +52,10 @@ async function glados(message: Message) {
             ### --- end of conversation log ---
         `;
 
-
-        console.log(messages)
-
         const resp = await Promise.race<string | null>([
            getGPTResponse(gladosAIPrompt, messages),
            new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000)), // 10 seconds
         ]);
-
-        console.log("Response:" + resp)
 
         if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
             await message.reply(trimString(resp, 1900, false))
