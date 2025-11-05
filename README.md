@@ -1,9 +1,22 @@
 # GLaDOS discord.mts bot
 Management and quality of life bot for **PortalMod** and **Phanty's Home**
 
-`Current Version: 3.03.0`
+# Install
+```bash
+npm install
+
+npm run start # Uses prod.env
+npm run debug # Uses beta.env
+```
+
+`Current Version: 3.04.0`
 
 # Changelog
+## Release 3.04.0 - November 5nd 2025
+### Changes
+- GLaDOS now sanitises messages to respond to, in an attempt to reduce prompt injection, prompt was tweaked.
+- New /about command will now list information about GLaDOS.
+
 ## Release 3.03.0 - November 2nd 2025
 ### Changes
 - GLaDOS now uses a different AI model, and gets 3 messages of context when responding to messages
