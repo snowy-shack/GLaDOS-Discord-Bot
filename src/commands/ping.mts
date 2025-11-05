@@ -7,5 +7,5 @@ export function init() {
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
-    await interaction.reply(logs.FormatInteractionReplyEmbed(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
+    await interaction.reply(logs.formatMessage(`🏓 Pong! ${Date.now() - interaction.createdTimestamp}ms`));
 }

@@ -1,4 +1,4 @@
-import {ColorResolvable, HexColorString} from "discord.js";
+import {HexColorString} from "discord.js";
 
 const colors: { [key: string]: HexColorString } = {
     Primary:   "#b068a8",

@@ -47,6 +47,7 @@ export function delayInMinutes(time: number) {
  *
  * @param input - The string to be trimmed.
  * @param length - The maximum length of the resulting string including the ellipsis.
+ * @param includeDots - Whether to append … when it exceeds the given length.
  * @return The trimmed string, potentially appended with an ellipsis if trimmed.
  */
 export function trimString(input: string, length: number, includeDots = true) {

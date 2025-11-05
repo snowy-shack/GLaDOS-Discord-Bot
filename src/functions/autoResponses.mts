@@ -1,7 +1,7 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
 import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
-import {delayInSeconds, getAuthorName, trimString} from "#src/modules/util.mjs";
+import {getAuthorName, trimString} from "#src/modules/util.mjs";
 import {getClient} from "#src/modules/client.mts";
 
 export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
@@ -14,7 +14,7 @@ function factorial(message: Message) {
     }
 
     if (Number(captured[1]) <= 100) {
-        message.reply(`The factorial of ${captured[1]} is ${factorials[Number(captured[1])]}! ✨`);
+        void message.reply(`The factorial of ${captured[1]} is ${factorials[Number(captured[1])]}! ✨`);
         return true;
     }
 
@@ -70,7 +70,7 @@ async function glados(message: Message) {
 
 function calc(message: Message) {
     if (hasWord("calc", message.content)) {
-        message.reply("Calc is short for calculator btw guys, they're just using slang.");
+        void message.reply("Calc is short for calculator btw guys, they're just using slang.");
         return true;
     }
     return false;
@@ -78,7 +78,7 @@ function calc(message: Message) {
 
 function jork(message: Message) {
     if (hasWord("jorkin", message.content)) {
-        message.reply("straight up");
+        void message.reply("straight up");
         return true;
     }
     return false;
@@ -87,9 +87,9 @@ function jork(message: Message) {
 function loss(message: Message) {
     if (hasWord("loss", message.content)) {
         if (Math.random() < 0.95) {
-            message.reply("\\|  \\|\\|\n\\|\\| \\|_");
+            void message.reply("\\|  \\|\\|\n\\|\\| \\|_");
         } else {
-            message.reply("⠀⠀⠀⣴⣴⡤\n" +
+            void message.reply("⠀⠀⠀⣴⣴⡤\n" +
                 "⠀⣠⠀⢿⠇⡇⠀⠀⠀⠀⠀⠀⠀⢰⢷⡗\n" +
                 "⠀⢶⢽⠿⣗⠀⠀⠀⠀⠀⠀⠀⠀⣼⡧⠂⠀⠀⣼⣷⡆\n" +
                 "⠀⠀⣾⢶⠐⣱⠀⠀⠀⠀⠀⣤⣜⣻⣧⣲⣦⠤⣧⣿⠶\n" +
@@ -112,7 +112,7 @@ function loss(message: Message) {
 
 function marco(message: Message) {
     if (message.content.toLowerCase() === "marco") {
-        message.reply("polo");
+        void message.reply("polo");
         return true;
     }
     return false;

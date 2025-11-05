@@ -1,5 +1,5 @@
 import {Client, Events} from "discord.js";
-import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
+import {flags, setFlag} from "#src/agents/flagAgent.mjs";
 import * as messageHandler from "#src/bridges/messageHandler.mjs";
 import * as logs from "#src/modules/logs.mjs";
 

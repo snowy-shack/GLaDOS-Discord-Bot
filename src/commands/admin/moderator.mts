@@ -1,4 +1,9 @@
-import {ChatInputCommandInteraction, GuildMember, PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    GuildMember,
+    PermissionFlagsBits,
+    SlashCommandBuilder
+} from "discord.js";
 import {spamKick} from "#src/actions/spamKick.mts";
 import * as logs from "#src/modules/logs.mts";
 import {getMember} from "#src/modules/discord.mts";
@@ -44,6 +49,7 @@ export function init() {
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     switch (interaction.options.getSubcommand()) {
         case "spam-kick": {
             let member: GuildMember | undefined = await getMember(interaction.options.getUser("user")?.id ?? "");
@@ -53,17 +59,17 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
             const kicked = await spamKick(member, reason ?? "None provided");
 
-            await interaction.reply(logs.FormatInteractionReplyEmbed(kicked ? "👋 Kicked user." : "❌ Failed to kick user."))
+            await interaction.editReply(logs.formatMessage(kicked ? "👋 Kicked user." : "❌ Failed to kick user."))
         } break;
 
         case "lockup": {
             let member: GuildMember | undefined = await getMember(interaction.options.getUser("user")?.id ?? "");
             if (member) {
                 await userLockup(member, null);
-                await interaction.reply(logs.FormatInteractionReplyEmbed(`Locked up ${member}!`));
+                await interaction.editReply(logs.formatMessage(`Locked up ${member}!`));
             } else {
                 await logs.logWarning("❌Could not lock user up!");
-                await interaction.reply(logs.FormatInteractionReplyEmbed("❌Could not lock user up!"));
+                await interaction.editReply(logs.formatMessage("❌Could not lock user up!"));
             }
         } break;
 
@@ -72,10 +78,10 @@ export async function react(interaction: ChatInputCommandInteraction) {
             if (member) {
                 await member.timeout(null);
                 await setFlag(member.id, flags.Security.LockedUp, "false");
-                await interaction.reply(logs.FormatInteractionReplyEmbed(`Freed ${member}!`));
+                await interaction.editReply(logs.formatMessage(`Freed ${member}!`));
             } else {
                 await logs.logWarning("❌Could not lock user up!");
-                await interaction.reply(logs.FormatInteractionReplyEmbed("❌Could not lock user up!"));
+                await interaction.editReply(logs.formatMessage("❌Could not lock user up!"));
             }
         }
     }

@@ -3,7 +3,7 @@ import {channels, roles} from "#src/modules/phantys_home.mjs";
 import {spamKick} from "#src/actions/spamKick.mjs";
 import * as logs from "#src/modules/logs.mjs";
 import {getChannel} from "#src/modules/discord.mjs";
-import {embed} from "#src/factories/styledEmbed.mjs";
+import {templateEmbed} from "#src/factories/styledEmbed.mjs";
 import {string} from "#src/agents/stringAgent.mjs";
 
 export function init(client: Client): void {
@@ -59,11 +59,11 @@ async function welcomeUser(oldMember: GuildMember|PartialGuildMember, member: Gu
 
             void logs.logMessage(`🙋‍♂️ Welcoming <@${member.user.id}> to ${channel}.`);
 
-            const welcome_message = embed(
-                await string("server.message.exclusive.welcome"),
-                "messages.welcome",
-                "Phanty's Home exclusive chat"
-            );
+            const welcome_message = templateEmbed({
+                body: await string("server.message.exclusive.welcome"),
+                footer: "messages.welcome",
+                title: "Phanty's Home exclusive chat"
+            });
 
             channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` });
         }

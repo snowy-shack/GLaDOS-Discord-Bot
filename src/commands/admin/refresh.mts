@@ -1,4 +1,9 @@
-import {Channel, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    MessageCreateOptions,
+    PermissionFlagsBits,
+    SlashCommandBuilder
+} from "discord.js";
 import * as logs from "#src/modules/logs.mts";
 import {emojis} from "#src/modules/phantys_home.mts";
 import * as discord from "#src/modules/discord.mts";
@@ -24,20 +29,26 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
     switch (interaction.options.getSubcommand()) {
         case "faq": {
-            entries = (await import("#src/consts/faqs.json")).default;
+            entries = (await import("#src/consts/faqs.json", {
+                with: { type: "json" }
+            })).default;
             channelName = "FAQ";
             channelID = channels.Faq;
             emoji = emojis.PortalMod;
         } break;
+
         case "rules": {
-            entries = (await import("#src/consts/rules.json")).default;
+            entries = (await import("#src/consts/rules.json", {
+                with: { type: "json" }
+            })).default;
             channelName = "Rules";
             channelID = channels.Rules;
             emoji = emojis.Home;
         } break;
     }
 
-    void interaction.reply(logs.FormatInteractionReplyEmbed("🔄️ Updating " + channelName + " Channel"));
+
+    void interaction.reply(logs.formatMessage("🔄️ Updating " + channelName + " Channel"));
     void logs.logMessage("🔄️ Updating " + channelName + " Channel");
 
     // Redefine channel to the actual channel object
@@ -53,7 +64,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     const formattedDate = formatDate(dateToString(new Date()), true);
 
     setTimeout(() => {
-        channel.send(logs.FormatMessageReplyEmbed(`Last ${channelName} update: ${formattedDate}`))
+        channel.send(logs.formatMessage<MessageCreateOptions>(`Last ${channelName} update: ${formattedDate}`));
         for (let entry of entries) {
             channel.send(`# ${emoji} ` + entry.title.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + entry.description + '\n** **');
         }

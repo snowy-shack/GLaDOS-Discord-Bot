@@ -2,74 +2,105 @@ import {
     APIEmbedField,
     ColorResolvable,
     EmbedBuilder,
-    InteractionReplyOptions,
-    MessageFlags, MessageReplyOptions
+    MessageFlags,
 } from "discord.js";
 import colors from "#src/consts/colors.mts";
 import {icons} from "#src/consts/icons.mts";
 
+
 /**
- * Generates a styled Embed.
- * @param body Body text of the Embed.
- * @param footer Footer text of the Embed, excluding the timestamp.
- * @param title The title of the Embed.
- * @param color The color of the Embed, <code>colors.Primary</code> by default.
- * @param fields Column fields of the Embed.
- * @param thumbnail Image URL.
- * @returns An Embed object
+ * Generates a styled Discord Embed.
+ *
+ * @param opts Object containing embed options.
+ * @param opts.body Body text of the embed.
+ * @param opts.footer Footer text (adds timestamp if provided).
+ * @param opts.title Title text of the embed.
+ * @param opts.color Embed color (`colors.Primary` by default).
+ * @param opts.thumbnail Thumbnail image URL.
+ * @param opts.fields Array of embed fields.
+ * @param opts.icon Icon URL for the embed author section.
+ *
+ * @returns An `EmbedBuilder` instance.
  */
-export function embed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = null, fields: APIEmbedField[] = []) {
+export function templateEmbed(opts: {
+    body?: string;
+    footer?: string;
+    title?: string;
+    color?: ColorResolvable;
+    thumbnail?: string | null;
+    fields?: APIEmbedField[];
+    icon?: string;
+}) {
+    const {
+        body = "",
+        footer = "",
+        title = "",
+        color = colors.Primary,
+        thumbnail = null,
+        fields = [],
+        icon
+    } = opts;
+
     const isPortalModEmbed = title.includes("PortalMod");
-    const formTitle = { 
-        name: title, 
-        iconURL: isPortalModEmbed ? icons.portalmod : icons.home
+    const author = {
+        name: title,
+        iconURL: icon ?? (isPortalModEmbed ? icons.portalmod : icons.home)
     };
 
-    let embed = new EmbedBuilder()
-        .setColor(color);
+    const embed = new EmbedBuilder().setColor(color);
 
-    if (title  !== "") embed.setAuthor(formTitle);
+    if (title  !== "") embed.setAuthor(author);
     if (body   !== "") embed.setDescription(body);
     if (footer !== "") {
-        embed.setFooter({text: footer});
+        embed.setFooter({ text: footer });
         embed.setTimestamp();
     }
 
-    if (thumbnail !== "") embed.setThumbnail(thumbnail);
-    if (fields?.length > 0) embed.addFields(...fields);
+    if (thumbnail) embed.setThumbnail(thumbnail);
+    if (fields.length > 0) embed.addFields(...fields);
 
     return embed;
 }
 
-/**
- * Generates a message with a styled Embed.
- * @param body Body text of the Embed.
- * @param footer Footer text of the Embed, excluding the timestamp.
- * @param title The title of the Embed.
- * @param color The color of the Embed, <code>colors.Primary</code> by default.
- * @param ephemeral Whether the Embed should only be visible to this user, <code>false</code> by default.
- * @param fields Column fields of the Embed.
- * @param thumbnail Image URL.
- * @returns A message object that can directly be used with <code>.send</code> and <code>.reply</code>.
- */
-export function InteractionReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, ephemeral = false, thumbnail: string|null = "", fields: APIEmbedField[] = []): InteractionReplyOptions {
-
-    return { embeds: [ embed(body, footer, title, color, thumbnail, fields) ],
-        ...(ephemeral && {flags: MessageFlags.Ephemeral })
-    };
-}
 
 /**
- * Generates a message with a styled Embed.
- * @param body Body text of the Embed.
- * @param footer Footer text of the Embed, excluding the timestamp.
- * @param title The title of the Embed.
- * @param color The color of the Embed, <code>colors.Primary</code> by default.
- * @param fields Column fields of the Embed.
- * @param thumbnail Image URL.
- * @returns A message object that can directly be used with <code>.send</code> and <code>.reply</code>.
+ * Generates a message object containing a styled Embed.
+ *
+ * @param opts Object containing embed options.
+ * @param opts.body Body text of the embed.
+ * @param opts.footer Footer text of the embed (timestamp added automatically if provided).
+ * @param opts.title Title of the embed.
+ * @param opts.color Embed color (`colors.Primary` by default).
+ * @param opts.ephemeral Whether the message should only be visible to the user (`false` by default).
+ * @param opts.fields Array of embed fields.
+ * @param opts.thumbnail Thumbnail image URL.
+ * @param opts.icon Icon URL for the embed author section.
+ *
+ * @returns A message object that can be used directly with `.send` or `.reply`.
  */
-export function MessageReplyEmbed(body: string, footer: string, title: string, color: ColorResolvable = colors.Primary, thumbnail: string|null = "", fields = []): MessageReplyOptions {
+export function embedMessage<T>(opts: {
+    body?: string;
+    footer?: string;
+    title?: string;
+    color?: ColorResolvable;
+    ephemeral?: boolean;
+    thumbnail?: string | null;
+    fields?: APIEmbedField[];
+    icon?: string;
+}): T {
+    const {
+        body = "",
+        footer = "",
+        title = "",
+        color = colors.Primary,
+        ephemeral = false,
+        thumbnail = null,
+        fields = [],
+        icon
+    } = opts;
 
-    return { embeds: [ embed(body, footer, title, color, thumbnail, fields) ]};
+    return {
+        embeds: [templateEmbed({ body, footer, title, color, thumbnail, fields, icon })],
+        ...(ephemeral && { flags: MessageFlags.Ephemeral })
+    } as T;
 }

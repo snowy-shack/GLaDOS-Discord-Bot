@@ -1,8 +1,10 @@
 import { emojis } from "#src/modules/phantys_home.mts";
 import {Locale} from "discord-api-types/v10";
 
-export async function string(key: string, local: Locale = Locale.EnglishUS) {
-    const strings = await import(`#src/consts/strings/${local}.json`, { assert: { type: "json" } });
+export async function string(key: string, locale: Locale = Locale.EnglishUS) {
+    const strings = await import(`#src/consts/strings/${locale}.json`, {
+        with: { type: "json" }
+    });
 
     const string = strings.default[key] ? strings.default[key] : "[undefined string]";
 

@@ -1,6 +1,6 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
 import colors from "#src/consts/colors.mts";
-import {InteractionReplyEmbed} from "#src/factories/styledEmbed.mts";
+import {embedMessage} from "#src/factories/styledEmbed.mts";
 import {getVersion} from "#src/modules/version.mts";
 
 export function init() {
@@ -23,19 +23,19 @@ export async function react(interaction: ChatInputCommandInteraction) {
         + "> - `/ping`\n"
 
         + "════════════════\n"
-        + `> **Current version:** v${await getVersion()}\n`
-        + `> **Latency:** ${Date.now() - interaction.createdTimestamp}ms\n`
+        + `> Current version: **v${await getVersion()}**\n`
+        + `> Latency: **${Date.now() - interaction.createdTimestamp}ms**\n`
         + "> [Source Code](https://github.com/snowy-shack/GLaDOS-Discord-Bot) - contribute!\n"
 
 
     await interaction.reply(
-        InteractionReplyEmbed(
-            body,
-            "about",
-            "GLaDOS Discord bot",
-            colors.Primary,
-            false,
-            "https://cdn.discordapp.com/avatars/1160161136373665852/2f1baa96122224e6e78057896a16b5fe.webp?size=160",
-        )
+        embedMessage({
+            body: body,
+            footer: "about",
+            title: "GLaDOS Discord bot",
+            color: colors.Primary,
+            ephemeral: false,
+            thumbnail: "https://cdn.discordapp.com/avatars/1160161136373665852/2f1baa96122224e6e78057896a16b5fe.webp?size=160",
+        })
     );
 }

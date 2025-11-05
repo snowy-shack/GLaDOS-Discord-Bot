@@ -1,4 +1,8 @@
-import {SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction} from "discord.js";
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction
+} from "discord.js";
 import { exec } from "child_process";
 import path from "path";
 import { getVersion } from "#src/modules/version.mts";
@@ -15,7 +19,7 @@ export function init() {
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
-    await interaction.reply(logs.FormatInteractionReplyEmbed("⏬ Updating to the latest version"));
+    await interaction.reply(logs.formatMessage("⏬ Updating to the latest version"));
     await logs.logMessage("⏬ Downloading latest changes");
 
     console.log(chalk.blueBright('⏬ Pulling from git'));

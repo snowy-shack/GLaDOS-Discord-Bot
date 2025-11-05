@@ -1,7 +1,7 @@
 import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/modules/phantys_home.mts";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
 import * as logs from "#src/modules/logs.mts";
-import {Message, MessageReaction, PartialMessageReaction, TextChannel} from "discord.js";
+import {Message, MessageReaction, PartialMessageReaction} from "discord.js";
 
 /**
  * Module for automatic emoji reactions on messages

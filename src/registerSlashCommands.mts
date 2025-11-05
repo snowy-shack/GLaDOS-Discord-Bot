@@ -31,7 +31,7 @@ export async function register() {
         );
 
         // @ts-ignore
-        rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
+        await rest.put(Routes.applicationCommands(client.application.id), { body: [] }); // Clear global commands
 
         // @ts-ignore
         console.log(chalk.gray(`Successfully refreshed ${data.length} slash commands.`));

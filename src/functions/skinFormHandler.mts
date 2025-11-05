@@ -1,51 +1,102 @@
 import {
-    EmbedBuilder,
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
     User,
-    Message, ButtonInteraction
+    Message,
+    ButtonInteraction, APIEmbed
 } from "discord.js";
 import * as minecraft from "#src/modules/minecraft.mts";
 import "#src/envloader.mts";
 
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/modules/logs.mts";
-import { embed, InteractionReplyEmbed } from "#src/factories/styledEmbed.mts";
+import { embedMessage } from "#src/factories/styledEmbed.mts";
 import { string, templateString } from "#src/agents/stringAgent.mts";
-import {getChannel} from "#src/modules/discord.mts";
-import {channels, dmUser} from "#src/modules/phantys_home.mts";
+import { getChannel } from "#src/modules/discord.mts";
+import { channels, dmUser } from "#src/modules/phantys_home.mts";
+import { icons } from "#src/consts/icons.mts";
 
 const title = "PortalMod Portal Gun skin form";
 
-export async function respond(previousField: number | null, fieldValue: string, type: string = "blank") {
+export async function respond(previousField: number | null, fieldValue: string, type: string = "blank"): Promise<APIEmbed[] | undefined> {
     switch (previousField) {
-        case 0: { // Send first form message if there hasn't been prior form messages.
-            return [embed(await string(`skins.form.intro.${type}`), `field 1/2 • skin.${type}`, title)];
+        case 0: {
+            return [
+                embedMessage({
+                    body: await string(`skins.form.intro.${type}`),
+                    footer: `field 1/2 • skin.${type}`,
+                    title
+                })
+            ];
         }
-        case 1: { // Username entered
+
+        case 1: {
             const minecraftUser = await minecraft.getAccount(fieldValue);
             const uuid = minecraftUser.uuid;
             const username = minecraftUser.username;
 
-            if (!(/^[\w-]+$/.test(fieldValue)) || fieldValue.length <= 2 || fieldValue.length >= 17) { // Contains invalid characters
-                return [embed(await string("skins.form.username.error"), `field 1/2 • skin.${type} • syntax error`, title)];
-
-            } else if (uuid) {
-                const form_profile = new EmbedBuilder().setColor(colors.Secondary)
-                    .setThumbnail(minecraft.getSkin(uuid))
-                    .setDescription(`# ${username}\n(\`UUID: ${uuid}\`)`);
-
-                return [embed(await string("skins.form.confirm"), `field 2/2 • skin.${type}`, title), form_profile];
-            } else {
-                return [embed(await templateString("skins.form.username.unknown", [fieldValue]), `field 1/2 • skin.${type} • not found`, title)];
+            if (!(/^[\w-]+$/.test(fieldValue)) || fieldValue.length <= 2 || fieldValue.length >= 17) {
+                return [
+                    embedMessage({
+                        body: await string("skins.form.username.error"),
+                        footer: `field 1/2 • skin.${type} • syntax error`,
+                        title
+                    })
+                ];
             }
+
+            if (uuid) {
+                const form_profile = embedMessage<APIEmbed>({
+                    color: colors.Secondary,
+                    thumbnail: minecraft.getSkin(uuid),
+                    body: `# ${username}\n(\`UUID: ${uuid}\`)`,
+                });
+                return [
+                    embedMessage({
+                        body: await string("skins.form.confirm"),
+                        footer: `field 2/2 • skin.${type}`,
+                        title
+                    }),
+                    form_profile
+                ];
+            }
+
+            return [
+                embedMessage({
+                    body: await templateString("skins.form.username.unknown", [fieldValue]),
+                    footer: `field 1/2 • skin.${type} • not found`,
+                    title
+                })
+            ];
         }
-        case 2: { // Username confirmed
+
+        case 2: {
             switch (fieldValue) {
-                case "confirm": return [embed(await string("skins.form.finished"), "form complete", title)];
-                case "change":  return [embed(await string("skins.form.confirm.change"), `field 1/2 • skin.${type} • reset`, title)];
-                default:        return [embed(await string("skins.form.confirm.error"), `field 2/2 • skin.${type} • syntax error`, title)];
+                case "confirm":
+                    return [
+                        embedMessage({
+                            body: await string("skins.form.finished"),
+                            footer: "form complete",
+                            title
+                        })
+                    ];
+                case "change":
+                    return [
+                        embedMessage({
+                            body: await string("skins.form.confirm.change"),
+                            footer: `field 1/2 • skin.${type} • reset`,
+                            title
+                        })
+                    ];
+                default:
+                    return [
+                        embedMessage({
+                            body: await string("skins.form.confirm.error"),
+                            footer: `field 2/2 • skin.${type} • syntax error`,
+                            title
+                        })
+                    ];
             }
         }
     }
@@ -62,16 +113,11 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
 
     void logs.logMessage(`🔁 Asking ${targetUser} to DM them in ${channel}.`);
 
-    const form_failed = embed(
-        await templateString("skins.form.fail",
-            [
-                targetUser.username,
-                type
-            ]
-        ),
-        `skin.${type} • DM error (${50007})`, // Error: "Cannot send messages to this user"
+    const form_failed = embedMessage<APIEmbed>({
+        body: await templateString("skins.form.fail", [targetUser.username, type]),
+        footer: `skin.${type} • DM error (50007)`,
         title
-    );
+    });
 
     const retry = new ButtonBuilder()
         .setCustomId('functions.skinFormHandler#retry')
@@ -79,8 +125,7 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
         .setEmoji('🔄')
         .setStyle(ButtonStyle.Secondary);
 
-    const buttons = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(retry);
+    const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(retry);
 
     channel.send({ content: `${targetUser}`, embeds: [form_failed], components: [buttons] });
 }
@@ -92,9 +137,8 @@ export function skinTypeFromFooter(message: Message): string | undefined {
 }
 
 export async function buttonPressed(buttonID: string, interaction: ButtonInteraction) {
-    // If the user isn't whom the message is directed towards
     if (!interaction.message.content.includes(interaction.user.id)) {
-        await interaction.deferUpdate(); // This makes the button do nothing
+        await interaction.deferUpdate();
         return;
     }
 
@@ -105,7 +149,16 @@ export async function buttonPressed(buttonID: string, interaction: ButtonInterac
             if (await sendFormMessage(interaction.user, 0, undefined, skinType, true)) {
                 await interaction.message.delete();
             } else {
-                await interaction.reply(InteractionReplyEmbed(await string("skins.form.fail.again"), `skin.${skinType} • message error`, title, colors.Error, true));
+                await interaction.reply(
+                    embedMessage({
+                        body: await string("skins.form.fail.again"),
+                        footer: `skin.${skinType} • message error`,
+                        title,
+                        color: colors.Error,
+                        ephemeral: true,
+                        thumbnail: icons.mark
+                    })
+                );
             }
         }
     }

@@ -1,4 +1,4 @@
-import { embed } from "#src/factories/styledEmbed.mts";
+import {templateEmbed} from "#src/factories/styledEmbed.mts";
 import { gun_skins as skins } from "#src/consts/gun_skins.mts";
 import { channels } from "#src/modules/phantys_home.mts";
 import { emojis } from "#src/modules/phantys_home.mts";
@@ -32,11 +32,11 @@ export async function checkBirthdays() {
 
             await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
 
-            const happy_birthday = embed(
-                await string("birthday.notification"),
-                "birthday • yay", 
-                "Phanty's Home Birthdays"
-            );
+            const happy_birthday = templateEmbed({
+                body: await string("birthday.notification"),
+                footer: "birthday • yay",
+                title: "Phanty's Home Birthdays"
+            });
 
             await channel.send({ content: `<@${discord_id}>`, embeds: [happy_birthday] })
                 .then(message => message.react(emojis.Tada));

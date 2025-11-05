@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 import * as logs from "#src/modules/logs.mts";
 import {CommandInteraction} from "discord.js";
 
@@ -25,7 +25,7 @@ export async function reply(interaction: CommandInteraction) {
     for (const command of commandList) {
         const { commandName } = interaction;
 
-        var commandModule = command.split('/').pop();
+        let commandModule = command.split('/').pop();
         if (commandModule && commandName === commandModule.split('.')[0]) {
             const commandModule = await import(`#src/commands/${command}`);
 
