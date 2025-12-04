@@ -9,7 +9,12 @@ npm run start # Uses prod.env
 npm run debug # Uses beta.env
 ```
 
-`Current Version: 3.05.0`
+`Current Version: 3.05.1`
+
+# Changelog
+## Release 3.05.1 - December 4th 2025
+### Changes
+- Fixed embeds sending in DMs
 
 # Changelog
 ## Release 3.05.0 - November 5th 2025

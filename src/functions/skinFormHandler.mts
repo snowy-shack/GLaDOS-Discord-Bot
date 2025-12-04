@@ -11,7 +11,7 @@ import "#src/envloader.mts";
 
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/modules/logs.mts";
-import { embedMessage } from "#src/factories/styledEmbed.mts";
+import { embedMessage, templateEmbed } from "#src/factories/styledEmbed.mts";
 import { string, templateString } from "#src/agents/stringAgent.mts";
 import { getChannel } from "#src/modules/discord.mts";
 import { channels, dmUser } from "#src/modules/phantys_home.mts";
@@ -23,11 +23,11 @@ export async function respond(previousField: number | null, fieldValue: string, 
     switch (previousField) {
         case 0: {
             return [
-                embedMessage({
+                templateEmbed({
                     body: await string(`skins.form.intro.${type}`),
                     footer: `field 1/2 • skin.${type}`,
                     title
-                })
+                }) as APIEmbed
             ];
         }
 
@@ -38,36 +38,36 @@ export async function respond(previousField: number | null, fieldValue: string, 
 
             if (!(/^[\w-]+$/.test(fieldValue)) || fieldValue.length <= 2 || fieldValue.length >= 17) {
                 return [
-                    embedMessage({
+                    templateEmbed({
                         body: await string("skins.form.username.error"),
                         footer: `field 1/2 • skin.${type} • syntax error`,
                         title
-                    })
+                    }) as APIEmbed
                 ];
             }
 
             if (uuid) {
-                const form_profile = embedMessage<APIEmbed>({
+                const form_profile = templateEmbed({
                     color: colors.Secondary,
                     thumbnail: minecraft.getSkin(uuid),
                     body: `# ${username}\n(\`UUID: ${uuid}\`)`,
-                });
+                }) as APIEmbed;
                 return [
-                    embedMessage({
+                    templateEmbed({
                         body: await string("skins.form.confirm"),
                         footer: `field 2/2 • skin.${type}`,
                         title
-                    }),
+                    }) as APIEmbed,
                     form_profile
                 ];
             }
 
             return [
-                embedMessage({
+                templateEmbed({
                     body: await templateString("skins.form.username.unknown", [fieldValue]),
                     footer: `field 1/2 • skin.${type} • not found`,
                     title
-                })
+                }) as APIEmbed
             ];
         }
 
@@ -75,27 +75,27 @@ export async function respond(previousField: number | null, fieldValue: string, 
             switch (fieldValue) {
                 case "confirm":
                     return [
-                        embedMessage({
+                        templateEmbed({
                             body: await string("skins.form.finished"),
                             footer: "form complete",
                             title
-                        })
+                        }) as APIEmbed
                     ];
                 case "change":
                     return [
-                        embedMessage({
+                        templateEmbed({
                             body: await string("skins.form.confirm.change"),
                             footer: `field 1/2 • skin.${type} • reset`,
                             title
-                        })
+                        }) as APIEmbed
                     ];
                 default:
                     return [
-                        embedMessage({
+                        templateEmbed({
                             body: await string("skins.form.confirm.error"),
                             footer: `field 2/2 • skin.${type} • syntax error`,
                             title
-                        })
+                        }) as APIEmbed
                     ];
             }
         }
@@ -113,11 +113,11 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
 
     void logs.logMessage(`🔁 Asking ${targetUser} to DM them in ${channel}.`);
 
-    const form_failed = embedMessage<APIEmbed>({
+    const form_failed = templateEmbed({
         body: await templateString("skins.form.fail", [targetUser.username, type]),
         footer: `skin.${type} • DM error (50007)`,
         title
-    });
+    }) as APIEmbed;
 
     const retry = new ButtonBuilder()
         .setCustomId('functions.skinFormHandler#retry')
