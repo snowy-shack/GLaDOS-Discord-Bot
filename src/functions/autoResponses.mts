@@ -122,7 +122,7 @@ function marco(message: Message) {
 
 export const WORDLE_APP_ID = "1211781489931452447";
 function trackWordle(message: Message) {
-    // if (message.author.id != WORDLE_APP_ID) return false; // Wordle bot ID
+    if (message.author.id != WORDLE_APP_ID) return false; // Wordle bot ID
 
     const content = message.content;
     const lines = content.split('\n');
