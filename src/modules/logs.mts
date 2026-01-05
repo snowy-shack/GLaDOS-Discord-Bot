@@ -23,14 +23,15 @@ export async function logWarning(message: string) {
     const logChannel = await getLogChannel();
     if (!logChannel || !logChannel.isTextBased()) return;
 
-    await logChannel.send(
-        embedMessage({
+    await logChannel.send({
+        content: rolesMarkDown.Developer,
+        ...embedMessage<MessageCreateOptions>({
             body: `**${message}**`,
             footer: "",
             title: "",
             color: colors.Warning
         })
-    );
+    });
 }
 
 export async function logMessage(message: string) {

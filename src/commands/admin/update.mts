@@ -28,7 +28,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
         if (error) {
             logs.logError("executing a script", error);
-            logs.logMessage("⚠️ Update wasn't successful");
+            logs.logWarning("⚠️ Update wasn't successful");
             return;
         }
 
