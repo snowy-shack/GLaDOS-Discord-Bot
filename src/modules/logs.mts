@@ -70,7 +70,7 @@ export async function logError(location: string, error: Error) {
         });
 
     } catch (error) {
-        console.error("An error occurred logging the following error. Ironic.");
+        console.error("An error occurred logging the above error. Ironic. Cause below");
         console.error(error);
     }
 }
