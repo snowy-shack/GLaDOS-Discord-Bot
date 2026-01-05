@@ -3,8 +3,10 @@ import {Message} from "discord.js";
 import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
 import {getAuthorName, trimString} from "#src/modules/util.mjs";
 import {getClient} from "#src/modules/client.mts";
+import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
+import {logMessage, logWarning} from "#src/modules/logs.mts";
 
-export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
+export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [factorial, glados, calc, jork, loss, marco, trackWordle];
 
 function factorial(message: Message) {
     const captured = message.content.match(/(\d+)!/);
@@ -116,6 +118,46 @@ function marco(message: Message) {
         return true;
     }
     return false;
+}
+
+function trackWordle(message: Message) {
+    if (message.author.id != "1211781489931452447") return false; // Wordle bot ID
+
+    console.log("WORDLE DEBUG; MESSAGE SENT BELOW")
+    console.log(message)
+
+    const content = message.content;
+    const lines = content.split('\n');
+
+    let players = 0;
+    for (const line of lines) {
+        // Match lines like: "👑 3/6: <@123> <@456>"
+        const lineMatch = line.match(/^\D*(\d+)\s*\/\s*\d+:\s*(.+)$/);
+        if (!lineMatch) continue;
+
+        const n = Number(lineMatch[1]);
+        const rest = lineMatch[2];
+
+        // Match all Discord user mentions
+        const userMatches = rest.matchAll(/<@(\d+)>/g);
+        for (const match of userMatches) {
+            players++;
+            const id = match[1];
+            void incrementFlagValue(id, flags.Wordle.Solves + n);
+        }
+    }
+
+    void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
+    return false;
+}
+
+async function incrementFlagValue(id: string, flag: string) {
+    let data = await getUserData(id);
+
+    let value = data[flag] ?? 0;
+    await setFlag(id, flag, value + 1);
+
+    void logWarning(`Debug: Wordle value for <@${id}> incremented to ${value + 1}`);
 }
 
 /**

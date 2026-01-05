@@ -65,6 +65,10 @@ export const flags = {
         Unlocked:     "birthday.unlocked",
     },
     MinecraftUUID:    "minecraft.uuid",
+    Wordle: {
+        Streak:       "wordle.streak",
+        Solves:       "wordle.solves_", // To be suffixed by a number
+    }
 }
 
 export const all_flags = getFlagsList(flags);
