@@ -151,6 +151,14 @@ export function isValidDate(day: number, month: number, year: number) {
     );
 }
 
+export function dateIsYesterday(dateStr: string) {
+    if (!dateStr) return false;
+    const yesterday = Date.now() - DAY_IN_MS;
+
+    const yesterdayDateStr = dateToString(new Date(yesterday));
+    return dateStr === yesterdayDateStr;
+}
+
 /**
  * Capitalizes the first character of the given string.
  *

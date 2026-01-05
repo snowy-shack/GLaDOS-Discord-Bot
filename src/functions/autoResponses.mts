@@ -1,10 +1,12 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
 import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
-import {getAuthorName, trimString} from "#src/modules/util.mjs";
+import {dateIsYesterday, dateToString, getAuthorName, trimString} from "#src/modules/util.mjs";
 import {getClient} from "#src/modules/client.mts";
+import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
+import {logMessage, logWarning} from "#src/modules/logs.mts";
 
-export const replyFunctions = [factorial, glados, calc, jork, loss, marco]
+export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [factorial, glados, calc, jork, loss, marco, trackWordle];
 
 function factorial(message: Message) {
     const captured = message.content.match(/(\d+)!/);
@@ -116,6 +118,49 @@ function marco(message: Message) {
         return true;
     }
     return false;
+}
+
+export const WORDLE_APP_ID = "1211781489931452447";
+function trackWordle(message: Message) {
+    // if (message.author.id != WORDLE_APP_ID) return false; // Wordle bot ID
+
+    const content = message.content;
+    const lines = content.split('\n');
+
+    let players = 0;
+    for (const line of lines) {
+        // Match lines like: "👑 3/6: <@123> <@456>"
+        const lineMatch = line.match(/^\D*(\d+)\s*\/\s*\d+:\s*(.+)$/);
+        if (!lineMatch) continue;
+
+        const n = Number(lineMatch[1]);
+        const rest = lineMatch[2];
+
+        // Match all Discord user mentions
+        const userMatches = rest.matchAll(/<@(\d+)>/g);
+        for (const match of userMatches) {
+            players++;
+            const id = match[1];
+            void incrementWordleScores(id, flags.Wordle.Solves + n);
+        }
+    }
+
+    void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
+    return false;
+}
+
+async function incrementWordleScores(id: string, flag: string) {
+    let data = await getUserData(id);
+
+    let value = data[flag] ?? 0;
+    await setFlag(id, flag, value + 1);
+
+    const streak = data[flags.Wordle.Streak] ?? 0;
+    const lastPlayed = data[flags.Wordle.LastPlayed];
+
+    // If played yesterday, increase streak, otherwise reset.
+    await setFlag(id, flags.Wordle.Streak, dateIsYesterday(lastPlayed) ? streak + 1 : 1 );
+    await setFlag(id, flags.Wordle.LastPlayed, dateToString(new Date()));
 }
 
 /**
