@@ -145,7 +145,7 @@ function trackWordle(message: Message) {
         }
     }
 
-    void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
+    if (players > 0) void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
     return false;
 }
 
