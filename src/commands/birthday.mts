@@ -105,7 +105,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 return;
             }
 
-            void interaction.editReply(embedMessage({
+            void interaction.reply(embedMessage({
                 body: await templateString("birthday.add.duplicate", [formatDate(userBirthday, true)]),
                 footer: "birthday • duplicate",
                 title,
