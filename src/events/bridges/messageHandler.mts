@@ -1,10 +1,9 @@
 import { Message, PermissionFlagsBits} from "discord.js";
-import * as DMFormHandler from "#src/functions/DMFormHandler.mts";
-import * as emojiReactionHandler from "#src/functions/emojiReactionHandler.mts";
-import * as countingHandler from "#src/functions/countingHandler.mts";
-import { replyFunctions } from "#src/functions/autoResponses.mts";
-import {addLikes, addLikesToMedia, addVotes, channels} from "#src/modules/phantys_home.mts";
-import detectSpam from "#src/functions/detectSpam.mjs";
+import * as DMFormHandler from "#src/modules/DMFormHandler.mts";
+import * as autoEmojiReactions from "#src/modules/autoEmojiReactions.mts";
+import { replyFunctions } from "#src/modules/autoResponses.mts";
+import {addLikes, addLikesToMedia, addVotes, channels} from "#src/core/phantys_home.mts";
+import spamDetector from "#src/modules/spamDetector.mts";
 
 /* private */ function isAdmin(message: Message) {
     const member = message.member;
@@ -16,23 +15,19 @@ import detectSpam from "#src/functions/detectSpam.mjs";
 export async function handleMessage(message: Message) {
     if (!message.channel.isSendable()) return;
 
-    void detectSpam.checkMessage(message); // Check if this message contains a suspicious link
+    void spamDetector.checkMessage(message); // Check if this message contains a suspicious link
 
     // If automatic emoji reaction should be added
     if (Object.values(channels).includes(message.channelId)
            && (addLikesToMedia(message.channelId))
             || addLikes(message.channelId)
             || addVotes(message.channelId)) {
-        await emojiReactionHandler.react(message);
+        await autoEmojiReactions.react(message);``
     }
 
     // Try all replies until one succeeds
     for (const replyFunction of replyFunctions) {
         if (await replyFunction(message)) break;
-    }
-
-    if (message.channelId === channels.Counting) {
-        countingHandler.onCountingMessage(message);
     }
 }
 

@@ -1,7 +1,7 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
 import colors from "#src/consts/colors.mts";
-import {embedMessage} from "#src/factories/styledEmbed.mts";
-import {getVersion} from "#src/modules/version.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import {getVersion} from "#src/core/version.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('about')

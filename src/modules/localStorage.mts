@@ -1,7 +1,7 @@
 import { promises, readdirSync } from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const USERS_DIR = path.join(__dirname, "../../userData");

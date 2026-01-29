@@ -1,12 +1,12 @@
 import {GuildMember, MessageCreateOptions, TextChannel} from "discord.js";
-import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
-import {DAY_IN_MS} from "#src/modules/util.mjs";
-import logs from "#src/modules/logs.mjs";
-import {channels, dmUser, rolesMarkDown} from "#src/modules/phantys_home.mjs";
-import {embedMessage} from "#src/factories/styledEmbed.mjs";
-import * as stringAgent from "#src/agents/stringAgent.mjs";
-import colors from "#src/consts/colors.mjs";
-import {getChannel} from "#src/modules/discord.mjs";
+import {flags, getFlag, setFlag} from "#src/modules/localStorage.mts";
+import {DAY_IN_MS} from "#src/core/util.mts";
+import logs from "#src/core/logs.mts";
+import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import * as localizedStrings from "#src/modules/localizedStrings.mts";
+import colors from "#src/consts/colors.mts";
+import {getChannel} from "#src/core/discord.mts";
 
 export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
     try {
@@ -23,7 +23,7 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
         void logs.logWarning(`🚫Locked up user ${member}`);
 
         await dmUser(member.user, embedMessage({
-            body: await stringAgent.string("server.notification.locked_up"),
+            body: await localizedStrings.string("server.notification.locked_up"),
             footer: "spam",
             title: "Phanty's Home Spam prevention",
             color: colors.Error
@@ -34,7 +34,7 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
             await mod_chat.send({
                 content: `${rolesMarkDown.Moderator}`,
                 ...embedMessage<MessageCreateOptions>({
-                    body: await stringAgent.templateString("server.security.user_locked_up", [
+                    body: await localizedStrings.templateString("server.security.user_locked_up", [
                         member.user.id,
                         channel.id,
                         `${(new Date().getTime() / 1000 + DAY_IN_MS / 4 / 1000).toFixed(0)}`,

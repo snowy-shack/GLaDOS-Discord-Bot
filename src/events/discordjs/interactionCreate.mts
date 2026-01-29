@@ -1,8 +1,8 @@
 import {Client, Events} from "discord.js";
-import commandHandler from "#src/bridges/commandHandler.mjs";
-import buttonHandler from "#src/bridges/buttonHandler.mjs";
-import modalHandler from "#src/bridges/modalHandler.mjs";
-import * as logs from "#src/modules/logs.mjs";
+import commandHandler from "#src/events/bridges/commandHandler.mts";
+import buttonHandler from "#src/events/bridges/buttonHandler.mts";
+import modalHandler from "#src/events/bridges/modalHandler.mts";
+import * as logs from "#src/core/logs.mts";
 
 export function init(client: Client): void {
     client.on(Events.InteractionCreate, async interaction => {

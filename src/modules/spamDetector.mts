@@ -1,7 +1,7 @@
-import logs from "#src/modules/logs.mjs";
+import logs from "#src/core/logs.mts";
 import {Message, TextChannel} from "discord.js";
-import {userLockup} from "#src/actions/userLockup.mjs";
-import {flags, getFlag} from "#src/agents/flagAgent.mjs";
+import {userLockup} from "#src/actions/userLockup.mts";
+import {flags, getFlag} from "#src/modules/localStorage.mts";
 
 let scamLinks: Set<string> = new Set();
 

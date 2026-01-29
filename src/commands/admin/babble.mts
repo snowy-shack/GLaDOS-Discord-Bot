@@ -4,8 +4,8 @@ import {
     MessageFlags,
     ChatInputCommandInteraction
 } from "discord.js";
-import * as discord from "#src/modules/discord.mts";
-import logs from "#src/modules/logs.mjs";
+import * as discord from "#src/core/discord.mts";
+import logs from "#src/core/logs.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("babble")

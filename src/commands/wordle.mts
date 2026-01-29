@@ -1,7 +1,6 @@
-import {ChatInputCommandInteraction, range, SlashCommandBuilder} from "discord.js";
-import FlagAgent, {flags, getFlag, getUserData} from "#src/agents/flagAgent.mts";
-import {formatMessage} from "#src/modules/logs.mts";
-import {embedMessage} from "#src/factories/styledEmbed.mts";
+import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
+import {flags, getFlag, getUserData} from "#src/modules/localStorage.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 
 export function init() {

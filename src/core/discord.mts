@@ -1,7 +1,7 @@
-import { getClient } from "#src/modules/client.mts";
-import {flags, setFlag} from "#src/agents/flagAgent.mts";
+import { getClient } from "#src/core/client.mts";
+import {flags, setFlag} from "#src/modules/localStorage.mts";
 import { Guild } from "discord.js";
-import {guildID} from "#src/modules/phantys_home.mjs";
+import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
 
 let phantys_home: Guild;

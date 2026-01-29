@@ -1,4 +1,4 @@
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import {ModalSubmitInteraction} from "discord.js";
 
 async function reply(interaction: ModalSubmitInteraction) {

@@ -3,13 +3,13 @@ import {
     TextInputBuilder, TextInputStyle, ChatInputCommandInteraction, ModalSubmitInteraction,
 } from "discord.js";
 
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import colors from "#src/consts/colors.mts";
-import { getMember } from "#src/modules/discord.mts";
-import {embedMessage} from "#src/factories/styledEmbed.mts";
-import {string, templateString} from "#src/agents/stringAgent.mts";
-import {flags, getAllFlagValues, getFlag, setFlag} from "#src/agents/flagAgent.mts";
-import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/modules/util.mts";
+import { getMember } from "#src/core/discord.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import {string, templateString} from "#src/modules/localizedStrings.mts";
+import {flags, getAllFlagValues, getFlag, setFlag} from "#src/modules/localStorage.mts";
+import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/core/util.mts";
 import {icons} from "#src/consts/icons.mts";
 
 export function init() {

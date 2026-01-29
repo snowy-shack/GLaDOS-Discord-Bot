@@ -1,6 +1,6 @@
-import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/modules/phantys_home.mts";
+import {addLikes, addLikesToMedia, addVotes, emojiId, emojis} from "#src/core/phantys_home.mts";
 import artLinks from "#src/consts/links/art_links.json" with { type: "json" };
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import {Message, MessageReaction, PartialMessageReaction} from "discord.js";
 
 /**

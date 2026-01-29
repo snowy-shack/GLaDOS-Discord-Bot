@@ -1,16 +1,16 @@
-import {templateEmbed} from "#src/factories/styledEmbed.mts";
+import {templateEmbed} from "#src/formatting/styledEmbed.mts";
 import { gun_skins as skins } from "#src/consts/gun_skins.mts";
-import { channels } from "#src/modules/phantys_home.mts";
-import { emojis } from "#src/modules/phantys_home.mts";
-import * as logs from "#src/modules/logs.mts";
-import * as guild from "#src/modules/discord.mts";
-import * as skinForm from "#src/functions/skinFormHandler.mts";
-import * as util from "#src/modules/util.mts";
-import {flags, getAllFlagValues, getFlag} from "#src/agents/flagAgent.mts";
-import {getChannel} from "#src/modules/discord.mts";
-import {dateToString} from "#src/modules/util.mts";
+import { channels } from "#src/core/phantys_home.mts";
+import { emojis } from "#src/core/phantys_home.mts";
+import * as logs from "#src/core/logs.mts";
+import * as guild from "#src/core/discord.mts";
+import * as skinForm from "#src/modules/skinFormHandler.mts";
+import * as util from "#src/core/util.mts";
+import {flags, getAllFlagValues, getFlag} from "#src/modules/localStorage.mts";
+import {getChannel} from "#src/core/discord.mts";
+import {dateToString} from "#src/core/util.mts";
 import {GuildMember} from "discord.js";
-import {string} from "#src/agents/stringAgent.mjs";
+import {string} from "#src/modules/localizedStrings.mts";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"

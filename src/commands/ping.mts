@@ -1,5 +1,5 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('ping')

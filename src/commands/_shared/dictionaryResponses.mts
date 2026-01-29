@@ -1,10 +1,10 @@
 import {
-    ChatInputCommandInteraction, InteractionEditReplyOptions, MessageFlags,
+    ChatInputCommandInteraction, InteractionEditReplyOptions,
     TextBasedChannel,
 } from "discord.js";
-import {embedMessage} from "#src/factories/styledEmbed.mjs";
-import colors from "#src/consts/colors.mjs";
-import * as logs from "#src/modules/logs.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import colors from "#src/consts/colors.mts";
+import * as logs from "#src/core/logs.mts";
 import {icons} from "#src/consts/icons.mts";
 
 type Item = { id: string; title: string; description: string };
@@ -13,11 +13,7 @@ function block(emoji: string, title: string, description: string) {
     return `# ${emoji} ${title}\n> ${description}`;
 }
 
-async function reply(
-    interaction: ChatInputCommandInteraction,
-    message: string,
-    error?: boolean,
-) {
+async function reply(interaction: ChatInputCommandInteraction, message: string, error?: boolean) {
     await interaction.editReply(
         embedMessage<InteractionEditReplyOptions>({
             title: message,

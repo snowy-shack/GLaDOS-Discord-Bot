@@ -1,5 +1,5 @@
 import {Client, Events} from "discord.js";
-import {flags, getFlag, setFlag} from "#src/agents/flagAgent.mjs";
+import {flags, getFlag, setFlag} from "#src/modules/localStorage.mts";
 
 export function init(client: Client): void {
     client.on(Events.GuildMemberAdd, async (member) => {

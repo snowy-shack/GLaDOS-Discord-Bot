@@ -1,10 +1,10 @@
 import {Client, Events, GuildMember, PartialGuildMember} from "discord.js";
-import {channels, roles} from "#src/modules/phantys_home.mjs";
-import {spamKick} from "#src/actions/spamKick.mjs";
-import * as logs from "#src/modules/logs.mjs";
-import {getChannel} from "#src/modules/discord.mjs";
-import {templateEmbed} from "#src/factories/styledEmbed.mjs";
-import {string} from "#src/agents/stringAgent.mjs";
+import {channels, roles} from "#src/core/phantys_home.mts";
+import {spamKick} from "#src/actions/spamKick.mts";
+import * as logs from "#src/core/logs.mts";
+import {getChannel} from "#src/core/discord.mts";
+import {templateEmbed} from "#src/formatting/styledEmbed.mts";
+import {string} from "#src/modules/localizedStrings.mts";
 
 export function init(client: Client): void {
     client.on(Events.GuildMemberUpdate, async (oldMember, member) => {

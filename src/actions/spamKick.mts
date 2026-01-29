@@ -1,13 +1,13 @@
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import colors from "#src/consts/colors.mts";
-import * as stringAgent from "#src/agents/stringAgent.mts";
+import * as localizedStrings from "#src/modules/localizedStrings.mts";
 import {GuildMember} from "discord.js";
-import {embedMessage} from "#src/factories/styledEmbed.mts";
-import {dmUser} from "#src/modules/phantys_home.mjs";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import {dmUser} from "#src/core/phantys_home.mts";
 
 export async function spamKick(member: GuildMember, reason: string) {
     await dmUser(member.user, embedMessage({
-        body: await stringAgent.string("server.notification.spam_kicked"),
+        body: await localizedStrings.string("server.notification.spam_kicked"),
         footer: "spam",
         title: "Phanty's Home Spam prevention",
         color: colors.Error

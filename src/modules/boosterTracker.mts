@@ -1,10 +1,10 @@
-import * as skinForm from "#src/functions/skinFormHandler.mts";
-import * as logs from "#src/modules/logs.mts";
-import {getMember, getRoleUsers} from "#src/modules/discord.mts";
-import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
-import {delayInSeconds} from "#src/modules/util.mts";
+import * as skinForm from "#src/modules/skinFormHandler.mts";
+import * as logs from "#src/core/logs.mts";
+import {getMember, getRoleUsers} from "#src/core/discord.mts";
+import {flags, getUserData, setFlag} from "#src/modules/localStorage.mts";
+import {delayInSeconds} from "#src/core/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
-import {roles} from "#src/modules/phantys_home.mts";
+import {roles} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
 
 export async function incrementAndDM() {

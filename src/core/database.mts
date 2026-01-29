@@ -1,6 +1,6 @@
 import pg from "pg";
-import * as logs from "#src/modules/logs.mts";
-import {delayInMilliseconds} from "#src/modules/util.mts";
+import * as logs from "#src/core/logs.mts";
+import {delayInMilliseconds} from "#src/core/util.mts";
 
 let pgClient: pg.Client;
 

@@ -1,6 +1,6 @@
-import { getChannel } from "#src/modules/discord.mts";
-import { channels, rolesMarkDown } from "#src/modules/phantys_home.mts";
-import { embedMessage } from "#src/factories/styledEmbed.mjs";
+import { getChannel } from "#src/core/discord.mts";
+import { channels, rolesMarkDown } from "#src/core/phantys_home.mts";
+import { embedMessage } from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {GuildBasedChannel, MessageCreateOptions} from "discord.js";
 import chalk from "chalk";

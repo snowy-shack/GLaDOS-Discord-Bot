@@ -1,12 +1,13 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
-import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
-import {dateIsYesterday, dateToString, getAuthorName, trimString} from "#src/modules/util.mjs";
-import {getClient} from "#src/modules/client.mts";
-import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
-import {logMessage, logWarning} from "#src/modules/logs.mts";
+import {getGPTResponse} from "#src/modules/openAIHandler.mts";
+import {dateIsYesterday, dateToString, getAuthorName, trimString} from "#src/core/util.mts";
+import {getClient} from "#src/core/client.mts";
+import {flags, getUserData, setFlag} from "#src/modules/localStorage.mts";
+import {logMessage} from "#src/core/logs.mts";
+import {channels} from "#src/core/phantys_home.mts";
 
-export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [factorial, glados, calc, jork, loss, marco, trackWordle];
+export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [maybeCount, factorial, glados, calc, jork, loss, marco, trackWordle];
 
 function factorial(message: Message) {
     const captured = message.content.match(/(\d+)!/);
@@ -30,7 +31,7 @@ const gladosAIPrompt = atob(`
 const sanitize = (str: string) => {
     return str
         .replaceAll('\n', ' ')
-        .replace(/[\\[\]()*\-=_/\\:;'"{}<>|`~]/g, '')
+        .replace(/[\\[\]()*\-=_\/:;'"{}<>|`~]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
 };
@@ -149,6 +150,24 @@ function trackWordle(message: Message) {
     return false;
 }
 
+function maybeCount(message: Message) {
+    if (message.channelId !== channels.Counting) return false;
+
+    const captured = message.content.match(/^(\d+)$/);
+
+    // One in 500
+    if (captured && (Math.random() * 500 < 1 || ( Math.random() * 5 < 1 && captured[1].endsWith("999"))) ) {
+        const channel = message.channel;
+        if ("send" in channel) {
+            channel.send(`${Number(captured[1]) + 1} :)`);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Not really a reaction, but still here for ease of use
 async function incrementWordleScores(id: string, flag: string) {
     let data = await getUserData(id);
 

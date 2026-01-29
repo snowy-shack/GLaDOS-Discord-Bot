@@ -3,9 +3,9 @@ import {
     PermissionFlagsBits,
     ChatInputCommandInteraction
 } from "discord.js";
-import boosterHandler from "#src/functions/boosterHandler.mts";
-import * as logs from "#src/modules/logs.mts";
-import {checkBirthdays} from "#src/functions/birthdayHandler.mts";
+import boosterHandler from "#src/modules/boosterTracker.mts";
+import * as logs from "#src/core/logs.mts";
+import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("utils")

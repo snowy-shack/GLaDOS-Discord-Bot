@@ -4,11 +4,11 @@ import {
     PermissionFlagsBits,
     SlashCommandBuilder
 } from "discord.js";
-import * as logs from "#src/modules/logs.mts";
-import {emojis} from "#src/modules/phantys_home.mts";
-import * as discord from "#src/modules/discord.mts";
-import {channels} from "#src/modules/phantys_home.mts";
-import {dateToString, formatDate} from "#src/modules/util.mts";
+import * as logs from "#src/core/logs.mts";
+import {emojis} from "#src/core/phantys_home.mts";
+import * as discord from "#src/core/discord.mts";
+import {channels} from "#src/core/phantys_home.mts";
+import {dateToString, formatDate} from "#src/core/util.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('refresh')

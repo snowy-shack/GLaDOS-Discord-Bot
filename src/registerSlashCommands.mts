@@ -1,7 +1,7 @@
 import { REST, Routes } from "discord.js";
-import { getCommandList } from "#src/bridges/commandHandler.mts";
-import { getClient } from "#src/modules/client.mts";
-import {guildID} from "#src/modules/phantys_home.mts";
+import { getCommandList } from "#src/events/bridges/commandHandler.mts";
+import { getClient } from "#src/core/client.mts";
+import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
 
 // Define the commands

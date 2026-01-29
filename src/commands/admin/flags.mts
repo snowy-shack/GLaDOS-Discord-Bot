@@ -4,8 +4,8 @@ import {
     PermissionFlagsBits,
     SlashCommandBuilder
 } from "discord.js";
-import {all_flags, getUserData, removeFlag, setFlag} from "#src/agents/flagAgent.mts";
-import {embedMessage} from "#src/factories/styledEmbed.mts";
+import {all_flags, getUserData, removeFlag, setFlag} from "#src/modules/localStorage.mts";
+import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 
 export function init() {

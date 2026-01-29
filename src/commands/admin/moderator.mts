@@ -5,10 +5,10 @@ import {
     SlashCommandBuilder
 } from "discord.js";
 import {spamKick} from "#src/actions/spamKick.mts";
-import * as logs from "#src/modules/logs.mts";
-import {getMember} from "#src/modules/discord.mts";
-import {userLockup} from "#src/actions/userLockup.mjs";
-import {flags, setFlag} from "#src/agents/flagAgent.mjs";
+import * as logs from "#src/core/logs.mts";
+import {getMember} from "#src/core/discord.mts";
+import {userLockup} from "#src/actions/userLockup.mts";
+import {flags, setFlag} from "#src/modules/localStorage.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("moderator")

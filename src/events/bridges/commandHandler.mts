@@ -2,17 +2,17 @@ import fs from "fs";
 import path from "path";
 
 import {fileURLToPath} from "url";
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import {CommandInteraction} from "discord.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function getCommandList() {
     const normalCommandsList = fs
-        .readdirSync(path.join(__dirname, "../commands"))
+        .readdirSync(path.join(__dirname, "../../commands"))
         .filter(file => file.endsWith(".mts"));
     const adminCommandsList = fs
-        .readdirSync(path.join(__dirname, "../commands/admin"))
+        .readdirSync(path.join(__dirname, "../../commands/admin"))
         .filter(file => file.endsWith(".mts"));
 
     return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.mts$/, ''));

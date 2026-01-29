@@ -1,5 +1,5 @@
 import {Message} from "discord.js";
-import {getClient} from "#src/modules/client.mts";
+import {getClient} from "#src/core/client.mts";
 
 export const DAY_IN_MS = 86400000;
 
