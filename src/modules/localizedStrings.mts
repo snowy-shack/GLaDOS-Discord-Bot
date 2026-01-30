@@ -1,4 +1,4 @@
-import { emojis } from "#src/modules/phantys_home.mts";
+import { emojis } from "#src/core/phantys_home.mts";
 import {Locale} from "discord-api-types/v10";
 
 export async function string(key: string, locale: Locale = Locale.EnglishUS) {

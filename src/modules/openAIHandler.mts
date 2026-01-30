@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import {delayInMilliseconds} from "#src/modules/util.mts";
-import {logError} from "#src/modules/logs.mts";
+import {delayInMilliseconds} from "#src/core/util.mts";
+import {logError} from "#src/core/logs.mts";
 
 const openai = new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",

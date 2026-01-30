@@ -1,7 +1,7 @@
-import logs from "#src/modules/logs.mjs";
+import logs from "#src/core/logs.mts";
 import {Message, TextChannel} from "discord.js";
-import {userLockup} from "#src/actions/userLockup.mjs";
-import {flags, getFlag} from "#src/agents/flagAgent.mjs";
+import {userLockup} from "#src/actions/userLockup.mts";
+import {userFields, getUserField} from "#src/modules/localStorage.mts";
 
 let scamLinks: Set<string> = new Set();
 
@@ -17,7 +17,7 @@ async function refreshScamURLs() {
 }
 
 async function checkMessage(message: Message) {
-    if (await getFlag(message.author.id, flags.Security.Whitelisted)) return;
+    if (getUserField(message.author.id, userFields.Security.Whitelisted)) return;
 
     let linkRegEx = /^(https?:\/\/)?(www\.)?([^\/\s]+)(\/.*)?$/; // Extracts domains from links present in the message.
     const linkMatches = message.content.match(linkRegEx);

@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 
 export async function getAccount(username: string): Promise<{uuid: string, username: string}> {
     const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);

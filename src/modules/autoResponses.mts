@@ -1,12 +1,20 @@
 import {factorials, voiceLines} from "#src/consts/miscellaneous.mts";
 import {Message} from "discord.js";
-import {getGPTResponse} from "#src/functions/openAIHandler.mjs";
-import {dateIsYesterday, dateToString, getAuthorName, trimString} from "#src/modules/util.mjs";
-import {getClient} from "#src/modules/client.mts";
-import {flags, getUserData, setFlag} from "#src/agents/flagAgent.mts";
-import {logMessage, logWarning} from "#src/modules/logs.mts";
+import {getGPTResponse} from "#src/modules/openAIHandler.mts";
+import {dateToString, daysSince, getAuthorName, trimString} from "#src/core/util.mts";
+import {getClient} from "#src/core/client.mts";
+import {
+    userFields,
+    getUserData,
+    setUserField,
+    userField,
+    getGlobalField,
+    globalFields, setGlobalField
+} from "#src/modules/localStorage.mts";
+import {logMessage} from "#src/core/logs.mts";
+import {channels} from "#src/core/phantys_home.mts";
 
-export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [factorial, glados, calc, jork, loss, marco, trackWordle];
+export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [maybeCount, factorial, glados, calc, jork, loss, marco, trackWordle];
 
 function factorial(message: Message) {
     const captured = message.content.match(/(\d+)!/);
@@ -30,7 +38,7 @@ const gladosAIPrompt = atob(`
 const sanitize = (str: string) => {
     return str
         .replaceAll('\n', ' ')
-        .replace(/[\\[\]()*\-=_/\\:;'"{}<>|`~]/g, '')
+        .replace(/[\\[\]()*\-=_\/:;'"{}<>|`~]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
 };
@@ -121,46 +129,70 @@ function marco(message: Message) {
 }
 
 export const WORDLE_APP_ID = "1211781489931452447";
+type wordleKeys = keyof typeof userFields.Wordle;
+
 function trackWordle(message: Message) {
-    if (message.author.id != WORDLE_APP_ID) return false; // Wordle bot ID
+    if (message.author.id != WORDLE_APP_ID) return false;
 
-    const content = message.content;
-    const lines = content.split('\n');
-
+    const lines = message.content.split('\n');
     let players = 0;
+
     for (const line of lines) {
-        // Match lines like: "👑 3/6: <@123> <@456>"
-        const lineMatch = line.match(/^\D*(\d+)\s*\/\s*\d+:\s*(.+)$/);
+        // Match digits or 'X' before the slash
+        const lineMatch = line.match(/^\D*([\dX])\s*\/\s*\d+:\s*(.+)$/i);
         if (!lineMatch) continue;
 
-        const n = Number(lineMatch[1]);
+        const score = lineMatch[1].toUpperCase();
         const rest = lineMatch[2];
 
-        // Match all Discord user mentions
         const userMatches = rest.matchAll(/<@(\d+)>/g);
         for (const match of userMatches) {
             players++;
             const id = match[1];
-            void incrementWordleScores(id, flags.Wordle.Solves + n);
+            // 'SolvesX' or 'Solves1'-'Solves6'
+            void incrementWordleScores(id, userFields.Wordle[(`Solves${score}`) as wordleKeys], Number(score));
         }
     }
 
-    if (players > 0) void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
+    if (players > 0) {
+        const before = getGlobalField(globalFields.Wordle.GamesTracked);
+        void setGlobalField(globalFields.Wordle.GamesTracked, before + 1);
+        void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
+    }
     return false;
 }
 
-async function incrementWordleScores(id: string, flag: string) {
-    let data = await getUserData(id);
+function maybeCount(message: Message) {
+    if (message.channelId !== channels.Counting) return false;
 
-    let value = data[flag] ?? 0;
-    await setFlag(id, flag, value + 1);
+    const captured = message.content.match(/^(\d+)$/);
 
-    const streak = data[flags.Wordle.Streak] ?? 0;
-    const lastPlayed = data[flags.Wordle.LastPlayed];
+    // One in 500
+    if (captured && (Math.random() * 500 < 1 || ( Math.random() * 5 < 1 && captured[1].endsWith("999"))) ) {
+        const channel = message.channel;
+        if ("send" in channel) {
+            channel.send(`${Number(captured[1]) + 1} :)`);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Not really a reaction, but still here for ease of use
+async function incrementWordleScores(id: string, field: userField, lastScore: number) {
+    let data = getUserData(id);
+
+    let value = data[field] ?? 0;
+    await setUserField(id, field, value + 1);
+    await setUserField(id, userFields.Wordle.LastScore, lastScore);
+
+    const streak = data[userFields.Wordle.Streak] ?? 0;
+    const lastPlayed = data[userFields.Wordle.LastPlayed];
 
     // If played yesterday, increase streak, otherwise reset.
-    await setFlag(id, flags.Wordle.Streak, dateIsYesterday(lastPlayed) ? streak + 1 : 1 );
-    await setFlag(id, flags.Wordle.LastPlayed, dateToString(new Date()));
+    await setUserField(id, userFields.Wordle.Streak, daysSince(lastPlayed) <= 2 ? streak + 1 : 1 );
+    await setUserField(id, userFields.Wordle.LastPlayed, dateToString(new Date()));
 }
 
 /**

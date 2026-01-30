@@ -6,15 +6,15 @@ import {
     Message,
     ButtonInteraction, APIEmbed
 } from "discord.js";
-import * as minecraft from "#src/modules/minecraft.mts";
+import * as minecraft from "#src/core/minecraft.mts";
 import "#src/envloader.mts";
 
 import colors from "#src/consts/colors.mts";
-import * as logs from "#src/modules/logs.mts";
-import { embedMessage, templateEmbed } from "#src/factories/styledEmbed.mts";
-import { string, templateString } from "#src/agents/stringAgent.mts";
-import { getChannel } from "#src/modules/discord.mts";
-import { channels, dmUser } from "#src/modules/phantys_home.mts";
+import * as logs from "#src/core/logs.mts";
+import { embedMessage, templateEmbed } from "#src/formatting/styledEmbed.mts";
+import { string, templateString } from "#src/modules/localizedStrings.mts";
+import { getChannel } from "#src/core/discord.mts";
+import { channels, dmUser } from "#src/core/phantys_home.mts";
 import { icons } from "#src/consts/icons.mts";
 
 const title = "PortalMod Portal Gun skin form";

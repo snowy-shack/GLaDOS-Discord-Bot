@@ -5,8 +5,8 @@ import {
 } from "discord.js";
 import { exec } from "child_process";
 import path from "path";
-import { getVersion } from "#src/modules/version.mts";
-import * as logs from "#src/modules/logs.mts";
+import { getVersion } from "#src/core/version.mts";
+import * as logs from "#src/core/logs.mts";
 
 import { fileURLToPath } from 'url';
 import chalk from "chalk";
@@ -24,7 +24,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
     console.log(chalk.blueBright('⏬ Pulling from git'));
 
-    exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, stderr) => {
+    exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, _) => {
 
         if (error) {
             logs.logError("executing a script", error);

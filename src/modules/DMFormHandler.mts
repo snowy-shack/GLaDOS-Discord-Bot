@@ -1,12 +1,12 @@
-import {getClient} from "#src/modules/client.mts";
-import * as database from "#src/modules/database.mts";
-import * as logs from "#src/modules/logs.mts";
-import * as skinForm from "#src/functions/skinFormHandler.mts";
-import {skinTypeFromFooter} from "#src/functions/skinFormHandler.mts";
-import {flags, setFlag} from "#src/agents/flagAgent.mts";
+import {getClient} from "#src/core/client.mts";
+import * as database from "#src/core/database.mts";
+import * as logs from "#src/core/logs.mts";
+import * as skinForm from "#src/modules/skinFormHandler.mts";
+import {skinTypeFromFooter} from "#src/modules/skinFormHandler.mts";
+import {userFields, setUserField, userField} from "#src/modules/localStorage.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
-import {capitalize} from "#src/modules/util.mts";
-import {getMember} from "#src/modules/discord.mts";
+import {capitalize} from "#src/core/util.mts";
+import {getMember} from "#src/core/discord.mts";
 import {Message} from "discord.js";
 
 export async function getLastBotMessage(message: Message): Promise<Message | undefined> {
@@ -55,8 +55,8 @@ export async function replyToDM(message: Message) {
             return;
         }
 
-        void setFlag(message.author.id, `${skinType}.unlocked`, "true");
-        void setFlag(message.author.id, flags.MinecraftUUID, uuidGot);
+        void setUserField(message.author.id, `${skinType}.unlocked` as userField, "true");
+        void setUserField(message.author.id, userFields.MinecraftUUID, uuidGot);
 
         let skinID = gun_skins[capitalize(skinType)].id;
 

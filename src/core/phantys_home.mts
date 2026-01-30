@@ -3,7 +3,7 @@ import {
     MessageCreateOptions,
     User
 } from "discord.js";
-import * as logs from "#src/modules/logs.mjs";
+import * as logs from "#src/core/logs.mts";
 
 // BETA : PRODUCTION
 export const guildID: string = isBeta ? "1221613837384417300" : "704266427577663548";

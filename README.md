@@ -9,9 +9,16 @@ npm run start # Uses prod.env
 npm run debug # Uses beta.env
 ```
 
-`Current Version: 3.05.1`
+`Current Version: 3.06.0`
 
 # Changelog
+## Release 3.06.0 - January 30th 2026
+### Fixes
+- Fixed /birthday add command not working
+### Changes
+- Major rework of storage system back-end
+- New `/wordle` command to see your stats, which are read from the Wordle app's messages
+
 ## Release 3.05.1 - December 4th 2025
 ### Changes
 - Fixed embeds sending in DMs

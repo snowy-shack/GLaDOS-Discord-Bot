@@ -1,5 +1,5 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
-import { emojis } from "#src/modules/phantys_home.mts";
+import { emojis } from "#src/core/phantys_home.mts";
 
 import faqsJSON from "#src/consts/faqs.json" with { type: "json" };
 import {reactWithTemplate} from "#src/commands/_shared/dictionaryResponses.mts";

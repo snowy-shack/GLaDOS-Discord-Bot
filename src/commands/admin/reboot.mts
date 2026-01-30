@@ -1,5 +1,5 @@
 import {SlashCommandBuilder, PermissionFlagsBits, CommandInteraction} from "discord.js";
-import * as logs from "#src/modules/logs.mts";
+import * as logs from "#src/core/logs.mts";
 import chalk from "chalk";
 
 export function init() {

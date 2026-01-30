@@ -1,13 +1,13 @@
 import {Events} from "discord.js";
 import chalk from "chalk";
-import * as logs from "#src/modules/logs.mts";
-import { getVersion } from "#src/modules/version.mts";
-import detectSpam from "#src/functions/detectSpam.mjs";
-import {getClient} from "#src/modules/client.mjs";
+import * as logs from "#src/core/logs.mts";
+import { getVersion } from "#src/core/version.mts";
+import spamDetector from "#src/modules/spamDetector.mts";
+import {getClient} from "#src/core/client.mts";
 
 export async function run() {
     console.log(chalk.gray("Running ready tasks..."));
-    await detectSpam.refreshScamURLs();
+    await spamDetector.refreshScamURLs();
 
     console.log(chalk.greenBright(`Ready! As ${getClient().user?.tag}`));
     await logs.logMessage(`🌃 Online and connected as GLaDOS v${await getVersion()}!`);
