@@ -6,7 +6,7 @@ import * as logs from "#src/core/logs.mts";
 import * as guild from "#src/core/discord.mts";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import * as util from "#src/core/util.mts";
-import {flags, getAllFlagValues, getFlag} from "#src/modules/localStorage.mts";
+import {userFields, getFieldForAllUsers, getUserField} from "#src/modules/localStorage.mts";
 import {getChannel} from "#src/core/discord.mts";
 import {dateToString} from "#src/core/util.mts";
 import {GuildMember} from "discord.js";
@@ -14,7 +14,7 @@ import {string} from "#src/modules/localizedStrings.mts";
 
 export async function checkBirthdays() {
     const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
-    const birthdays = (await getAllFlagValues(flags.Birthday.Date))
+    const birthdays = (await getFieldForAllUsers(userFields.Birthday.Date))
         .filter(item => item.value.split("-").slice(0, 2).join("-") === today) // Check if it's today
         .map(item => item.user);
 
@@ -28,7 +28,7 @@ export async function checkBirthdays() {
             await logs.logMessage(`🎉 It's <@${discord_id}>'s birthday!`);
 
             const guildMember: GuildMember | undefined = await guild.getMember(discord_id);
-            if (!guildMember || await getFlag(guildMember.id, flags.Birthday.Unlocked)) return;
+            if (!guildMember || getUserField(guildMember.id, userFields.Birthday.Unlocked)) return;
 
             await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
 

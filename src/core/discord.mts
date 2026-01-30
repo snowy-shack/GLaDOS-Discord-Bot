@@ -1,5 +1,5 @@
 import { getClient } from "#src/core/client.mts";
-import {flags, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, setUserField} from "#src/modules/localStorage.mts";
 import { Guild } from "discord.js";
 import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
@@ -29,7 +29,7 @@ export async function getMember(id: string) {
     try {
         return await phantys_home.members.fetch(id);
     } catch {
-        void setFlag(id, flags.Ghost);
+        void setUserField(id, userFields.Ghost);
         return undefined;
     }
 }

@@ -1,5 +1,6 @@
 import {Message} from "discord.js";
 import {getClient} from "#src/core/client.mts";
+import {dateString} from "#src/core/types.mts";
 
 export const DAY_IN_MS = 86400000;
 
@@ -151,12 +152,16 @@ export function isValidDate(day: number, month: number, year: number) {
     );
 }
 
-export function dateIsYesterday(dateStr: string) {
-    if (!dateStr) return false;
-    const yesterday = Date.now() - DAY_IN_MS;
-
-    const yesterdayDateStr = dateToString(new Date(yesterday));
-    return dateStr === yesterdayDateStr;
+/**
+ * Calculates the number of full days elapsed since a given date string.
+ * * @param dateStr - The date string to compare (formatted via dateToString).
+ * @returns The number of days between the date and now.
+ */
+export function daysSince(dateStr: dateString): number {
+    if (!dateStr) return 0;
+    const pastDate = new Date(dateStr).getTime();
+    const diff = Date.now() - pastDate;
+    return Math.floor(diff / DAY_IN_MS);
 }
 
 /**

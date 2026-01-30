@@ -3,7 +3,7 @@ import * as database from "#src/core/database.mts";
 import * as logs from "#src/core/logs.mts";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import {skinTypeFromFooter} from "#src/modules/skinFormHandler.mts";
-import {flags, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, setUserField, userField} from "#src/modules/localStorage.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
 import {capitalize} from "#src/core/util.mts";
 import {getMember} from "#src/core/discord.mts";
@@ -55,8 +55,8 @@ export async function replyToDM(message: Message) {
             return;
         }
 
-        void setFlag(message.author.id, `${skinType}.unlocked`, "true");
-        void setFlag(message.author.id, flags.MinecraftUUID, uuidGot);
+        void setUserField(message.author.id, `${skinType}.unlocked` as userField, "true");
+        void setUserField(message.author.id, userFields.MinecraftUUID, uuidGot);
 
         let skinID = gun_skins[capitalize(skinType)].id;
 

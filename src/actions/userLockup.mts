@@ -1,5 +1,5 @@
 import {GuildMember, MessageCreateOptions, TextChannel} from "discord.js";
-import {flags, getFlag, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, getUserField, setUserField} from "#src/modules/localStorage.mts";
 import {DAY_IN_MS} from "#src/core/util.mts";
 import logs from "#src/core/logs.mts";
 import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
@@ -10,11 +10,11 @@ import {getChannel} from "#src/core/discord.mts";
 
 export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
     try {
-        const alreadyLockedUp = await getFlag(member.user.id, flags.Security.LockedUp);
+        const alreadyLockedUp = getUserField(member.user.id, userFields.Security.LockedUp);
         if (alreadyLockedUp) return;
 
         // Mark the user as locked up
-        await setFlag(member.user.id, flags.Security.LockedUp, "true");
+        await setUserField(member.user.id, userFields.Security.LockedUp, "true");
 
         // Auto-release the user after 6 hours
         await member.timeout(DAY_IN_MS / 4, "Suspicious URL detected");
@@ -53,5 +53,5 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
 }
 
 export async function userUnlock(member: GuildMember) {
-    await setFlag(member.user.id, flags.Security.LockedUp, "false");
+    await setUserField(member.user.id, userFields.Security.LockedUp, "false");
 }

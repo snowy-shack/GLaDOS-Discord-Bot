@@ -8,7 +8,7 @@ import {spamKick} from "#src/actions/spamKick.mts";
 import * as logs from "#src/core/logs.mts";
 import {getMember} from "#src/core/discord.mts";
 import {userLockup} from "#src/actions/userLockup.mts";
-import {flags, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, setUserField} from "#src/modules/localStorage.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("moderator")
@@ -77,7 +77,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             let member: GuildMember | undefined = await getMember(interaction.options.getUser("user")?.id ?? "");
             if (member) {
                 await member.timeout(null);
-                await setFlag(member.id, flags.Security.LockedUp, "false");
+                await setUserField(member.id, userFields.Security.LockedUp, "false");
                 await interaction.editReply(logs.formatMessage(`Freed ${member}!`));
             } else {
                 await logs.logWarning("❌Could not lock user up!");

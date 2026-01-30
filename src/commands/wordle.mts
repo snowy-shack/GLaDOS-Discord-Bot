@@ -1,5 +1,5 @@
-import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
-import {flags, getFlag, getUserData} from "#src/modules/localStorage.mts";
+import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord.js";
+import {userFields, getUserField, getUserData, getGlobalField, globalFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 
@@ -17,40 +17,52 @@ export function init() {
         );
 }
 
+export type wordleKeys = keyof typeof userFields.Wordle;
 export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
 
         case "stats": {
-            const userID = interaction.options.getUser('user')?.id ?? interaction.user.id;
-            const data = await getUserData(userID);
+            const user = interaction.options.getUser('user');
+            const userID = user?.id ?? interaction.user.id;
 
             const solves: Record<number, number> = {
-                1: await getFlag(userID, flags.Wordle.Solves + "1") ?? 0,
-                2: await getFlag(userID, flags.Wordle.Solves + "2") ?? 0,
-                3: await getFlag(userID, flags.Wordle.Solves + "3") ?? 0,
-                4: await getFlag(userID, flags.Wordle.Solves + "4") ?? 0,
-                5: await getFlag(userID, flags.Wordle.Solves + "5") ?? 0,
-                6: await getFlag(userID, flags.Wordle.Solves + "6") ?? 0,
+                1: getUserField(userID, userFields.Wordle.Solves1) ?? 0,
+                2: getUserField(userID, userFields.Wordle.Solves2) ?? 0,
+                3: getUserField(userID, userFields.Wordle.Solves3) ?? 0,
+                4: getUserField(userID, userFields.Wordle.Solves4) ?? 0,
+                5: getUserField(userID, userFields.Wordle.Solves5) ?? 0,
+                6: getUserField(userID, userFields.Wordle.Solves6) ?? 0,
+                0: getUserField(userID, userFields.Wordle.SolvesX) ?? 0,
             };
 
-            const streak = await getFlag(userID, flags.Wordle.Streak);
-            const summedGames = Object.values(solves)
-                .reduce((acc, val) => acc + Number(val), 0);
+            const streak = getUserField(userID, userFields.Wordle.Streak) ?? 0;
+            const globalTotal = getGlobalField(globalFields.Wordle.GamesTracked) ?? 0;
 
-            const body = `You finished ${summedGames} games, with a streak of ${streak} days.\nBelow is your solve graph.\n` +
-                `-# This information may not be entirely accurate.\n` +
-                renderBarGraph(solves);
+            const totalGames = Object.values(solves).reduce((acc, val) => acc + Number(val), 0);
+            const successfulGames = totalGames - solves[0];
+            const weightedSum = Object.entries(solves)
+                .filter(([score]) => score !== "0")
+                .reduce((acc, [score, count]) => acc + (Number(score) * Number(count)), 0);
+
+            const average = successfulGames > 0 ? (weightedSum / successfulGames).toFixed(2) : 0;
+            const participation = globalTotal > 0 ? ((totalGames / globalTotal) * 100).toFixed(1) : 0;
+
+            const pronouns = user ? [user, "Their", "their"] : ["You", "Your", "your"];
+            const body = `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
+                + `\n### ${pronouns[1]} average score is **${average}**.`
+                + `\nBelow is ${pronouns[2]} solve graph.`
+                + '\n' + renderBarGraph(solves)
+                + `\n-# This information may not be entirely accurate.`;
 
             await interaction.reply(
                 embedMessage({
                     body: body,
                     footer: "wordle stats",
                     title: "Wordle game stats",
-                    color: colors.Success,
+                    color: colors.Primary,
                     ephemeral: false,
-                    // thumbnail: "https://cdn.discordapp.com/avatars/1160161136373665852/2f1baa96122224e6e78057896a16b5fe.webp?size=160",
                 })
-            )
+            );
         } break;
     }
 }
@@ -62,7 +74,7 @@ function renderBarGraph( solves_x: Record<number, number> ): string {
     const values = Object.values(solves_x);
     const max = Math.max(...values);
 
-    let output = "";
+    let output = "```\n";
 
     for (let x = 1; x <= 6; x++) {
         const value = solves_x[x] ?? 0;
@@ -73,5 +85,5 @@ function renderBarGraph( solves_x: Record<number, number> ): string {
         output += `${x}: ${FULL_BLOCK.repeat(barLength)}\n`;
     }
 
-    return output;
+    return output + "```";
 }

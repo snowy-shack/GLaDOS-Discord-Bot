@@ -1,7 +1,4 @@
-import {
-    ChatInputCommandInteraction, InteractionEditReplyOptions,
-    TextBasedChannel,
-} from "discord.js";
+import {ChatInputCommandInteraction, MessageFlags, TextBasedChannel,} from "discord.js";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/core/logs.mts";
@@ -15,9 +12,10 @@ function block(emoji: string, title: string, description: string) {
 
 async function reply(interaction: ChatInputCommandInteraction, message: string, error?: boolean) {
     await interaction.editReply(
-        embedMessage<InteractionEditReplyOptions>({
+        embedMessage({
             title: message,
             color: error ? colors.Error : colors.Primary,
+            ephemeral: true,
             ...(error && { icon: icons.mark })
         })
     );
@@ -35,7 +33,9 @@ export async function reactWithTemplate(interaction: ChatInputCommandInteraction
         emoji,
     } = opts;
 
-    await interaction.deferReply();
+    await interaction.deferReply({
+        flags: MessageFlags.Ephemeral,
+    });
 
     const id = interaction.options.getString(itemType);
     const targetMessage = interaction.options.getString("message_id");
@@ -67,7 +67,7 @@ export async function reactWithTemplate(interaction: ChatInputCommandInteraction
             if (msg.author.id === targetUser.id) {
                 await msg.reply(content);
                 replied = true;
-                await reply(interaction, "Replying!");
+                await reply(interaction, "Replied!");
 
                 setTimeout(() => void interaction.deleteReply().catch(() => {}), deleteAckAfterMs);
                 break;
@@ -85,7 +85,7 @@ export async function reactWithTemplate(interaction: ChatInputCommandInteraction
         try {
             const msg = await channel.messages.fetch(targetMessage);
             await msg.reply(content);
-            await reply(interaction, "Replying!");
+            await reply(interaction, "Replied!");
             setTimeout(() => void interaction.deleteReply().catch(() => {}), deleteAckAfterMs);
         } catch (err) {
             await reply(interaction, "Unknown message ID.", true);

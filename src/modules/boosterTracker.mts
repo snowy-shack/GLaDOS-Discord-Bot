@@ -1,7 +1,7 @@
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import * as logs from "#src/core/logs.mts";
 import {getMember, getRoleUsers} from "#src/core/discord.mts";
-import {flags, getUserData, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, getUserData, setUserField} from "#src/modules/localStorage.mts";
 import {delayInSeconds} from "#src/core/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
 import {roles} from "#src/core/phantys_home.mts";
@@ -21,12 +21,12 @@ export async function incrementAndDM() {
         console.log(chalk.yellowBright("Updating boosting days for", boosters));
 
         for (const boosterId of boosters) {
-            let boosterData = await getUserData(boosterId);
+            let boosterData = getUserData(boosterId);
 
-            let boostingDays = boosterData[flags.Booster.BoostingDays] ?? 0;
-            await setFlag(boosterId, flags.Booster.BoostingDays, boostingDays + 1);
+            let boostingDays = boosterData[userFields.Booster.BoostingDays] ?? 0;
+            await setUserField(boosterId, userFields.Booster.BoostingDays, boostingDays + 1);
 
-            if (boostingDays + 1 >= 90 && !boosterData[flags.Booster.Messaged]) {
+            if (boostingDays + 1 >= 90 && !boosterData[userFields.Booster.Messaged]) {
                 void finishedBoosting(boosterId);
             }
 
@@ -49,7 +49,7 @@ async function finishedBoosting(user_id: string) {
     await logs.logMessage(`😁${targetUser} has boosted for 90 days!`);
 
     await skinForm.sendFormMessage(targetUser.user, 0, undefined, gun_skins.Booster.id);
-    await setFlag(targetUser.id, flags.Booster.Messaged);
+    await setUserField(targetUser.id, userFields.Booster.Messaged);
 }
 
 export default { incrementAndDM };

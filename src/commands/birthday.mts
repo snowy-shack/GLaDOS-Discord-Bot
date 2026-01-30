@@ -1,6 +1,6 @@
 import {
     ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
-    TextInputBuilder, TextInputStyle, ChatInputCommandInteraction, ModalSubmitInteraction,
+    TextInputBuilder, TextInputStyle, ChatInputCommandInteraction, ModalSubmitInteraction, MessageFlags,
 } from "discord.js";
 
 import * as logs from "#src/core/logs.mts";
@@ -8,7 +8,7 @@ import colors from "#src/consts/colors.mts";
 import { getMember } from "#src/core/discord.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import {string, templateString} from "#src/modules/localizedStrings.mts";
-import {flags, getAllFlagValues, getFlag, setFlag} from "#src/modules/localStorage.mts";
+import {userFields, getFieldForAllUsers, getUserField, setUserField} from "#src/modules/localStorage.mts";
 import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/core/util.mts";
 import {icons} from "#src/consts/icons.mts";
 
@@ -71,7 +71,7 @@ async function getUserDetails(users: { [key: string]: string }[]) {
     let lastMember;
 
     for (const entry of users) {
-        let ghost = await getFlag(entry.user, flags.Ghost);
+        let ghost = getUserField(entry.user, userFields.Ghost);
         if (ghost) continue;
 
         try {
@@ -98,7 +98,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
 
         case "add": {
-            const userBirthday = await getFlag(interaction.user.id, flags.Birthday.Date);
+            const userBirthday = getUserField(interaction.user.id, userFields.Birthday.Date);
 
             if (!userBirthday) {
                 await interaction.showModal(form);
@@ -120,7 +120,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             const birthdayUser = interaction.options.getUser("user");
             if (!birthdayUser) return;
 
-            const userBirthday = await getFlag(birthdayUser.id, flags.Birthday.Date);
+            const userBirthday = getUserField(birthdayUser.id, userFields.Birthday.Date);
 
             if (userBirthday) {
                 await interaction.editReply(embedMessage({
@@ -151,7 +151,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
         case "next": {
             await interaction.deferReply();
 
-            const users = await getAllFlagValues(flags.Birthday.Date);
+            const users = await getFieldForAllUsers(userFields.Birthday.Date);
             const users_sorted = sortDatesUpcoming(users);
             const birthdayCount = interaction.options.getInteger("count") || 1;
             const userEntries = await getUserDetails(users_sorted);
@@ -212,7 +212,7 @@ export async function modalSubmitted(formID: string, interaction: ModalSubmitInt
         } else birthDate = "";
 
         if (birthDate) {
-            await setFlag(interaction.user.id, flags.Birthday.Date, birthDate);
+            await setUserField(interaction.user.id, userFields.Birthday.Date, birthDate);
             void logs.logMessage(`🍰 Saved birthday of ${interaction.user}: ${formatDate(birthDate, true)}`);
 
             await interaction.reply(embedMessage({
