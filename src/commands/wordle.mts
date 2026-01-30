@@ -36,6 +36,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             };
 
             const streak = getUserField(userID, userFields.Wordle.Streak) ?? 0;
+            const lastScore = getUserField(userID, userFields.Wordle.LastScore) ?? NaN;
             const globalTotal = getGlobalField(globalFields.Wordle.GamesTracked) ?? 0;
 
             const totalGames = Object.values(solves).reduce((acc, val) => acc + Number(val), 0);
@@ -51,7 +52,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             const body = `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
                 + `\n### ${pronouns[1]} average score is **${average}**.`
                 + `\nBelow is ${pronouns[2]} solve graph.`
-                + '\n' + renderBarGraph(solves)
+                + '\n' + renderBarGraph(solves, lastScore)
                 + `\n-# This information may not be entirely accurate.`;
 
             await interaction.reply(
@@ -70,11 +71,11 @@ export async function react(interaction: ChatInputCommandInteraction) {
 const FULL_BLOCK = "█";
 const WIDTH = 18;
 
-function renderBarGraph( solves_x: Record<number, number> ): string {
+function renderBarGraph( solves_x: Record<number, number>, lastScore: number ): string {
     const values = Object.values(solves_x);
     const max = Math.max(...values);
 
-    let output = "```\n";
+    let output = "```ansi\n";
 
     for (let x = 1; x <= 6; x++) {
         const value = solves_x[x] ?? 0;
@@ -82,7 +83,7 @@ function renderBarGraph( solves_x: Record<number, number> ): string {
             ? 0
             : Math.round((value / max) * WIDTH);
 
-        output += `${x}: ${FULL_BLOCK.repeat(barLength)}\n`;
+        output += x === lastScore ? `${x}: \x1b[0;32m${FULL_BLOCK.repeat(barLength)}\x1b[0m\n` : `${x}: ${FULL_BLOCK.repeat(barLength)}\n`;
     }
 
     return output + "```";

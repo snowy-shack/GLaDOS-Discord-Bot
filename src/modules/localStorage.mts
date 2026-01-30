@@ -39,6 +39,7 @@ export const userFields = {
     Wordle: {
         Streak:       "wordle.streak",
         LastPlayed:   "wordle.last_played",
+        LastScore:    "wordle.last_score",
         Solves1:      "wordle.solves_1",
         Solves2:      "wordle.solves_2",
         Solves3:      "wordle.solves_3",
@@ -165,7 +166,7 @@ export function getUserData(userID: string) {
     return storage.users[userID];
 }
 
-export async function setUserField(userID: string, field: userField, newValue = "true") {
+export async function setUserField(userID: string, field: userField, newValue: any = "true") {
     // If value is already set, don't replace it
     if (storage.users[userID][field] == newValue) return;
 

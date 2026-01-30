@@ -150,7 +150,7 @@ function trackWordle(message: Message) {
             players++;
             const id = match[1];
             // 'SolvesX' or 'Solves1'-'Solves6'
-            void incrementWordleScores(id, userFields.Wordle[(`Solves${score}`) as wordleKeys]);
+            void incrementWordleScores(id, userFields.Wordle[(`Solves${score}`) as wordleKeys], Number(score));
         }
     }
 
@@ -180,11 +180,12 @@ function maybeCount(message: Message) {
 }
 
 // Not really a reaction, but still here for ease of use
-async function incrementWordleScores(id: string, field: userField) {
+async function incrementWordleScores(id: string, field: userField, lastScore: number) {
     let data = getUserData(id);
 
     let value = data[field] ?? 0;
     await setUserField(id, field, value + 1);
+    await setUserField(id, userFields.Wordle.LastScore, lastScore);
 
     const streak = data[userFields.Wordle.Streak] ?? 0;
     const lastPlayed = data[userFields.Wordle.LastPlayed];
