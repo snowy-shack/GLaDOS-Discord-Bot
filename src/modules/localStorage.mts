@@ -167,10 +167,11 @@ export function getUserData(userID: string) {
 }
 
 export async function setUserField(userID: string, field: userField, newValue: any = "true") {
+    storage.users[userID] ??= {};
+
     // If value is already set, don't replace it
     if (storage.users[userID][field] == newValue) return;
 
-    storage.users[userID] ??= {};
     storage.users[userID][field] = newValue;
 
     await save('users', userID);
