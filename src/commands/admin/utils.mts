@@ -6,6 +6,7 @@ import {
 import boosterHandler from "#src/modules/boosterTracker.mts";
 import * as logs from "#src/core/logs.mts";
 import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
+import {getChannel} from "#src/core/discord.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName("utils")
@@ -21,6 +22,11 @@ export function init() {
             subcommand.setName("daily_birthday")
                 .setDescription("Reevaluate daily birthdays")
         )
+
+        .addSubcommand(subcommand =>
+            subcommand.setName("test")
+                .setDescription("Test command")
+        )
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
@@ -35,6 +41,10 @@ export async function react(interaction: ChatInputCommandInteraction) {
         case "daily_birthday": {
             await checkBirthdays();
             void interaction.reply(logs.formatMessage("🍰 Reevaluated daily birthdays"));
+        } break;
+
+        case "test": {
+
         }
     }
 }

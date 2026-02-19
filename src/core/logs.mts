@@ -4,6 +4,7 @@ import { embedMessage } from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {GuildBasedChannel, MessageCreateOptions} from "discord.js";
 import chalk from "chalk";
+import {isSilent} from "#src/envloader.mts";
 
 /* private */ async function getLogChannel(): Promise<GuildBasedChannel | null | undefined> {
     return await getChannel(channels.Logs);
@@ -19,6 +20,8 @@ export function formatMessage<T>(message: string): T {
 }
 
 export async function logWarning(message: string) {
+    if (isSilent) return;
+
     console.log(chalk.red(`[WARN]: ${message}`));
     const logChannel = await getLogChannel();
     if (!logChannel || !logChannel.isTextBased()) return;
@@ -35,6 +38,8 @@ export async function logWarning(message: string) {
 }
 
 export async function logMessage(message: string) {
+    if (isSilent) return;
+
     console.log(chalk.blueBright(`[LOGS]: ${message}`));
     const logChannel = await getLogChannel();
     if (!logChannel || !logChannel.isTextBased()) return;
@@ -50,6 +55,8 @@ export async function logMessage(message: string) {
 }
 
 export async function logError(location: string, error: Error) {
+    if (isSilent) return;
+
     console.error(`Error occurred ${location}: ${error.message}`);
 
     try {

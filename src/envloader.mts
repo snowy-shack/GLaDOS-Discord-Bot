@@ -9,6 +9,7 @@ const __dirname: string = path.dirname(fileURLToPath(import.meta.url));
 const args: string[] = process.argv.slice(2);
 
 export const isBeta: boolean = args.includes("--beta") || args.includes("-b");
+export const isSilent: boolean = args.includes("--silent") || args.includes("-s");
 
 // Apply the environment file
 const envFile: `${string}.env` = isBeta ? "beta.env" : "prod.env";
