@@ -44,7 +44,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             } else if (stdout.includes("Already up to date")) {
                 await logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
             } else {
-                await logs.logMessage("⚠️ Update wasn't successful");
+                await logs.logWarning("⚠️ Update wasn't successful");
             }
         }, 500);
     });
