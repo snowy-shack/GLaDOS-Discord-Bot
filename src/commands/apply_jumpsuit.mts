@@ -33,35 +33,29 @@ export async function react(interaction: ChatInputCommandInteraction) {
     const username = interaction.options.getString('username', true);
     let armWidth = interaction.options.getString('arm_width');
 
+    let canvas: any = createCanvas(64, 64);
+    let ctx: any = canvas.getContext('2d');
+
     try {
-        const skin = await loadImage(`https://minotar.net/skin/${username}`);
-
-        const canvas = createCanvas(64, 64);
-        const ctx = canvas.getContext('2d');
-
-        // Draw base skin
+        let skin: any = await loadImage(`https://minotar.net/skin/${username}`);
         ctx.drawImage(skin, 0, 0);
+        skin = null; // Release C++ memory
 
         if (armWidth === null) {
-            // If this pixel is transparent, then the skin is likely 3px
-            const pixelData = ctx.getImageData(50, 18, 51, 19).data;
-            const isTransparent = pixelData[3] === 0;
-
-            armWidth = isTransparent ? "3" : "4";
+            const pixelData = ctx.getImageData(50, 18, 1, 1).data;
+            armWidth = pixelData[3] === 0 ? "3" : "4";
         }
 
-        const jumpsuit = await loadImage(path.join(process.cwd(), "src/consts/images", `jumpsuit_${armWidth}px.png`));
-
-        // Remove previous overlay
+        let jumpsuit: any = await loadImage(path.join(process.cwd(), "src/consts/images", `jumpsuit_${armWidth}px.png`));
         ctx.clearRect(0, 32, 64, 16);
         ctx.clearRect(0, 48, 16, 16);
         ctx.clearRect(48, 48, 16, 16);
-
-        // Otherwise, simply composite the jumpsuit over it
         ctx.drawImage(jumpsuit, 0, 0);
+        jumpsuit = null; // Release C++ memory
 
         const fileName = `${username}_jumpsuit.png`;
-        const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: fileName });
+        const buffer = canvas.toBuffer();
+        const attachment = new AttachmentBuilder(buffer, { name: fileName });
 
         await interaction.editReply({ files: [ attachment ],
             ...embedMessage<InteractionEditReplyOptions>({ body:
@@ -77,5 +71,9 @@ export async function react(interaction: ChatInputCommandInteraction) {
         await interaction.editReply(
             formatMessage("Failed to fetch skin or apply jumpsuit. Ensure username is correct.")
         );
+    } finally {
+        // Force memory clean-up
+        ctx = null;
+        canvas = null;
     }
 }
