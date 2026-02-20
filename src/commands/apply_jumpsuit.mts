@@ -47,9 +47,16 @@ export async function react(interaction: ChatInputCommandInteraction) {
         }
 
         let jumpsuit: any = await loadImage(path.join(process.cwd(), "src/consts/images", `jumpsuit_${armWidth}px.png`));
-        ctx.clearRect(0, 32, 64, 16);
-        ctx.clearRect(0, 48, 16, 16);
-        ctx.clearRect(48, 48, 16, 16);
+        ctx.clearRect(0, 32, 16, 14); // Leg 1
+        ctx.clearRect(0, 48, 16, 14); // Leg 2
+
+        ctx.clearRect(16, 32, 24, 16); // Body
+
+        ctx.clearRect(40, 32, 16, 13); // Arm 1
+        ctx.clearRect(48, 48, 16, 13); // Arm 2
+
+        ctx.clearRect(0, 0, 8, 8); // Logo
+
         ctx.drawImage(jumpsuit, 0, 0);
         jumpsuit = null; // Release C++ memory
 
