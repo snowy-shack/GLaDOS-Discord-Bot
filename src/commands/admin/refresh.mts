@@ -53,7 +53,10 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
     // Redefine channel to the actual channel object
     const channel = await discord.getChannel(channelID);
-    if (!channel?.isTextBased()) return;
+    if (!channel?.isTextBased()) {
+        void logs.logWarning("⚠️ Couldn't refresh " + channelName + " Channel! Not found or no permissions");
+        return;
+    }
 
     const fetchedMessages = await channel.messages.fetch({ limit: 100 });
 
