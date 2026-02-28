@@ -66,7 +66,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     setTimeout(() => {
         channel.send(logs.formatMessage<MessageCreateOptions>(`Last ${channelName} update: ${formattedDate}`));
         for (let entry of entries) {
-            channel.send(`# ${emoji} ` + entry.title.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + entry.description + '\n** **');
+            channel.send(`# ${emoji} ` + entry.title.replace('___', ' *\\_\\_\\_\\_*') + '\n> ' + entry.description); // + '\n** **');
         }
     }, 5000);
 }
