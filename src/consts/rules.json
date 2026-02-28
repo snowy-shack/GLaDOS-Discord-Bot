@@ -28,5 +28,10 @@
       "id": "rule_6",
       "title": "Keep chats English",
       "description": "To facilitate effective moderation and allow everyone to participate in conversations, please keep your conversations in this server in English. Occasional use of other languages is fine, but avoid entire conversations in your native language."
+  },
+  {
+    "id": "rule_7",
+    "title": "No excessive advertising",
+    "description": "Share your projects sparingly. Avoid repetitive advertising, recruiting, or posting external server invites. We reserve the right to determine if promotion becomes excessive."
   }
 ]
