@@ -5,17 +5,15 @@ import { emojis } from "#src/core/phantys_home.mts";
 import * as logs from "#src/core/logs.mts";
 import * as guild from "#src/core/discord.mts";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
-import * as util from "#src/core/util.mts";
-import {userFields, getFieldForAllUsers, getUserField} from "#src/modules/localStorage.mts";
-import {getChannel} from "#src/core/discord.mts";
-import {dateToString} from "#src/core/util.mts";
+import { dateIsToday, delayInMinutes } from "#src/core/util.mts";
+import { userFields, getFieldForAllUsers, getUserField } from "#src/modules/localStorage.mts";
+import { getChannel } from "#src/core/discord.mts";
 import {GuildMember} from "discord.js";
 import {string} from "#src/modules/localizedStrings.mts";
 
 export async function checkBirthdays() {
-    const today = dateToString(new Date()).split("-").slice(0, 2).join("-"); // "dd-mm"
     const birthdays = (await getFieldForAllUsers(userFields.Birthday.Date))
-        .filter(item => item.value.split("-").slice(0, 2).join("-") === today) // Check if it's today
+        .filter(item => dateIsToday(item.value))
         .map(item => item.user);
 
     await logs.logMessage(`🎂 There are ${birthdays.length} birthday(s) today.`);
@@ -41,7 +39,7 @@ export async function checkBirthdays() {
             await channel.send({ content: `<@${discord_id}>`, embeds: [happy_birthday] })
                 .then(message => message.react(emojis.Tada));
 
-            await util.delayInMinutes(10);
+            await delayInMinutes(10);
         })();
     }
 }

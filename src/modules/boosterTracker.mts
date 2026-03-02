@@ -4,7 +4,8 @@ import {getMember, getRoleUsers} from "#src/core/discord.mts";
 import {userFields, getUserData, setUserField} from "#src/modules/localStorage.mts";
 import {delayInSeconds} from "#src/core/util.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
-import {roles} from "#src/core/phantys_home.mts";
+import { roles } from "#src/core/phantys_home.mts";
+import { toError } from "#src/core/try-catch.mts";
 import chalk from "chalk";
 
 export async function incrementAndDM() {
@@ -35,8 +36,8 @@ export async function incrementAndDM() {
 
         await logs.logMessage(`✅ Incremented boosting days for ${successes} members.`);
 
-    } catch (error: any) {
-        await logs.logError("incrementing boosters", error);
+    } catch (error: unknown) {
+        await logs.logError("incrementing boosters", toError(error));
     }
 }
 

@@ -6,7 +6,8 @@ import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import * as localizedStrings from "#src/modules/localizedStrings.mts";
 import colors from "#src/consts/colors.mts";
-import {getChannel} from "#src/core/discord.mts";
+import { getChannel } from "#src/core/discord.mts";
+import { toError } from "#src/core/try-catch.mts";
 
 export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
     try {
@@ -47,8 +48,8 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
             });
         }
 
-    } catch (error: any) {
-        await logs.logError("locking user", error);
+    } catch (error: unknown) {
+        await logs.logError("locking user", toError(error));
     }
 }
 

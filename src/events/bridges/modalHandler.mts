@@ -6,9 +6,8 @@ async function reply(interaction: ModalSubmitInteraction) {
 
     const [modulePath, formID] = customId.split('#');
 
-    let path = `#src/${modulePath.replace(/\./g, '/')}.mjs`;
-    // Dynamic import
-    const module = await import(path);
+    const modulePathResolved = `#src/${modulePath.replace(/\./g, '/')}.mts`;
+    const module = await import(modulePathResolved);
 
     if (typeof module.modalSubmitted === "function") {
         await module.modalSubmitted(formID, interaction);

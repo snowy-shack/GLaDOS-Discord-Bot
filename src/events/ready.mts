@@ -7,7 +7,8 @@ import {getClient} from "#src/core/client.mts";
 
 export async function run() {
     console.log(chalk.gray("Running ready tasks..."));
-    await spamDetector.refreshScamURLs();
+    // Don't block "Ready" on scam list fetch — refresh in background
+    void spamDetector.refreshScamURLs();
 
     console.log(chalk.greenBright(`Ready! As ${getClient().user?.tag}`));
     await logs.logMessage(`🌃 Online and connected as GLaDOS v${await getVersion()}!`);

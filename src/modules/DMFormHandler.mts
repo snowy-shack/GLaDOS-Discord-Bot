@@ -6,8 +6,9 @@ import {skinTypeFromFooter} from "#src/modules/skinFormHandler.mts";
 import {userFields, setUserField, userField} from "#src/modules/localStorage.mts";
 import {gun_skins} from "#src/consts/gun_skins.mts";
 import {capitalize} from "#src/core/util.mts";
-import {getMember} from "#src/core/discord.mts";
-import {Message} from "discord.js";
+import { getMember } from "#src/core/discord.mts";
+import { toError } from "#src/core/try-catch.mts";
+import { Message } from "discord.js";
 
 export async function getLastBotMessage(message: Message): Promise<Message | undefined> {
     let lastMessage;
@@ -19,8 +20,8 @@ export async function getLastBotMessage(message: Message): Promise<Message | und
 
         try {
             if (message.embeds.length > 0) lastMessage = message;
-        } catch (error: any) {
-            await logs.logError("fetching embeds for DM form", error);
+        } catch (error: unknown) {
+            await logs.logError("fetching embeds for DM form", toError(error));
         }
     }
 

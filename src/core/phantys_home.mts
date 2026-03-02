@@ -4,6 +4,7 @@ import {
     User
 } from "discord.js";
 import * as logs from "#src/core/logs.mts";
+import { toError } from "#src/core/try-catch.mts";
 
 // BETA : PRODUCTION
 export const guildID: string = isBeta ? "1221613837384417300" : "704266427577663548";
@@ -120,13 +121,13 @@ export async function dmUser(targetUser: User, content: MessageCreateOptions): P
         await targetUser.send(content);
         return true;
 
-    } catch (error: any) { // Unable to DM
-        if (error.code !== 50007) {
-            await logs.logError(`DM'ing user ${targetUser.id}`, error);
+    } catch (error: unknown) {
+        const err = error && typeof error === "object" && "code" in error ? (error as { code: number }) : null;
+        if (err?.code !== 50007) {
+            await logs.logError(`DM'ing user ${targetUser.id}`, toError(error));
             return null;
-        } else {
-            await logs.logWarning(`🎭 Couldn't DM ${targetUser}.`);
         }
+        await logs.logWarning(`🎭 Couldn't DM ${targetUser}.`);
         return false;
     }
 }

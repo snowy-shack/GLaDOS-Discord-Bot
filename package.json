@@ -1,6 +1,9 @@
 {
+    "name": "glados-discord-bot",
+    "version": "3.6.0",
     "type": "module",
     "scripts": {
+        "changelog:recent": "git log --format=\"- **%ad** — %s\" --date=short ac06faf..HEAD",
         "start": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --silent",
         "debug": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --beta"
     },

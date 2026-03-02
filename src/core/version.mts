@@ -1,12 +1,20 @@
-import { promises as fs } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
-import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+let versionCache: string | null = null;
+
+/** Single source of truth: package.json version (semver). */
+export function getVersionSync(): string {
+    if (versionCache !== null) return versionCache;
+    const pkgPath = path.join(__dirname, "../../package.json");
+    const data = readFileSync(pkgPath, "utf8");
+    const parsed = JSON.parse(data) as { version?: string };
+    versionCache = typeof parsed.version === "string" ? parsed.version : "0.0.0";
+    return versionCache;
+}
 
 export async function getVersion(): Promise<string> {
-    const data: string = await fs.readFile(path.join(__dirname, "../../README.md"), "utf8");
-    const version: RegExpMatchArray|null = data.match(/Current Version:\s*([\d]+\.[\d]+\.[\d]+)/);
-
-    return version ? version[1] : ".unknown";
+    return getVersionSync();
 }

@@ -7,7 +7,8 @@ import {
 import { createCanvas, loadImage } from 'canvas';
 import {formatMessage, logError} from "#src/core/logs.mts";
 import path from "node:path";
-import {embedMessage} from "#src/formatting/styledEmbed.mts";
+import { toError } from "#src/core/try-catch.mts";
+import { embedMessage } from "#src/formatting/styledEmbed.mts";
 
 export function init() {
     return new SlashCommandBuilder().setName('apply_jumpsuit')
@@ -73,8 +74,8 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 thumbnail: `attachment://${fileName}`
             }) }
         );
-    } catch (e: any) {
-        await logError("Generating jumpsuit skin", e);
+    } catch (e: unknown) {
+        await logError("Generating jumpsuit skin", toError(e));
         await interaction.editReply(
             formatMessage("Failed to fetch skin or apply jumpsuit. Ensure username is correct.")
         );

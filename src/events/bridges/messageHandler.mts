@@ -22,7 +22,7 @@ export async function handleMessage(message: Message) {
            && (addLikesToMedia(message.channelId))
             || addLikes(message.channelId)
             || addVotes(message.channelId)) {
-        await autoEmojiReactions.react(message);``
+        await autoEmojiReactions.react(message);
     }
 
     // Try all replies until one succeeds

@@ -7,7 +7,10 @@ import {CommandInteraction} from "discord.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export function getCommandList() {
+let commandListCache: string[] | null = null;
+
+export function getCommandList(): string[] {
+    if (commandListCache) return commandListCache;
     const normalCommandsList = fs
         .readdirSync(path.join(__dirname, "../../commands"))
         .filter(file => file.endsWith(".mts"));
@@ -15,22 +18,21 @@ export function getCommandList() {
         .readdirSync(path.join(__dirname, "../../commands/admin"))
         .filter(file => file.endsWith(".mts"));
 
-    return [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.mts$/, ''));
+    commandListCache = [...normalCommandsList, ...adminCommandsList.map(file => `admin/${file}`)].map(file => file.replace(/\.mts$/, ''));
+    return commandListCache;
 }
 
 export async function reply(interaction: CommandInteraction) {
-    let commandList = getCommandList();
+    const commandList = getCommandList();
 
-    // Find the command associated
+    const { commandName } = interaction;
     for (const command of commandList) {
-        const { commandName } = interaction;
-
-        let commandModule = command.split('/').pop();
-        if (commandModule && commandName === commandModule.split('.')[0]) {
+        const fileName = command.split('/').pop();
+        if (fileName && commandName === fileName.split('.')[0]) {
             const commandModule = await import(`#src/commands/${command}`);
 
             if (typeof commandModule.react === "function") {
-                commandModule.react(interaction);
+                await commandModule.react(interaction);
             } else {
                 await logs.logError("handling command", Error(`${command} command has no react functionality`));
             }
