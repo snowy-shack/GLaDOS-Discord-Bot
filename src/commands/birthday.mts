@@ -9,8 +9,9 @@ import { getMember } from "#src/core/discord.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import {string, templateString} from "#src/modules/localizedStrings.mts";
 import {userFields, getFieldForAllUsers, getUserField, setUserField} from "#src/modules/localStorage.mts";
-import {dateIsToday, DAY_IN_MS, formatDate, isValidDate, sortDatesUpcoming, trimString} from "#src/core/util.mts";
-import {icons} from "#src/consts/icons.mts";
+import { dateIsToday, formatDate, isValidDate, sortDatesUpcoming, trimString, daysUntilBirthday } from "#src/core/util.mts";
+import { toError } from "#src/core/try-catch.mts";
+import { icons } from "#src/consts/icons.mts";
 
 export function init() {
     return new SlashCommandBuilder()
@@ -56,15 +57,7 @@ const birthdayInput = new TextInputBuilder()
 
 form.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(birthdayInput));
 
-function daysUntilBirthday(date: string) {
-    const today = new Date();
-    const [day, month] = date.split('-').map(Number);
-    let nextBirthday = new Date(today.getFullYear(), month - 1, day);
-    if (today > nextBirthday) nextBirthday.setFullYear(today.getFullYear() + 1);
-    return Math.ceil((Number(nextBirthday) - Number(today)) / DAY_IN_MS);
-}
-
-async function getUserDetails(users: { [key: string]: string }[]) {
+async function getUserDetails(users: { user: string; value: string }[]) {
     const usernames     = [];
     const dates         = [];
     const daysRemaining = [];
@@ -87,8 +80,8 @@ async function getUserDetails(users: { [key: string]: string }[]) {
             usernames.push(trimString(displayName, 20));
             dates.push(formattedDate);
             daysRemaining.push(remainingDays);
-        } catch (error: any) {
-            await logs.logError("indexing birthdays", error)
+        } catch (error: unknown) {
+            await logs.logError("indexing birthdays", toError(error));
         }
     }
     return { usernames, dates, daysRemaining, lastMember };

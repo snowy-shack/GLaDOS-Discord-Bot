@@ -4,7 +4,8 @@ import {spamKick} from "#src/actions/spamKick.mts";
 import * as logs from "#src/core/logs.mts";
 import {getChannel} from "#src/core/discord.mts";
 import {templateEmbed} from "#src/formatting/styledEmbed.mts";
-import {string} from "#src/modules/localizedStrings.mts";
+import { toError } from "#src/core/try-catch.mts";
+import { string } from "#src/modules/localizedStrings.mts";
 
 export function init(client: Client): void {
     client.on(Events.GuildMemberUpdate, async (oldMember, member) => {
@@ -39,8 +40,8 @@ async function manageSillyRole(oldMember: GuildMember|PartialGuildMember, member
             await logs.logMessage(`😔 Removed Silly role from <@${member.user.id}>`);
         }
 
-    } catch (error: any) {
-        await logs.logError(`managing Silly role for ${member}`, error);
+    } catch (error: unknown) {
+        await logs.logError(`managing Silly role for ${member}`, toError(error));
     }
 }
 
@@ -67,7 +68,7 @@ async function welcomeUser(oldMember: GuildMember|PartialGuildMember, member: Gu
 
             channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` });
         }
-    } catch (error: any) {
-        await logs.logError("welcoming user", error);
+    } catch (error: unknown) {
+        await logs.logError("welcoming user", toError(error));
     }
 }

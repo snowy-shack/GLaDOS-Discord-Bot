@@ -12,23 +12,36 @@ import "#src/envloader.mts";
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/core/logs.mts";
 import { embedMessage, templateEmbed } from "#src/formatting/styledEmbed.mts";
-import { string, templateString } from "#src/modules/localizedStrings.mts";
+import {hasString, string, templateString} from "#src/modules/localizedStrings.mts";
 import { getChannel } from "#src/core/discord.mts";
 import { channels, dmUser } from "#src/core/phantys_home.mts";
 import { icons } from "#src/consts/icons.mts";
+import {getGunSkin} from "#src/modules/portalGunSkinLoader.mts";
 
 const title = "PortalMod Portal Gun skin form";
 
-export async function respond(previousField: number | null, fieldValue: string, type: string = "blank"): Promise<APIEmbed[] | undefined> {
+export async function createResponseEmbed(previousField: number | null, fieldValue: string, type: string = "blank"): Promise<APIEmbed[] | undefined> {
     switch (previousField) {
         case 0: {
-            return [
-                templateEmbed({
-                    body: await string(`skins.form.intro.${type}`),
-                    footer: `field 1/2 • skin.${type}`,
-                    title
-                }) as APIEmbed
-            ];
+            if ((await hasString(`skins.form.intro.${type}`))) {
+                return [
+                    templateEmbed({
+                        body: await string(`skins.form.intro.${type}`),
+                        footer: `field 1/2 • skin.${type}`,
+                        title
+                    }) as APIEmbed
+                ];
+            } else {
+                const skin = await getGunSkin(type);
+                const credit = skin?.artist ? ` by **${skin?.artist}**` : "";
+                return [
+                    templateEmbed({
+                        body: await templateString(`skins.form.intro.generic`, [skin?.name ?? "<unknown>", credit]),
+                        footer: `field 1/2 • skin.${type}`,
+                        title
+                    }) as APIEmbed
+                ];
+            }
         }
 
         case 1: {
@@ -102,8 +115,8 @@ export async function respond(previousField: number | null, fieldValue: string, 
     }
 }
 
-export async function sendFormMessage(targetUser: User, previousField: number, textInput = "", type = "", retried = false) {
-    const succeeded = await dmUser(targetUser, { embeds: await respond(previousField, textInput, type) });
+export async function sendFormMessage(targetUser: User, previousField: number, textInput = "", skinType = "", retried = false) {
+    const succeeded = await dmUser(targetUser, { embeds: await createResponseEmbed(previousField, textInput, skinType) });
     if (succeeded) return true;
 
     if (retried || succeeded === null) return false;
@@ -114,8 +127,8 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
     void logs.logMessage(`🔁 Asking ${targetUser} to DM them in ${channel}.`);
 
     const form_failed = templateEmbed({
-        body: await templateString("skins.form.fail", [targetUser.username, type]),
-        footer: `skin.${type} • DM error (50007)`,
+        body: await templateString("skins.form.fail", [targetUser.username, skinType]),
+        footer: `skin.${skinType} • DM error (50007)`,
         title
     }) as APIEmbed;
 

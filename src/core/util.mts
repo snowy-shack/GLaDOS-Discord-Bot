@@ -1,8 +1,26 @@
-import {Message} from "discord.js";
-import {getClient} from "#src/core/client.mts";
-import {dateString} from "#src/core/types.mts";
+import { Message } from "discord.js";
+import { getClient } from "#src/core/client.mts";
+import { dateString, shortDateString } from "#src/core/types.mts";
 
 export const DAY_IN_MS = 86400000;
+
+/** Parsed parts from "dd-mm" or "dd-mm-yyyy". Year is undefined for short form. */
+export type DateParts = { day: number; month: number; year?: number };
+
+/**
+ * Parse "dd-mm" or "dd-mm-yyyy" into numeric parts. Returns undefined if invalid.
+ */
+export function parseDateParts(dateStr: string): DateParts | undefined {
+    if (!dateStr || typeof dateStr !== "string") return undefined;
+    const parts = dateStr.trim().split("-").map(Number);
+    if (parts.length < 2 || parts.some(isNaN)) return undefined;
+    const [day, month, year] = parts;
+    if (month < 1 || month > 12 || day < 1 || day > 31) return undefined;
+    if (parts.length >= 3 && !isNaN(year!) && year! >= 1) {
+        return { day, month, year: year! };
+    }
+    return { day, month };
+}
 
 /**
  * Generates a promise that resolves after the input time in milliseconds.
@@ -55,113 +73,118 @@ export function trimString(input: string, length: number, includeDots = true) {
     return input.length > length ? input.slice(0, length - 1) + (includeDots ? '…' : '') : input;
 }
 
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+
+function daySuffix(day: number): "st" | "nd" | "rd" | "th" {
+    if (day % 10 === 1 && day !== 11) return "st";
+    if (day % 10 === 2 && day !== 12) return "nd";
+    if (day % 10 === 3 && day !== 13) return "rd";
+    return "th";
+}
+
 /**
- * Converts a Date object to a string formatted as `dd-mm-yyyy`.
- *
- * @param date - The Date object to be converted to a string.
- * @return The formatted date string in `dd-mm-yyyy` format.
+ * Converts a Date to `dd-mm-yyyy` (e.g. 15-03-1990).
  */
-export function dateToString(date: Date) {
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // Month (0-based, so +1)
+export function dateToString(date: Date): dateString {
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
     const yyyy = date.getFullYear();
-
-    return `${dd}-${mm}-${yyyy}`;
+    return `${dd}-${mm}-${yyyy}` as dateString;
 }
 
 /**
- * Formats a given date string into a more readable format with an optional year inclusion.
- *
- * @param date - The input date string in the format `dd-mm-yyyy`.
- * @param [includeYear=false] - Whether to include the year in the output format.
- * @return A formatted date string, optionally including the year.
+ * Converts a Date to `dd-mm` (e.g. 15-03). Use for year-agnostic dates like birthdays "today".
  */
-export function formatDate(date: string, includeYear: boolean = false) {
-    const months = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-
-    const day:   number = Number(date.split('-')[0]);
-    const month: string = months[Number(date.split('-')[1]) - 1];
-    const year:  string = date.split('-')[2];
-
-    const suffix: "st"|"rd"|"nd"|"th" =
-        (day % 10 === 1 && day !== 11) ? "st" :
-            (day % 10 === 2 && day !== 12) ? "nd" :
-                (day % 10 === 3 && day !== 13) ? "rd" : "th";
-
-    return (year === "1900" || !includeYear) ? `${month} ${day}${suffix}` : `${month} ${day}${suffix} ${year}`;
+export function dateToShortString(date: Date): shortDateString {
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    return `${dd}-${mm}` as shortDateString;
 }
 
 /**
- * Checks whether the given date string corresponds to today's date.
- *
- * @param date - The date string in the format "DD-MM".
- * @return Returns true if the given date matches today's date, otherwise false.
+ * Human-readable date from "dd-mm" or "dd-mm-yyyy". Year is omitted when missing or 1900.
+ * @param includeYear - Include year in output (e.g. "March 15th 1990").
  */
-export function dateIsToday(date: string) {
+export function formatDate(date: string, includeYear = false): string {
+    const p = parseDateParts(date);
+    if (!p) return date;
+    const monthName = MONTH_NAMES[p.month - 1];
+    const suffix = daySuffix(p.day);
+    const withYear = includeYear && p.year != null && p.year !== 1900;
+    return withYear ? `${monthName} ${p.day}${suffix} ${p.year}` : `${monthName} ${p.day}${suffix}`;
+}
+
+/**
+ * True if the given date string (dd-mm or dd-mm-yyyy) is today (same day and month).
+ */
+export function dateIsToday(date: string): boolean {
+    const p = parseDateParts(date);
+    if (!p) return false;
     const today = new Date();
-    const [day, month] = date.split('-').map(Number);
-
-    return today.getDate() === day && today.getMonth() + 1 === month;
+    return today.getDate() === p.day && today.getMonth() + 1 === p.month;
 }
 
 /**
- * Sorts an array of objects containing date strings in ascending order of upcoming dates.
- * Dates that are in the past relative to the current date are moved to the end of the list.
- * Dates are expected in the format `dd-mm`.
- *
- * @param list - An array of objects, each containing at least a `value` property with a `dd-mm` formatted date string.
- * @return The sorted array where upcoming dates appear first and past dates are moved to the end.
+ * Sorts by next occurrence of the date (month-day). Past dates this year go to the end.
+ * Accepts `value` as "dd-mm" or "dd-mm-yyyy".
  */
-export function sortDatesUpcoming(list: { value: string, [key: string]: string }[]): { value: string, [key: string]: string }[] {
+export function sortDatesUpcoming<T extends { value: string }>(list: T[]): T[] {
     const today = new Date();
-    const currentDay: number = today.getDate();
-    const currentMonth: number = today.getMonth() + 1; // getMonth() is zero-based
-    const todayDate: number = currentMonth * 100 + currentDay;
+    const todayNum = (today.getMonth() + 1) * 100 + today.getDate();
 
-    return list.sort((a, b): number => {
-        const [dayA, monthA] = a.value.split('-').map(Number);
-        const [dayB, monthB] = b.value.split('-').map(Number);
-
-        const dateA: number = monthA * 100 + dayA;
-        const dateB: number = monthB * 100 + dayB;
-
-        // Move past dates to the end
-        const aIsPast: boolean = dateA < todayDate;
-        const bIsPast: boolean = dateB < todayDate;
-
-        if (aIsPast !== bIsPast) return aIsPast ? 1 : -1;
-        return dateA - dateB;
+    return [...list].sort((a, b) => {
+        const pA = parseDateParts(a.value);
+        const pB = parseDateParts(b.value);
+        if (!pA || !pB) return 0;
+        const numA = pA.month * 100 + pA.day;
+        const numB = pB.month * 100 + pB.day;
+        const aPast = numA < todayNum;
+        const bPast = numB < todayNum;
+        if (aPast !== bPast) return aPast ? 1 : -1;
+        return numA - numB;
     });
 }
 
 /**
- * Checks if the given day, month, and year construct a valid date.
- *
- * @param day - The day of the month.
- * @param month - The month of the year (1-12).
- * @param year - The year.
- * @return Returns true if the date is valid, false otherwise.
+ * Validates that day/month/year form a real calendar date.
  */
-export function isValidDate(day: number, month: number, year: number) {
+export function isValidDate(day: number, month: number, year: number): boolean {
     const date = new Date(year, month - 1, day);
-    return (
-        date.getFullYear() === year &&
-        date.getMonth() === month - 1 &&
-        date.getDate() === day
-    );
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
 /**
- * Calculates the number of full days elapsed since a given date string.
- * * @param dateStr - The date string to compare (formatted via dateToString).
- * @returns The number of days between the date and now.
+ * Validates a "dd-mm-yyyy" string and returns true if it's a real date.
+ */
+export function isValidDateString(dateStr: string): boolean {
+    const p = parseDateParts(dateStr);
+    if (!p || p.year == null) return false;
+    return isValidDate(p.day, p.month, p.year);
+}
+
+/**
+ * Days elapsed since the given full date string (dd-mm-yyyy).
  */
 export function daysSince(dateStr: dateString): number {
     if (!dateStr) return 0;
-    const pastDate = new Date(dateStr).getTime();
-    const diff = Date.now() - pastDate;
-    return Math.floor(diff / DAY_IN_MS);
+    const p = parseDateParts(dateStr);
+    if (!p || p.year == null) return 0;
+    const past = new Date(p.year, p.month - 1, p.day).getTime();
+    return Math.floor((Date.now() - past) / DAY_IN_MS);
+}
+
+/**
+ * Days until the next occurrence of this date (by month-day). Use for birthdays.
+ * Accepts "dd-mm" or "dd-mm-yyyy". Returns 0 if today.
+ */
+export function daysUntilBirthday(dateStr: string): number {
+    const p = parseDateParts(dateStr);
+    if (!p) return NaN;
+    const today = new Date();
+    let next = new Date(today.getFullYear(), p.month - 1, p.day);
+    if (next.getTime() < today.getTime()) next.setFullYear(today.getFullYear() + 1);
+    return Math.ceil((next.getTime() - today.getTime()) / DAY_IN_MS);
 }
 
 /**

@@ -19,11 +19,13 @@ async function refreshScamURLs() {
 async function checkMessage(message: Message) {
     if (getUserField(message.author.id, userFields.Security.Whitelisted)) return;
 
-    let linkRegEx = /^(https?:\/\/)?(www\.)?([^\/\s]+)(\/.*)?$/; // Extracts domains from links present in the message.
+    // Match URLs in the message and extract domains (group 3)
+    const linkRegEx = /(?:https?:\/\/)?(?:www\.)?([^\/\s]+)(?:\/.*)?/g;
     const linkMatches = message.content.match(linkRegEx);
+    if (!linkMatches) return;
 
-    for (let domain in linkMatches) {
-        domain = linkMatches[+domain];
+    for (const match of linkMatches) {
+        const domain = match.replace(/(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
         if (scamLinks.has(domain) && message.member && message.channel instanceof TextChannel) {
             await userLockup(message.member, message.channel, message.content);
             try {

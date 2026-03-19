@@ -9,9 +9,27 @@ npm run start # Uses prod.env
 npm run debug # Uses beta.env
 ```
 
-`Current Version: 3.06.0`
+Version is in `package.json` (semver); the bot shows it on startup and in `/about`.
 
 # Changelog
+
+## Recent changes (from git, since v3.6.0)
+
+_To refresh: run `npm run changelog:recent` (or `git log --format="- **%ad** — %s" --date=short <commit>..HEAD`) and paste the output here. Update the commit in the script when you tag a new release._
+
+- **2026-02-28** — Update rules channel ID & error handling
+- **2026-02-28** — Remove new lines between rules/faq entries
+- **2026-02-28** — Update rules
+- **2026-02-26** — Update .gitignore for storage directory
+- **2026-02-20** — Better jumpsuit old layer removal (hands and feet)
+- **2026-02-20** — Memory safety for canvas dependency; downgrade canvas for pi
+- **2026-02-19** — Proper warning on non-successful update
+- **2026-02-19** — Add `/apply_jumpsuit` command
+- **2026-02-19** — Add silent option
+- **2026-01-30** — setUserField() unset field hotfix
+
+## Release history
+
 ## Release 3.06.0 - January 30th 2026
 ### Fixes
 - Fixed /birthday add command not working
@@ -23,7 +41,6 @@ npm run debug # Uses beta.env
 ### Changes
 - Fixed embeds sending in DMs
 
-# Changelog
 ## Release 3.05.0 - November 5th 2025
 ### Changes
 - Tweaked formatting of `/about` command response embed.

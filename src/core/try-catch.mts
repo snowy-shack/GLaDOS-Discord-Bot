@@ -1,4 +1,11 @@
 // https://gist.github.com/t3dotgg/a486c4ae66d32bf17c09c73609dacc5b
+
+/** Normalize unknown catch value to Error for logging. */
+export function toError(error: unknown): Error {
+    if (error instanceof Error) return error;
+    return new Error(String(error));
+}
+
 // Types for the result object with discriminated union
 type Success<T> = {
     data: T;

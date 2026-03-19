@@ -4,10 +4,10 @@ import * as logs from "#src/core/logs.mts";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import {skinTypeFromFooter} from "#src/modules/skinFormHandler.mts";
 import {userFields, setUserField, userField} from "#src/modules/localStorage.mts";
-import {gun_skins} from "#src/consts/gun_skins.mts";
-import {capitalize} from "#src/core/util.mts";
-import {getMember} from "#src/core/discord.mts";
-import {Message} from "discord.js";
+import { getMember } from "#src/core/discord.mts";
+import { toError } from "#src/core/try-catch.mts";
+import { Message } from "discord.js";
+import {getGunSkin} from "#src/modules/portalGunSkinLoader.mts";
 
 export async function getLastBotMessage(message: Message): Promise<Message | undefined> {
     let lastMessage;
@@ -19,8 +19,8 @@ export async function getLastBotMessage(message: Message): Promise<Message | und
 
         try {
             if (message.embeds.length > 0) lastMessage = message;
-        } catch (error: any) {
-            await logs.logError("fetching embeds for DM form", error);
+        } catch (error: unknown) {
+            await logs.logError("fetching embeds for DM form", toError(error));
         }
     }
 
@@ -48,23 +48,27 @@ export async function replyToDM(message: Message) {
     }
 
     if (lastFormIndex === 2 && message.content === "confirm") {
-        // const skinType = gun_skins.Booster.id;
         const skinType = skinTypeFromFooter(lastMessage);
         if (!skinType) {
-            await logs.logError("replyToDM:55", new Error("No skin type found in footer"));
+            await logs.logError("processing 'confirm' of skin form", new Error("No skin type found in footer"));
             return;
         }
 
         void setUserField(message.author.id, `${skinType}.unlocked` as userField, "true");
         void setUserField(message.author.id, userFields.MinecraftUUID, uuidGot);
 
-        let skinID = gun_skins[capitalize(skinType)].id;
+        let skinID = (await getGunSkin(skinType))?.skin_id;
+
+        if (!skinID) {
+            await logs.logError("processing 'confirm' of skin form", Error("Portal gun skin ID was not found in fetched"));
+            return;
+        }
 
         await database.addGunSkin(uuidGot, skinID);
         await logs.logMessage(`💎 Added ${skinType} skin to uuid '${uuidGot}' ${await getMember(message.author.id)}.`);
     }
 
-    let embeds = await skinForm.respond(lastFormIndex, message.content.toLowerCase(), skinTypeFromFooter(lastMessage));
+    let embeds = await skinForm.createResponseEmbed(lastFormIndex, message.content.toLowerCase(), skinTypeFromFooter(lastMessage));
 
     if (embeds) {
         await message.author.send({ embeds: embeds } );

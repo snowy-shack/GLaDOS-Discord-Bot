@@ -6,9 +6,9 @@ async function reply(interaction: ButtonInteraction): Promise<void> {
 
     const [modulePath, buttonID] = customId.split('#');
 
-    let path = `#src/${modulePath.replace(/\./g, '/')}.mjs`;
+    const modulePathResolved = `#src/${modulePath.replace(/\./g, '/')}.mts`;
     // Dynamic import
-    const module: {buttonPressed: Function} = await import(path);
+    const module = await import(modulePathResolved) as { buttonPressed?: (id: string, interaction: ButtonInteraction) => unknown };
 
     if (typeof module.buttonPressed === "function") {
         await module.buttonPressed(buttonID, interaction);

@@ -3,9 +3,10 @@ import * as logs from "#src/core/logs.mts";
 import {getMember, getRoleUsers} from "#src/core/discord.mts";
 import {userFields, getUserData, setUserField} from "#src/modules/localStorage.mts";
 import {delayInSeconds} from "#src/core/util.mts";
-import {gun_skins} from "#src/consts/gun_skins.mts";
-import {roles} from "#src/core/phantys_home.mts";
+import { roles } from "#src/core/phantys_home.mts";
+import { toError } from "#src/core/try-catch.mts";
 import chalk from "chalk";
+import {KNOWN_SKINS} from "#src/modules/portalGunSkinLoader.mts";
 
 export async function incrementAndDM() {
     try {
@@ -20,7 +21,7 @@ export async function incrementAndDM() {
         let successes = 0;
         console.log(chalk.yellowBright("Updating boosting days for", boosters));
 
-        for (const boosterId of boosters) {
+        for (const boosterId of boosters.map(member => member.user.id)) {
             let boosterData = getUserData(boosterId);
 
             let boostingDays = boosterData[userFields.Booster.BoostingDays] ?? 0;
@@ -35,8 +36,8 @@ export async function incrementAndDM() {
 
         await logs.logMessage(`✅ Incremented boosting days for ${successes} members.`);
 
-    } catch (error: any) {
-        await logs.logError("incrementing boosters", error);
+    } catch (error: unknown) {
+        await logs.logError("incrementing boosters", toError(error));
     }
 }
 
@@ -48,7 +49,7 @@ async function finishedBoosting(user_id: string) {
 
     await logs.logMessage(`😁${targetUser} has boosted for 90 days!`);
 
-    await skinForm.sendFormMessage(targetUser.user, 0, undefined, gun_skins.Booster.id);
+    await skinForm.sendFormMessage(targetUser.user, 0, undefined, KNOWN_SKINS.Booster);
     await setUserField(targetUser.id, userFields.Booster.Messaged);
 }
 
