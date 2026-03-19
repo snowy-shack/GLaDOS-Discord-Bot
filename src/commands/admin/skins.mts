@@ -15,7 +15,7 @@ export async function init() {
 
     return new SlashCommandBuilder().setName("skins")
         .setDescription("Portal Gun skin management")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
         .addSubcommand(subCommand =>
             subCommand.setName("form")
                 .setDescription("DM user(s) a skin form")
