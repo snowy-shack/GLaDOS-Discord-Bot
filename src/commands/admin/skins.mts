@@ -5,9 +5,11 @@ import {
 } from "discord.js";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import * as logs from "#src/core/logs.mts";
-import {all_skins, gun_skins as skins} from "#src/consts/gun_skins.mts";
+import {getAllSkins} from "#src/modules/portalGunSkinLoader.mts";
 
-export function init() {
+export async function init() {
+    const skins = await getAllSkins();
+
     return new SlashCommandBuilder().setName("skins")
         .setDescription("Portal Gun skin management")
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
@@ -23,7 +25,7 @@ export function init() {
                     option.setName("skin_type")
                         .setDescription("The Portal Gun skin to give")
                         .setRequired(true)
-                        .addChoices(...all_skins)
+                        .addChoices(...skins)
                 )
         );
 }

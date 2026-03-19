@@ -1,5 +1,4 @@
 import {templateEmbed} from "#src/formatting/styledEmbed.mts";
-import { gun_skins as skins } from "#src/consts/gun_skins.mts";
 import { channels } from "#src/core/phantys_home.mts";
 import { emojis } from "#src/core/phantys_home.mts";
 import * as logs from "#src/core/logs.mts";
@@ -10,6 +9,7 @@ import { userFields, getFieldForAllUsers, getUserField } from "#src/modules/loca
 import { getChannel } from "#src/core/discord.mts";
 import {GuildMember} from "discord.js";
 import {string} from "#src/modules/localizedStrings.mts";
+import {KNOWN_SKINS} from "#src/modules/portalGunSkinLoader.mts";
 
 export async function checkBirthdays() {
     const birthdays = (await getFieldForAllUsers(userFields.Birthday.Date))
@@ -28,7 +28,7 @@ export async function checkBirthdays() {
             const guildMember: GuildMember | undefined = await guild.getMember(discord_id);
             if (!guildMember || getUserField(guildMember.id, userFields.Birthday.Unlocked)) return;
 
-            await skinForm.sendFormMessage(guildMember.user, 0, undefined, skins.Birthday.id); // Start a DM form
+            await skinForm.sendFormMessage(guildMember.user, 0, undefined, KNOWN_SKINS.Birthday); // Start a DM form
 
             const happy_birthday = templateEmbed({
                 body: await string("birthday.notification"),

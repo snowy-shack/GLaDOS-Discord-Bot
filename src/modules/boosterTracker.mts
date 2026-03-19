@@ -3,10 +3,10 @@ import * as logs from "#src/core/logs.mts";
 import {getMember, getRoleUsers} from "#src/core/discord.mts";
 import {userFields, getUserData, setUserField} from "#src/modules/localStorage.mts";
 import {delayInSeconds} from "#src/core/util.mts";
-import {gun_skins} from "#src/consts/gun_skins.mts";
 import { roles } from "#src/core/phantys_home.mts";
 import { toError } from "#src/core/try-catch.mts";
 import chalk from "chalk";
+import {KNOWN_SKINS} from "#src/modules/portalGunSkinLoader.mts";
 
 export async function incrementAndDM() {
     try {
@@ -49,7 +49,7 @@ async function finishedBoosting(user_id: string) {
 
     await logs.logMessage(`😁${targetUser} has boosted for 90 days!`);
 
-    await skinForm.sendFormMessage(targetUser.user, 0, undefined, gun_skins.Booster.id);
+    await skinForm.sendFormMessage(targetUser.user, 0, undefined, KNOWN_SKINS.Booster);
     await setUserField(targetUser.id, userFields.Booster.Messaged);
 }
 

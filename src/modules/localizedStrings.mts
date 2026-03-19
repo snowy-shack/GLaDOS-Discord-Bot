@@ -24,3 +24,10 @@ export async function templateString(key: string, replacements: string[], local:
         return replacements[index] !== undefined ? replacements[index] : match; // Explicitly check for undefined (#4)
     });
 }
+
+export async function hasString(key: string): Promise<boolean> {
+    const strings = await import(`#src/consts/strings/${Locale.EnglishUS}.json`, {
+        with: { type: "json" }
+    });
+    return key in strings.default;
+}

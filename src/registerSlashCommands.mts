@@ -10,7 +10,7 @@ let commandList = getCommandList();
 const commands = await Promise.all(
     commandList.map(async commandName => { // <id>.mjs
         const { init } = await import(`#src/commands/${commandName}`);
-        let initialization = init();
+        let initialization = await init();
 
         return initialization.toJSON();
     })
