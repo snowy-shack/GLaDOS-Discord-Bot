@@ -104,3 +104,11 @@ export function embedMessage<T>(opts: {
         ...(ephemeral && { flags: MessageFlags.Ephemeral })
     } as T;
 }
+
+export function errorEmbedMessage<T>(message: string) {
+    return embedMessage<T>({
+        body: message,
+        color: colors.Error,
+        icon: icons.mark,
+    })
+}
