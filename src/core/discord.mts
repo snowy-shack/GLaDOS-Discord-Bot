@@ -1,6 +1,6 @@
 import { getClient } from "#src/core/client.mts";
 import {userFields, setUserField} from "#src/modules/localStorage.mts";
-import { Guild } from "discord.js";
+import {Guild, GuildMember} from "discord.js";
 import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
 
@@ -46,13 +46,13 @@ export async function getChannel(id: string) {
     }
 }
 
-export async function getRoleUsers(id: string): Promise<string[] | null> {
+export async function getRoleUsers(id: string): Promise<GuildMember[] | null> {
     await phantys_home.members.fetch(); // Ensure all members are cached (#3)
     const role = await phantys_home.roles.fetch(id);
 
     if (!role) return null;
 
-    return role.members.map(member => member.user.id); // TODO: This mapping shouldn't occur here, but rather at usages that need it in this format.
+    return role.members.map(member => member);
 }
 
 export default { init }

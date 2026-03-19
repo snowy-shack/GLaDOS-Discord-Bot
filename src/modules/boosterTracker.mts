@@ -21,7 +21,7 @@ export async function incrementAndDM() {
         let successes = 0;
         console.log(chalk.yellowBright("Updating boosting days for", boosters));
 
-        for (const boosterId of boosters) {
+        for (const boosterId of boosters.map(member => member.user.id)) {
             let boosterData = getUserData(boosterId);
 
             let boostingDays = boosterData[userFields.Booster.BoostingDays] ?? 0;
