@@ -31,6 +31,5 @@ export async function getGPTResponse(prompt: string, context: string): Promise<s
             }
         }
     }
-    void logError("handling AI response", err);
     return null;
 }
