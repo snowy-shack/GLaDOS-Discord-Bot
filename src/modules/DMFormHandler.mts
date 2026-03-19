@@ -60,7 +60,7 @@ export async function replyToDM(message: Message) {
         let skinID = (await getGunSkin(skinType))?.skin_id;
 
         if (!skinID) {
-            await logs.logError("processing 'confirm' of skin form", Error("Portal gun skin ID could not be parsed"));
+            await logs.logError("processing 'confirm' of skin form", Error("Portal gun skin ID was not found in fetched"));
             return;
         }
 
