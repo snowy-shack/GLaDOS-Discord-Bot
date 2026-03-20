@@ -1,13 +1,14 @@
-import { getChannel } from "#src/core/discord.mts";
 import { channels, rolesMarkDown } from "#src/core/phantys_home.mts";
 import { embedMessage } from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
-import {GuildBasedChannel, MessageCreateOptions} from "discord.js";
+import { MessageCreateOptions, TextChannel, WebhookClient } from "discord.js";
 import chalk from "chalk";
-import {isSilent} from "#src/envloader.mts";
+import { isSilent } from "#src/envloader.mts";
+import { getChannel } from "#src/core/discord.mts";
 
-/* private */ async function getLogChannel(): Promise<GuildBasedChannel | null | undefined> {
-    return await getChannel(channels.Logs);
+type Sender = {
+    name: string,
+    getSender: () => Promise<TextChannel | WebhookClient>,
 }
 
 export function formatMessage<T>(message: string): T {
@@ -19,67 +20,67 @@ export function formatMessage<T>(message: string): T {
     }) as T;
 }
 
-export async function logWarning(message: string) {
+const warningLogger = (s: Sender) => async (msg: string) => {
     if (isSilent) return;
-
-    console.log(chalk.red(`[WARN]: ${message}`));
-    const logChannel = await getLogChannel();
-    if (!logChannel || !logChannel.isTextBased()) return;
-
-    await logChannel.send({
+    console.log(chalk.red(`[WARN]: ${msg}`));
+    const target = await s.getSender();
+    await target.send({
+        username: s.name,
         content: rolesMarkDown.Developer,
-        ...embedMessage<MessageCreateOptions>({
-            body: `**${message}**`,
-            footer: "",
-            title: "",
-            color: colors.Warning
-        })
+        ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: colors.Warning })
     });
-}
+};
 
-export async function logMessage(message: string) {
+const messageLogger = (s: Sender) => async (msg: string) => {
     if (isSilent) return;
+    console.log(chalk.blueBright(`[LOGS]: ${msg}`));
+    const target = await s.getSender();
+    await target.send({
+        username: s.name,
+        ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: s.name === "GLaDOS" ? colors.Success : colors.Inactive })
+    });
+};
 
-    console.log(chalk.blueBright(`[LOGS]: ${message}`));
-    const logChannel = await getLogChannel();
-    if (!logChannel || !logChannel.isTextBased()) return;
-
-    await logChannel.send(
-        embedMessage({
-            body: `**${message}**`,
-            footer: "",
-            title: "",
-            color: colors.Success
-        })
-    );
-}
-
-export async function logError(location: string, error: Error) {
+const errorLogger = (s: Sender) => async (loc: string, err: Error) => {
     if (isSilent) return;
+    console.error(chalk.red(`Error @ ${loc}: ${err.message}`));
+    const target = await s.getSender();
+    const body = `Error @ ${loc} - **\`${err.message}\`**\n\`\`\`\n${err.stack || "No stack"}\n\`\`\``;
+    await target.send({
+        username: s.name,
+        content: rolesMarkDown.Developer,
+        ...embedMessage<MessageCreateOptions>({ title: "An error occurred", body, color: colors.Error })
+    });
+};
 
-    console.error(`Error occurred ${location}: ${error.message}`);
-
-    try {
-        const logChannel = await getLogChannel();
-        if (!logChannel || !logChannel.isTextBased()) return;
-
-        let formattedError = `Error occurred ${location} - **\`${error.message}\`**`;
-        formattedError += ` \n \`\`\` \n${error.stack || "No stack trace available"}\n\`\`\``;
-
-        await logChannel.send({
-            content: rolesMarkDown.Developer,
-            ...embedMessage<MessageCreateOptions>({
-                body: formattedError,
-                footer: "",
-                title: "An error occurred",
-                color: colors.Error
-            })
-        });
-
-    } catch (error) {
-        console.error("An error occurred logging the above error. Ironic. Cause below");
-        console.error(error);
+const gladosSender: Sender = {
+    name: "GLaDOS",
+    getSender: async () => {
+        const chan = await getChannel(channels.Logs);
+        if (!(chan instanceof TextChannel)) throw new Error('Invalid Log Channel');
+        return chan;
     }
-}
+};
 
-export default { logWarning, logMessage, logError };
+const webhookSender: Sender = {
+    name: "Central Core",
+    getSender: async () => {
+        if (!process.env.WEBHOOK) throw new Error('No Webhook URL');
+        return new WebhookClient({ url: process.env.WEBHOOK });
+    }
+};
+
+export const glados = {
+    logWarning: warningLogger(gladosSender),
+    logMessage: messageLogger(gladosSender),
+    logError: errorLogger(gladosSender)
+};
+
+export const webhook = {
+    logWarning: (msg: string) => warningLogger(webhookSender)('⚙️ ' + msg),
+    logMessage: (msg: string) => messageLogger(webhookSender)('⚙️ ' + msg),
+    logError: errorLogger(webhookSender),
+};
+
+export const { logWarning, logMessage, logError } = glados;
+export default glados;
