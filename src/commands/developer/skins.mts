@@ -1,7 +1,7 @@
 import {
     SlashCommandBuilder,
     PermissionFlagsBits,
-    ChatInputCommandInteraction, InteractionReplyOptions
+    ChatInputCommandInteraction, InteractionReplyOptions, User
 } from "discord.js";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import * as logs from "#src/core/logs.mts";
@@ -45,15 +45,19 @@ export async function react(interaction: ChatInputCommandInteraction) {
             const target_role = interaction.options.getRole('role');
 
             if (!target_user && !target_role) {
-                return await interaction.editReply(errorEmbedMessage("Please specify a user or a role."));
+                await interaction.editReply(errorEmbedMessage("Please specify a user or a role."));
+                return;
             }
 
-            const recipients = new Set<any>();
+            const recipients = new Set<User>();
             if (target_user) recipients.add(target_user);
 
             if (target_role && interaction.guild) {
                 const members = await getRoleUsers(target_role.id);
-                if (!members) return await interaction.editReply(errorEmbedMessage("Please specify a user or a role."));
+                if (!members) {
+                    await interaction.editReply(errorEmbedMessage("Please specify a user or a role."));
+                    return;
+                }
 
                 const roleMembers = members.filter(m => !m.user.bot);
                 roleMembers.forEach(m => recipients.add(m.user));
