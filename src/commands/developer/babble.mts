@@ -7,6 +7,8 @@ import {
 import * as discord from "#src/core/discord.mts";
 import logs from "#src/core/logs.mts";
 
+export const name = 'babble';
+
 export function init() {
     return new SlashCommandBuilder().setName("babble")
         .setDescription("Be a good Genetic Lifeform")

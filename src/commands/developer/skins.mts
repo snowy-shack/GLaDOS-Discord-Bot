@@ -10,6 +10,8 @@ import {errorEmbedMessage} from "#src/formatting/styledEmbed.mts";
 import {getRoleUsers} from "#src/core/discord.mts";
 import {getUserField, userField} from "#src/modules/localStorage.mts";
 
+export const name = 'skins';
+
 export async function init() {
     const skins = await getAllSkins();
 

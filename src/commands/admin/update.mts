@@ -10,7 +10,10 @@ import * as logs from "#src/core/logs.mts";
 
 import { fileURLToPath } from 'url';
 import chalk from "chalk";
+import {reboot} from "#src/commands/admin/reboot.mts";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export const name = 'update';
 
 export function init() {
     return new SlashCommandBuilder().setName('update')
@@ -24,27 +27,30 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
     console.log(chalk.blueBright('⏬ Pulling from git'));
 
-    exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, (error, stdout, _) => {
+    exec(`bash ${path.join(__dirname, '../../../scripts/git-pull.sh')}`, async (error, stdout, _) => {
+        const output = stdout.trim(); // Remove trailing newlines/spaces
 
         if (error) {
-            logs.logError("executing a script", error);
-            logs.logWarning("⚠️ Update wasn't successful");
+            await logs.logError("executing a script", error);
+            await logs.logWarning(`⚠️ Update failed. Output:\n\`\`\`\n${output || "No output"}\n\`\`\``);
             return;
         }
 
         setTimeout(async () => {
-            if (stdout.includes("Fast-forward")) {
-                await logs.logMessage(`✅ Successfully updated to GLaDOS v${await getVersion()}!`);
+            const version = await getVersion();
 
-                // Reboot after 2 seconds
+            if (output.includes("Fast-forward")) {
+                await logs.logMessage(`✅ Successfully updated to GLaDOS v${version}!\n**Output:**\n\`\`\`\n${output}\n\`\`\``);
+
+                // Reboot after 3 seconds
                 setTimeout(async () => {
-                    await logs.logMessage("🔁 Rebooting");
-                    process.exit();
-                }, 5000);
-            } else if (stdout.includes("Already up to date")) {
-                await logs.logMessage(`✅ Already up-to-date: GLaDOS v${await getVersion()}`);
+                    await reboot();
+                }, 3000);
+            } else if (output.includes("Already up to date")) {
+                await logs.logMessage(`✅ Already up-to-date: GLaDOS v${version}`);
             } else {
-                await logs.logWarning("⚠️ Update wasn't successful");
+                // Log the actual output even if we don't recognize the git status
+                await logs.logWarning(`⚠️ Update status unclear. Output:\n\`\`\`\n${output}\n\`\`\``);
             }
         }, 500);
     });

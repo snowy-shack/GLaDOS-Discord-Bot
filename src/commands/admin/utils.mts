@@ -8,6 +8,8 @@ import * as logs from "#src/core/logs.mts";
 import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
 import {getChannel} from "#src/core/discord.mts";
 
+export const name = 'utils';
+
 export function init() {
     return new SlashCommandBuilder().setName("utils")
         .setDescription("DO NOT USE")

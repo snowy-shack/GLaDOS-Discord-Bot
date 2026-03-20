@@ -5,6 +5,8 @@ import faqsJSON from "#src/consts/faqs.json" with { type: "json" };
 import {reactWithTemplate} from "#src/commands/_shared/dictionaryResponses.mts";
 const options = faqsJSON.map(object => ({name: object.title, value: object.id})); // Get a list of FAQ titles for the FAQ command
 
+export const name = 'faq';
+
 export function init() {
     return new SlashCommandBuilder().setName('faq')
         .setDescription('Sends FAQ Replies')

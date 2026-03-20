@@ -1,15 +1,16 @@
 console.log("Program started");
 
+import {MaybePromise} from "#src/util/utilityTypes.mts";
+import chalk from "chalk";
+
 import "#src/envloader.mts";
-import logs from "#src/core/logs.mts";
+import logs, {webhook} from "#src/core/logs.mts";
 
 import clientModule from "#src/core/client.mts";
 import discordModule from "#src/core/discord.mts";
 import commandRegistryModule from "#src/commandRegistry.mts";
 import eventInitModule from "#src/events/eventInit.mts";
 import localStorageModule from "#src/modules/localStorage.mts";
-import {MaybePromise} from "#src/util/utilityTypes.mts";
-import chalk from "chalk";
 
 const t0 = { start: 0 };
 function ms() { return Date.now() - t0.start; }
@@ -44,6 +45,8 @@ async function load<Dep, Res>(
 async function init() {
     t0.start = Date.now();
 
+    void webhook.logMessage("GLaDOS boot process initialised...");
+
     const localStoragePromise = load(localStorageModule);
     const clientPromise = load(clientModule);
     const commandRegistryPromise = load(commandRegistryModule, clientPromise);
@@ -62,7 +65,8 @@ process.on('uncaughtException', (error) => { // Error logging
     try {
         void logs.logError("running (uncaught)", error);
     } catch (caught) {
-        console.error("Uncaught exception could not be logged in Discord channel:", caught)
+        void webhook.logError("running (uncaught)", error);
+        console.error("Uncaught exception could not be logged in Discord channel:", caught);
     }
 });
 

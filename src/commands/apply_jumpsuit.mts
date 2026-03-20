@@ -10,6 +10,8 @@ import path from "node:path";
 import { toError } from "#src/core/try-catch.mts";
 import { embedMessage } from "#src/formatting/styledEmbed.mts";
 
+export const name = 'apply_jumpsuit';
+
 export function init() {
     return new SlashCommandBuilder().setName('apply_jumpsuit')
         .setDescription('Adds a jumpsuit to your minecraft skin')

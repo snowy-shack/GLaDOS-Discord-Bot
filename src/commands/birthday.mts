@@ -13,6 +13,8 @@ import { dateIsToday, formatDate, isValidDate, sortDatesUpcoming, trimString, da
 import { toError } from "#src/core/try-catch.mts";
 import { icons } from "#src/consts/icons.mts";
 
+export const name = 'birthday';
+
 export function init() {
     return new SlashCommandBuilder()
         .setName("birthday")

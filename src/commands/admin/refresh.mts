@@ -10,6 +10,8 @@ import * as discord from "#src/core/discord.mts";
 import {channels} from "#src/core/phantys_home.mts";
 import {dateToString, formatDate} from "#src/core/util.mts";
 
+export const name = 'refresh';
+
 export function init() {
     return new SlashCommandBuilder().setName('refresh')
         .setDescription("Refresh a channel's contents")

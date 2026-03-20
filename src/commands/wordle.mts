@@ -3,6 +3,8 @@ import {userFields, getUserField, getUserData, getGlobalField, globalFields} fro
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 
+export const name = 'wordle';
+
 export function init() {
     return new SlashCommandBuilder()
         .setName("wordle")

@@ -7,6 +7,7 @@ const colors: { [key: string]: HexColorString } = {
     Warning:   "#fe8452",
     Success:   "#42d364",
     Calendar:  "#fe8452",
+    Inactive:  "#40495a",
 }
 
 export default colors;

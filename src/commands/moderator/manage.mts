@@ -10,6 +10,8 @@ import {getMember} from "#src/core/discord.mts";
 import {userLockup} from "#src/actions/userLockup.mts";
 import {userFields, setUserField} from "#src/modules/localStorage.mts";
 
+export const name = 'manage';
+
 export function init() {
     return new SlashCommandBuilder().setName("manage")
         .setDescription("Moderation command managing users")

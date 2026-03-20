@@ -8,7 +8,6 @@ let phantys_home: Guild;
 
 async function init(client: Client) {
     console.log(chalk.gray("Initializing discord server..."));
-    // const client = getClient();
 
     phantys_home = await client.guilds.fetch(guildID);
 

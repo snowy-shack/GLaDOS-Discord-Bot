@@ -15,6 +15,8 @@ import {
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 
+export const name = 'storage';
+
 export function init() {
     return new SlashCommandBuilder()
         .setName("storage")

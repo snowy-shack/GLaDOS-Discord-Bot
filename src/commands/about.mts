@@ -3,6 +3,8 @@ import colors from "#src/consts/colors.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import {getVersion} from "#src/core/version.mts";
 
+export const name = 'about';
+
 export function init() {
     return new SlashCommandBuilder().setName('about')
         .setDescription('Get information on GLaDOS');
