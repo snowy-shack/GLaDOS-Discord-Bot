@@ -11,6 +11,7 @@ import * as logs from "#src/core/logs.mts";
 import { fileURLToPath } from 'url';
 import chalk from "chalk";
 import {reboot} from "#src/commands/admin/reboot.mts";
+import {webhook} from "#src/core/logs.mts";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const name = 'update';
@@ -38,6 +39,8 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
         setTimeout(async () => {
             const version = await getVersion();
+
+            void webhook.logMessage(`Git log:**\n\`\`\`\n${stdout}\n\`\`\`** `); // Log the output
 
             if (output.includes("Fast-forward")) {
                 await logs.logMessage(`✅ Successfully updated to GLaDOS v${version}!\n**Output:**\n\`\`\`\n${output}\n\`\`\``);
