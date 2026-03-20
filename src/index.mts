@@ -1,34 +1,61 @@
-console.log("index.mts running");
+console.log("Program started");
+
 import "#src/envloader.mts";
 import logs from "#src/core/logs.mts";
 
-import client from "#src/core/client.mts";
-import discord from "#src/core/discord.mts";
-import registerSlashCommands from "#src/registerSlashCommands.mts";
-import eventInit from "#src/events/eventInit.mts";
-import localStorage from "#src/modules/localStorage.mts";
+import clientModule from "#src/core/client.mts";
+import discordModule from "#src/core/discord.mts";
+import commandRegistryModule from "#src/commandRegistry.mts";
+import eventInitModule from "#src/events/eventInit.mts";
+import localStorageModule from "#src/modules/localStorage.mts";
+import {MaybePromise} from "#src/util/utilityTypes.mts";
+import chalk from "chalk";
 
 const t0 = { start: 0 };
 function ms() { return Date.now() - t0.start; }
 
+interface CoreModule<Dep = void, Res = void> {
+    init: (dependency: Dep) => Promise<Res>;
+    name: () => string;
+}
+
+async function load<Dep, Res>(
+    module: CoreModule<Dep, Res>,
+    dependency: MaybePromise<Dep>
+): Promise<Res>;
+
+async function load<Dep extends void | undefined, Res>(
+    module: CoreModule<Dep, Res>
+): Promise<Res>;
+
+async function load<Dep, Res>(
+    module: CoreModule<Dep, Res>,
+    ...args: unknown[]
+): Promise<Res> {
+    const dependency = args[0] as MaybePromise<Dep>;
+    const loadedDependency = await dependency;
+
+    const result = await module.init(loadedDependency);
+
+    console.log(chalk.gray(`Module ${module.name()} loaded in ${ms()}ms`));
+    return result;
+}
+
 async function init() {
     t0.start = Date.now();
 
-    await localStorage.init();
-    console.log(`  [bench] localStorage.init: ${ms()}ms`);
+    const localStoragePromise = load(localStorageModule);
+    const clientPromise = load(clientModule);
+    const commandRegistryPromise = load(commandRegistryModule, clientPromise);
+    const discordModulePromise = load(discordModule, clientPromise);
+    const eventInitPromise = load(eventInitModule, clientPromise);
 
-    await client.init();
-    console.log(`  [bench] client.init: ${ms()}ms`);
-
-    await discord.init();
-    console.log(`  [bench] discord.init: ${ms()}ms`);
-
-    await registerSlashCommands.register();
-    console.log(`  [bench] registerSlashCommands: ${ms()}ms`);
-
-    await eventInit.init();
-    console.log(`  [bench] eventInit: ${ms()}ms`);
-    console.log(`  [bench] TOTAL STARTUP (to Ready): ${ms()}ms`);
+    await Promise.all([
+        localStoragePromise,
+        commandRegistryPromise,
+        discordModulePromise,
+        eventInitPromise,
+    ])
 }
 
 process.on('uncaughtException', (error) => { // Error logging

@@ -1,14 +1,14 @@
 import { getClient } from "#src/core/client.mts";
 import {userFields, setUserField} from "#src/modules/localStorage.mts";
-import {Guild, GuildMember} from "discord.js";
+import {Client, Guild, GuildMember} from "discord.js";
 import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
 
 let phantys_home: Guild;
 
-async function init() {
+async function init(client: Client) {
     console.log(chalk.gray("Initializing discord server..."));
-    const client = getClient();
+    // const client = getClient();
 
     phantys_home = await client.guilds.fetch(guildID);
 
@@ -55,4 +55,4 @@ export async function getRoleUsers(id: string): Promise<GuildMember[] | null> {
     return role.members.map(member => member);
 }
 
-export default { init }
+export default { init, name: () => "discord" }

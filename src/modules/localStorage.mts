@@ -234,4 +234,4 @@ export async function popEntry(userID: string, field: userField) {
     return entry;
 }
 
-export default { init };
+export default { init, name: () => "localStorage" };

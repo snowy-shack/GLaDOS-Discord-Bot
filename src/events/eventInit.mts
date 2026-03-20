@@ -9,10 +9,10 @@ import cron from "node-cron";
 import daily from "#src/events/daily.mts";
 import {getClient} from "#src/core/client.mts";
 import chalk from "chalk";
+import {Client} from "discord.js";
 
-export async function init(): Promise<void> {
+export async function init(client: Client): Promise<void> {
     console.log(chalk.gray("Initializing events..."));
-    const client = getClient();
 
     guildMemberUpdate.init(client);
     interactionCreate.init(client);
@@ -32,4 +32,4 @@ cron.schedule(
     { timezone: "Europe/Amsterdam" }
 );
 
-export default { init }
+export default { init, name: () => "eventInit" }

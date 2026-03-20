@@ -30,10 +30,12 @@ async function init() {
     });
     await client.login(process.env.TOKEN);
     console.log(chalk.gray("Client initialized and logged in."));
+
+    return client;
 }
 
 export function getClient(): Client {
     return client;
 }
 
-export default { init }
+export default { init, name: () => "client" }
