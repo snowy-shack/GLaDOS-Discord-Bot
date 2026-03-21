@@ -19,7 +19,6 @@ export const name = 'update';
 export function init() {
     return new SlashCommandBuilder().setName('update')
             .setDescription('Updates GLaDOS')
-            .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {

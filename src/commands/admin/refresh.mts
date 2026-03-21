@@ -15,7 +15,6 @@ export const name = 'refresh';
 export function init() {
     return new SlashCommandBuilder().setName('refresh')
         .setDescription("Refresh a channel's contents")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
             .addSubcommand(subcommand => subcommand
                 .setName("faq")
                 .setDescription("Refreshes the FAQ Channel")

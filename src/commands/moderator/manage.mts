@@ -15,7 +15,6 @@ export const name = 'manage';
 export function init() {
     return new SlashCommandBuilder().setName("manage")
         .setDescription("Moderation command managing users")
-        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
 
         .addSubcommand(subcommand =>
             subcommand.setName("spam-kick")

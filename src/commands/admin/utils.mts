@@ -13,7 +13,6 @@ export const name = 'utils';
 export function init() {
     return new SlashCommandBuilder().setName("utils")
         .setDescription("DO NOT USE")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 
         .addSubcommand(subcommand =>
             subcommand.setName("booster_inc")

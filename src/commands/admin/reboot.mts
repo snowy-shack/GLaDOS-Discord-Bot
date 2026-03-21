@@ -8,7 +8,6 @@ export const name = 'reboot';
 export function init() {
   return new SlashCommandBuilder().setName("reboot")
     .setDescription("Reboots GLaDOS")
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 }
 
 export async function react(interaction: CommandInteraction) {

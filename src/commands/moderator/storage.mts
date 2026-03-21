@@ -21,7 +21,6 @@ export function init() {
     return new SlashCommandBuilder()
         .setName("storage")
         .setDescription("View and modify user storage")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand(subcommand => subcommand
             .setName('get')
             .setDescription("Get all fields of a given user")

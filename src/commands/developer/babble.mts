@@ -12,7 +12,6 @@ export const name = 'babble';
 export function init() {
     return new SlashCommandBuilder().setName("babble")
         .setDescription("Be a good Genetic Lifeform")
-        .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
         .addStringOption(option =>
             option.setName("message")
                 .setDescription("The Message")
