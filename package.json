@@ -4,8 +4,9 @@
     "type": "module",
     "scripts": {
         "changelog:recent": "git log --format=\"- **%ad** — %s\" --date=short ac06faf..HEAD",
-        "start": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --silent",
-        "debug": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --beta"
+        "start":  "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts",
+        "silent": "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --silent",
+        "debug":  "node --loader ts-node/esm --require tsconfig-paths/register --experimental-specifier-resolution=node src/index.mts --beta"
     },
     "devDependencies": {
         "@types/node": "^22.15.14",
