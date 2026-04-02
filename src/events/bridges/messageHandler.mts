@@ -1,9 +1,10 @@
-import { Message, PermissionFlagsBits} from "discord.js";
+import {Message, PermissionFlagsBits} from "discord.js";
 import * as DMFormHandler from "#src/modules/DMFormHandler.mts";
 import * as autoEmojiReactions from "#src/modules/autoEmojiReactions.mts";
-import { replyFunctions } from "#src/modules/autoResponses.mts";
+import {replyFunctions} from "#src/modules/autoResponses.mts";
 import {addLikes, addLikesToMedia, addVotes, channels} from "#src/core/phantys_home.mts";
 import spamDetector from "#src/modules/spamDetector.mts";
+import {check, filter} from "#src/modules/coreModule.mts";
 
 /* private */ function isAdmin(message: Message) {
     const member = message.member;
@@ -16,6 +17,7 @@ export async function handleMessage(message: Message) {
     if (!message.channel.isSendable()) return;
 
     void spamDetector.checkMessage(message); // Check if this message contains a suspicious link
+    void check(message);
 
     // If automatic emoji reaction should be added
     if (Object.values(channels).includes(message.channelId)
@@ -27,7 +29,11 @@ export async function handleMessage(message: Message) {
 
     // Try all replies until one succeeds
     for (const replyFunction of replyFunctions) {
-        if (await replyFunction(message)) break;
+        const response = await replyFunction(message);
+        if (response) {
+            if (response !== "") await message.reply(filter(response));
+            break;
+        }
     }
 }
 

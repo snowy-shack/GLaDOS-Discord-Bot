@@ -4,31 +4,29 @@ import {getGPTResponse} from "#src/modules/openAIHandler.mts";
 import {dateToString, daysSince, getAuthorName, trimString} from "#src/core/util.mts";
 import {getClient} from "#src/core/client.mts";
 import {
-    userFields,
+    getGlobalField,
     getUserData,
+    globalFields,
+    setGlobalField,
     setUserField,
     userField,
-    getGlobalField,
-    globalFields, setGlobalField
+    userFields
 } from "#src/modules/localStorage.mts";
 import {logMessage} from "#src/core/logs.mts";
 import {channels} from "#src/core/phantys_home.mts";
 
-export const replyFunctions: ((message: Message) => boolean | Promise<Boolean>)[] = [maybeCount, factorial, glados, calc, jork, loss, marco, trackWordle];
+export const replyFunctions: ((message: Message) => string | Promise<string | undefined> | undefined)[] = [maybeCount, factorial, glados, calc, jork, loss, marco, trackWordle];
 
 function factorial(message: Message) {
     const captured = message.content.match(/(\d+)!/);
 
     if (!captured || captured.length === 0 || Number(captured[1]) < 0) {
-        return false;
+        return;
     }
 
     if (Number(captured[1]) <= 100) {
-        void message.reply(`The factorial of ${captured[1]} is ${factorials[Number(captured[1])]}! ✨`);
-        return true;
+        return `The factorial of ${captured[1]} is ${factorials[Number(captured[1])]}! ✨`;
     }
-
-    return false;
 }
 
 const gladosAIPrompt = atob(`
@@ -68,38 +66,31 @@ async function glados(message: Message) {
         ]);
 
         if (typeof resp == "string") { // If it *is* null, it falls back on the normal voice line reply
-            await message.reply(trimString(resp, 1900, false))
-            return true;
+            return trimString(resp, 1900, false)
         }
 
-        await message.reply(voiceLines[Math.floor(Math.random() * voiceLines.length)]);
-        return true;
+        return voiceLines[Math.floor(Math.random() * voiceLines.length)];
     }
-    return false;
 }
 
 function calc(message: Message) {
     if (hasWord("calc", message.content)) {
-        void message.reply("Calc is short for calculator btw guys, they're just using slang.");
-        return true;
+        return "Calc is short for calculator btw guys, they're just using slang.";
     }
-    return false;
 }
 
 function jork(message: Message) {
     if (hasWord("jorkin", message.content)) {
-        void message.reply("straight up");
-        return true;
+        return "straight up";
     }
-    return false;
 }
 
 function loss(message: Message) {
     if (hasWord("loss", message.content)) {
         if (Math.random() < 0.95) {
-            void message.reply("\\|  \\|\\|\n\\|\\| \\|_");
+            return "\\|  \\|\\|\n\\|\\| \\|_";
         } else {
-            void message.reply("⠀⠀⠀⣴⣴⡤\n" +
+            return "⠀⠀⠀⣴⣴⡤\n" +
                 "⠀⣠⠀⢿⠇⡇⠀⠀⠀⠀⠀⠀⠀⢰⢷⡗\n" +
                 "⠀⢶⢽⠿⣗⠀⠀⠀⠀⠀⠀⠀⠀⣼⡧⠂⠀⠀⣼⣷⡆\n" +
                 "⠀⠀⣾⢶⠐⣱⠀⠀⠀⠀⠀⣤⣜⣻⣧⣲⣦⠤⣧⣿⠶\n" +
@@ -113,26 +104,22 @@ function loss(message: Message) {
                 "⠰⣷⣿⡀⢐⢿⣿⣿⢻⠀⠀⠀⢠⣿⡿⡤⣴⠄⢀⣀⡀\n" +
                 "⠘⣿⣿⠂⠈⢸⣿⣿⣸⠀⠀⠀⢘⣿⣿⣀⡠⣠⣺⣿⣷\n" +
                 "⠀⣿⣿⡆⠀⢸⣿⣿⣾⡇⠀⣿⣿⣿⣿⣿⣗⣻⡻⠿⠁\n" +
-                "⠀⣿⣿⡇⠀⢸⣿⣿⡇⠀⠀⠉⠉⠉⠉⠉⠉⠁");
+                "⠀⣿⣿⡇⠀⢸⣿⣿⡇⠀⠀⠉⠉⠉⠉⠉⠉⠁";
         }
-        return true;
     }
-    return false;
 }
 
 function marco(message: Message) {
     if (message.content.toLowerCase() === "marco") {
-        void message.reply("polo");
-        return true;
+        return "polo";
     }
-    return false;
 }
 
 export const WORDLE_APP_ID = "1211781489931452447";
 type wordleKeys = keyof typeof userFields.Wordle;
 
 function trackWordle(message: Message) {
-    if (message.author.id != WORDLE_APP_ID) return false;
+    if (message.author.id != WORDLE_APP_ID) return undefined;
 
     const lines = message.content.split('\n');
     let players = 0;
@@ -159,11 +146,10 @@ function trackWordle(message: Message) {
         void setGlobalField(globalFields.Wordle.GamesTracked, before + 1);
         void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
     }
-    return false;
 }
 
 function maybeCount(message: Message) {
-    if (message.channelId !== channels.Counting) return false;
+    if (message.channelId !== channels.Counting) return;
 
     const captured = message.content.match(/^(\d+)$/);
 
@@ -172,11 +158,9 @@ function maybeCount(message: Message) {
         const channel = message.channel;
         if ("send" in channel) {
             channel.send(`${Number(captured[1]) + 1} :)`);
-            return true;
+            return "";
         }
     }
-
-    return false;
 }
 
 // Not really a reaction, but still here for ease of use

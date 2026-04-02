@@ -1,12 +1,8 @@
-import {
-    SlashCommandBuilder,
-    PermissionFlagsBits,
-    ChatInputCommandInteraction
-} from "discord.js";
+import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
 import boosterHandler from "#src/modules/boosterTracker.mts";
 import * as logs from "#src/core/logs.mts";
 import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
-import {getChannel} from "#src/core/discord.mts";
+import {h} from "#src/modules/coreModule.mts";
 
 export const name = 'utils';
 
@@ -27,6 +23,11 @@ export function init() {
         .addSubcommand(subcommand =>
             subcommand.setName("test")
                 .setDescription("Test command")
+                .addStringOption(option =>
+                    option.setName('input')
+                        .setDescription('Some input')
+                        .setRequired(true)
+                )
         )
 }
 
@@ -45,7 +46,9 @@ export async function react(interaction: ChatInputCommandInteraction) {
         } break;
 
         case "test": {
-
+            const text = interaction.options.getString("input");
+            const a = await h(text ?? "");
+            await interaction.reply(a);
         }
     }
 }
