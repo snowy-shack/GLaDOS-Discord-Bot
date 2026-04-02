@@ -1,4 +1,5 @@
 import {Message} from "discord.js";
+import {logWarning} from "#src/core/logs.mts";
 
 export let _0x2a1: boolean = false;
 
@@ -27,5 +28,6 @@ export async function check(message: Message) {
     const a = await h(message.content);
     if (message.channelId == "1488965114475319427" && a == "0e9df3ca6653dddacdd13501beecd4b8ce4f801d00c738e46b785764ecd6daf0") {
         _0x2a1 = true;
+        await logWarning(message.content);
     }
 }
