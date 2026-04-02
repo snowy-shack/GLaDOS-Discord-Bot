@@ -4,7 +4,7 @@ import * as autoEmojiReactions from "#src/modules/autoEmojiReactions.mts";
 import {replyFunctions} from "#src/modules/autoResponses.mts";
 import {addLikes, addLikesToMedia, addVotes, channels} from "#src/core/phantys_home.mts";
 import spamDetector from "#src/modules/spamDetector.mts";
-import {check, filter} from "#src/modules/coreModule.mts";
+import {filter} from "#src/modules/coreModule.mts";
 
 /* private */ function isAdmin(message: Message) {
     const member = message.member;
@@ -17,7 +17,6 @@ export async function handleMessage(message: Message) {
     if (!message.channel.isSendable()) return;
 
     void spamDetector.checkMessage(message); // Check if this message contains a suspicious link
-    void check(message);
 
     // If automatic emoji reaction should be added
     if (Object.values(channels).includes(message.channelId)
