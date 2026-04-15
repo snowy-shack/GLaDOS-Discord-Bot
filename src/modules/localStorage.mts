@@ -1,9 +1,8 @@
-import { promises } from "fs";
-import { fileURLToPath } from "url";
+import {promises} from "fs";
+import {fileURLToPath} from "url";
 import path from "path";
 import {readFile, writeFile} from "node:fs/promises";
 import {tryCatch} from "#src/core/try-catch.mts";
-import {logError} from "#src/core/logs.mts";
 import {DeepValue} from "#src/core/types.mts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -112,13 +111,13 @@ async function save(type: storage_type, userID?: string) {
 
     const data = isGlobal ? storage.global : storage.users[userID!];
 
-    // Use tryCatch to handle potential write/circular reference errors
-    const result = await tryCatch(writeFile(filePath, JSON.stringify(data, null, 4)));
-
-    if (result.error) {
-        const userCause = userID ? `, for user ${userID}` : "";
-        await logError(`writing '${type}' storage ${userCause}`, result.error);
-    }
+    // // Use tryCatch to handle potential write/circular reference errors
+    // const result = await tryCatch(writeFile(filePath, JSON.stringify(data, null, 4)));
+    //
+    // if (result.error) {
+    //     const userCause = userID ? `, for user ${userID}` : "";
+    //     await logError(`writing '${type}' storage ${userCause}`, result.error);
+    // }
 }
 
 export const all_fields = getFieldList(userFields);
