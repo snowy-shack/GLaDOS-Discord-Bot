@@ -2,12 +2,14 @@ import {promises} from "fs";
 import {fileURLToPath} from "url";
 import path from "path";
 import {readFile, writeFile} from "node:fs/promises";
-import {tryCatch} from "#src/core/try-catch.mts";
+import * as logs from "#src/core/logs.mts";
+import {toError, tryCatch} from "#src/core/try-catch.mts";
 import {DeepValue} from "#src/core/types.mts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STORAGE_DIR = path.join(__dirname, "../../storage");
 const USERS_DIR = path.join(__dirname, "../../storage/users");
+const BACKUPS_DIR = path.join(__dirname, "../../storage/backups");
 
 const storage_types = {
     Global: 'global',
@@ -68,13 +70,38 @@ let storage: {
     users: {},
 };
 
+let saveQueue: Promise<void> = Promise.resolve();
+
+function makeBackupName(id: string) {
+    return `${id}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.json`;
+}
+
+function isPlainObject(value: unknown): value is Record<string, any> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function clone<T>(value: T): T {
+    return value === undefined ? value : JSON.parse(JSON.stringify(value));
+}
+
+function normalizeObject<T extends Record<string, any>>(value: unknown): T {
+    return isPlainObject(value) ? value as T : {} as T;
+}
+
+async function atomicWriteJson(filePath: string, data: unknown) {
+    const tempPath = `${filePath}.tmp`;
+    const json = JSON.stringify(data, null, 4);
+
+    await writeFile(tempPath, json);
+    await promises.rename(tempPath, filePath);
+}
+
 async function init() {
     const STORAGE_PATH = path.join(STORAGE_DIR, 'storage.json');
 
-    // Ensure directories exist
     await promises.mkdir(USERS_DIR, { recursive: true });
+    await promises.mkdir(BACKUPS_DIR, { recursive: true });
 
-    // Load global & user data in parallel
     const [globalRes, userRes] = await Promise.all([
         tryCatch<any, NodeJS.ErrnoException>(readFile(STORAGE_PATH, 'utf-8').then(JSON.parse)),
         tryCatch((async () => {
@@ -88,19 +115,19 @@ async function init() {
         })())
     ]);
 
-    // Handle Global
     if (globalRes.error) {
         if (globalRes.error.code === 'ENOENT') {
-            await writeFile(STORAGE_PATH, '{}');
+            await atomicWriteJson(STORAGE_PATH, {});
             storage.global = {};
-        } else throw globalRes.error;
+        } else {
+            throw globalRes.error;
+        }
     } else {
-        storage.global = globalRes.data;
+        storage.global = normalizeObject(globalRes.data);
     }
 
-    // Handle Users
     if (userRes.error) throw userRes.error;
-    storage.users = userRes.data;
+    storage.users = normalizeObject(userRes.data);
 }
 
 async function save(type: storage_type, userID?: string) {
@@ -109,45 +136,58 @@ async function save(type: storage_type, userID?: string) {
         ? path.join(STORAGE_DIR, 'storage.json')
         : path.join(USERS_DIR, `${userID}.json`);
 
-    const data = isGlobal ? storage.global : storage.users[userID!];
+    const backupId = isGlobal ? 'global' : userID!;
+    const source = isGlobal ? storage.global : storage.users[userID!];
 
-    // // Use tryCatch to handle potential write/circular reference errors
-    // const result = await tryCatch(writeFile(filePath, JSON.stringify(data, null, 4)));
-    //
-    // if (result.error) {
-    //     const userCause = userID ? `, for user ${userID}` : "";
-    //     await logError(`writing '${type}' storage ${userCause}`, result.error);
-    // }
+    if (!isGlobal && !storage.users[userID!]) return;
+
+    const data = clone(source);
+
+    saveQueue = saveQueue
+        .catch(() => undefined)
+        .then(async () => {
+            try {
+                await promises.mkdir(BACKUPS_DIR, { recursive: true });
+                await atomicWriteJson(filePath, data);
+                await atomicWriteJson(path.join(BACKUPS_DIR, makeBackupName(backupId)), data);
+            } catch (error) {
+                await logs.logError(
+                    `saving ${type}${isGlobal ? "" : ` for user ${userID}`}`,
+                    toError(error)
+                );
+                throw error;
+            }
+        });
+
+    return saveQueue;
 }
 
 export const all_fields = getFieldList(userFields);
 
-// This is used by the command to display "options"
 function getFieldList(obj: { [key: string]: string | {} }): { name: string, value: string }[] {
-    let result: { name: string, value: string }[] = [];
+    let list: { name: string, value: string }[] = [];
 
     for (const value of Object.values(obj)) {
         if (typeof value !== 'string' && value !== null) {
-            // Recursively call the function for nested objects
-            result = result.concat(
+            list = list.concat(
                 getFieldList(value as { [key: string]: string }).map((subValue) => ({
                     name: subValue.value,
                     value: subValue.value,
                 }))
             );
         } else {
-            result.push({name: value, value: value});
+            list.push({ name: value, value: value });
         }
     }
 
-    return result;
+    return list;
 }
 
 export function getFieldForAllUsers(field: userField) {
-    let list = [];
+    let list: { user: string; value: any }[] = [];
 
-    for (let [userID, userData] of Object.entries(storage.users)) {
-        if (userData[field]) list.push({ user: userID, value: userData[field] });
+    for (const [userID, userData] of Object.entries(storage.users)) {
+        if (field in userData) list.push({ user: userID, value: userData[field] });
     }
 
     return list;
@@ -156,13 +196,13 @@ export function getFieldForAllUsers(field: userField) {
 export function getUserField(userID: string, field: userField) {
     storage.users[userID] ??= {};
     let value = storage.users[userID][field];
-    if (["true", "false"].includes(value)) value = value === "true"; // Replace "<bool>" with actual booleans
+    if (["true", "false"].includes(value)) value = value === "true";
 
     return value;
 }
 
 export function getUserData(userID: string) {
-    return storage.users[userID];
+    return clone(storage.users[userID]);
 }
 
 export async function setUserField(userID: string, field: userField, newValue: any = "true") {
@@ -185,7 +225,7 @@ export function getGlobalField(field: globalField) {
 }
 
 export function getGlobalData() {
-    return storage.global;
+    return clone(storage.global);
 }
 
 export async function setGlobalField(field: globalField, newValue: any = "true") {
@@ -225,6 +265,7 @@ export async function popEntry(userID: string, field: userField) {
     const list = storage.users[userID]?.[field];
 
     if (!Array.isArray(list)) throw Error(`Field "${field}" is not an array for user ${userID}`);
+    if (list.length === 0) return undefined;
 
     const entry = list.pop();
     await save('users', userID);
