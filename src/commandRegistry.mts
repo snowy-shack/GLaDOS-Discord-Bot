@@ -1,13 +1,6 @@
 import {ChatInputCommandInteraction, Client, PermissionFlagsBits, REST, Routes, SharedSlashCommand} from "discord.js";
 import {guildID} from "#src/core/phantys_home.mts";
 import chalk from "chalk";
-
-export interface CommandModule {
-    init: () => SharedSlashCommand | Promise<SharedSlashCommand>;
-    react: (interaction: ChatInputCommandInteraction) => Promise<void>;
-    name: string;
-}
-
 // Command imports
 import * as ping from "#src/commands/ping.mts";
 import * as about from "#src/commands/about.mts";
@@ -16,6 +9,7 @@ import * as birthday from "#src/commands/birthday.mts";
 import * as faq from "#src/commands/faq.mts";
 import * as rule from "#src/commands/rule.mts";
 import * as wordle from "#src/commands/wordle.mts";
+import * as tooltips from "#src/commands/tooltips.mts";
 
 import * as babble from "#src/commands/developer/babble.mts";
 import * as skins from "#src/commands/developer/skins.mts";
@@ -28,6 +22,12 @@ import * as refresh from "#src/commands/admin/refresh.mts";
 import * as update from "#src/commands/admin/update.mts";
 import * as utils from "#src/commands/admin/utils.mts";
 
+export interface CommandModule {
+    init: () => SharedSlashCommand | Promise<SharedSlashCommand>;
+    react: (interaction: ChatInputCommandInteraction) => Promise<void>;
+    name: string;
+}
+
 export type commandCategory = 'global' | 'moderator' | 'developer' | 'admin';
 export const commandRegistry: Record<commandCategory, { [key: string]: CommandModule }> = {
     global: {
@@ -38,6 +38,7 @@ export const commandRegistry: Record<commandCategory, { [key: string]: CommandMo
         faq: faq,
         rule: rule,
         wordle: wordle,
+        tooltips: tooltips
     },
     moderator: {
         manage: manage,
