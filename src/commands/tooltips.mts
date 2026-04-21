@@ -1,9 +1,9 @@
 import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
 
-export const name = 'tooltip';
+export const name = 'tooltips';
 
 export function init() {
-    return new SlashCommandBuilder().setName('tooltip')
+    return new SlashCommandBuilder().setName('tooltips')
         .setDescription('Tell people to please consult the tooltips');
 }
 
