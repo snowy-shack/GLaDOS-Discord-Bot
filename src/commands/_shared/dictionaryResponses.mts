@@ -6,11 +6,11 @@ import {icons} from "#src/consts/icons.mts";
 
 type Item = { id: string; title: string; description: string };
 
-function block(emoji: string, title: string, description: string) {
+export function block(emoji: string, title: string, description: string) {
     return `# ${emoji} ${title}\n> ${description}`;
 }
 
-async function reply(interaction: ChatInputCommandInteraction, message: string, error?: boolean) {
+export async function reply(interaction: ChatInputCommandInteraction, message: string, error?: boolean) {
     await interaction.editReply(
         embedMessage({
             title: message,
