@@ -2,6 +2,6 @@
 
 cd /home/phantomeye/phbot/phantys-home-bot/
 
-git pull --no-rebase
+git -c color.ui=always pull --no-rebase
 
 npm i

@@ -1,17 +1,14 @@
-import {
-    SlashCommandBuilder,
-    PermissionFlagsBits,
-    ChatInputCommandInteraction
-} from "discord.js";
-import { exec } from "child_process";
+import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
+import {exec} from "child_process";
 import path from "path";
-import { getVersion } from "#src/core/version.mts";
+import {getVersion} from "#src/core/version.mts";
 import * as logs from "#src/core/logs.mts";
+import {webhook} from "#src/core/logs.mts";
 
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 import chalk from "chalk";
 import {reboot} from "#src/commands/admin/reboot.mts";
-import {webhook} from "#src/core/logs.mts";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const name = 'update';
@@ -32,17 +29,17 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
         if (error) {
             await logs.logError("executing a script", error);
-            await logs.logWarning(`⚠️ Update failed. Output:\n\`\`\`\n${output || "No output"}\n\`\`\``);
+            await logs.logWarning(`⚠️ Update failed. Output:\n\`\`\`ansi\n${output || "No output"}\n\`\`\``);
             return;
         }
 
         setTimeout(async () => {
             const version = await getVersion();
 
-            void webhook.logMessage(`Git log:**\n\`\`\`\n${stdout}\n\`\`\`** `); // Log the output
+            void webhook.logMessage(`Git log:**\n\`\`\`ansi\n${stdout}\n\`\`\`** `); // Log the output
 
             if (output.includes("Fast-forward")) {
-                await logs.logMessage(`✅ Successfully updated to GLaDOS v${version}!\n**Output:**\n\`\`\`\n${output}\n\`\`\``);
+                await logs.logMessage(`✅ Successfully updated to GLaDOS v${version}!`);
 
                 // Reboot after 3 seconds
                 setTimeout(async () => {
@@ -52,7 +49,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 await logs.logMessage(`✅ Already up-to-date: GLaDOS v${version}`);
             } else {
                 // Log the actual output even if we don't recognize the git status
-                await logs.logWarning(`⚠️ Update status unclear. Output:\n\`\`\`\n${output}\n\`\`\``);
+                await logs.logWarning(`⚠️ Update status unclear. Output:\n\`\`\`ansi\n${output}\n\`\`\``);
             }
         }, 500);
     });
