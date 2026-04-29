@@ -55,6 +55,8 @@ export const emojis: {[key: string]: string} = {
     Upvote:     isBeta ? "<:upvote:1266753165265473580>"       : "<:upvote:1264163489073860620>",
     Yo:         isBeta ? "<:yo:1349437575659524239>"           : "<:yo:1349437436719005749>",
     Tada:       isBeta ? "<:tada:1351512055059972157>"         : "<:tada:1351511867503149117>",
+    OrangeMod:  "<:orangetalmod:1499168496276213851>",
+    GreenMod:   "<:greentalmod:1499168497392029766>",
 }
 
 /**

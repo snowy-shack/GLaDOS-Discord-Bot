@@ -3,8 +3,9 @@ import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/core/logs.mts";
 import {icons} from "#src/consts/icons.mts";
+import {emojis} from "#src/core/phantys_home.mts";
 
-type Item = { id: string; title: string; description: string };
+type Item = { id: string; title: string; emoji?: string; description: string };
 
 export function block(emoji: string, title: string, description: string) {
     return `# ${emoji} ${title}\n> ${description}`;
@@ -47,8 +48,9 @@ export async function reactWithTemplate(interaction: ChatInputCommandInteraction
 
     const found = items.find((o) => o.id === id);
     if (!found) return;
-
-    const content = block(emoji ?? "", found.title, found.description);
+    
+    const definitiveEmoji = found.emoji != undefined ? emojis[found.emoji] : emoji;
+    const content = block(definitiveEmoji ?? "", found.title, found.description);
 
     // Prevent conflicting target parameters
     if (targetUser && targetMessage) {
