@@ -1,21 +1,14 @@
-import {
-    ButtonBuilder,
-    ButtonStyle,
-    ActionRowBuilder,
-    User,
-    Message,
-    ButtonInteraction, APIEmbed
-} from "discord.js";
+import {ActionRowBuilder, APIEmbed, ButtonBuilder, ButtonInteraction, ButtonStyle, Message, User} from "discord.js";
 import * as minecraft from "#src/core/minecraft.mts";
 import "#src/envloader.mts";
 
 import colors from "#src/consts/colors.mts";
 import * as logs from "#src/core/logs.mts";
-import { embedMessage, templateEmbed } from "#src/formatting/styledEmbed.mts";
+import {embedMessage, templateEmbed} from "#src/formatting/styledEmbed.mts";
 import {hasString, string, templateString} from "#src/modules/localizedStrings.mts";
-import { getChannel } from "#src/core/discord.mts";
-import { channels, dmUser } from "#src/core/phantys_home.mts";
-import { icons } from "#src/consts/icons.mts";
+import {getChannel} from "#src/core/discord.mts";
+import {channels, dmUser} from "#src/core/phantys_home.mts";
+import {icons} from "#src/consts/icons.mts";
 import {getGunSkin} from "#src/modules/portalGunSkinLoader.mts";
 
 const title = "PortalMod Portal Gun skin form";
@@ -133,7 +126,7 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
     }) as APIEmbed;
 
     const retry = new ButtonBuilder()
-        .setCustomId('functions.skinFormHandler#retry')
+        .setCustomId('modules.skinFormHandler#retry')
         .setLabel(`Retry`)
         .setEmoji('🔄')
         .setStyle(ButtonStyle.Secondary);
