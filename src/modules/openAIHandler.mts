@@ -1,35 +1,35 @@
 import OpenAI from "openai";
-import {delayInMilliseconds} from "#src/core/util.mts";
-import {logError} from "#src/core/logs.mts";
 
 const openai = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
+    // baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.APIKEY,
 });
+const MODEL = "gpt-5-mini";
 
-let err: Error;
+export type ContextMessage = { glados: boolean, username?: string, content: string };
 
-export async function getGPTResponse(prompt: string, context: string): Promise<string | null> {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-            const completion = await openai.chat.completions.create({
-                model: "google/gemma-3n-e4b-it:free",
-                store: true,
-                messages: [
-                    { "role": "user", "content": context },
-                    { "role": "user", "content": prompt },
-                ],
-            });
+export async function isUnsafe(context: ContextMessage[]): Promise<boolean> {
+    const moderation = await openai.moderations.create({
+        model: "omni-moderation-latest",
+        input: context.map(m => m.content).join(","),
+    });
 
-            return completion.choices[0].message.content;
-        } catch (e) {
-            console.error(`Attempt ${attempt} failed:`, e);
-            if (e instanceof Error) err = e;
+    return moderation.results[0].flagged;
+}
 
-            if (attempt < 3) {
-                await delayInMilliseconds(1000 * attempt);
-            }
-        }
-    }
-    return null;
+export async function getResponse(prompt: string, context: ContextMessage[]): Promise<string | null> {
+    const response = await openai.responses.create({
+        model: MODEL,
+        input: [
+            ...context.map((m) => ({
+                role: m.glados ? "assistant" : "user",
+                content: m.glados
+                    ? [{type: "output_text", text: m.content}]
+                    : [{type: "input_text", text: m.username + " SAYS " + m.content}],
+            } as any )),
+            { role: "developer", content: [{ type: "input_text", text: prompt }] },
+        ],
+    });
+
+    return response.output_text;
 }
