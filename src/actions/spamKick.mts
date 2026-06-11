@@ -14,7 +14,12 @@ export async function spamKick(member: GuildMember, reason: string) {
     }));
 
     try {
-        await member.kick(`Suspected spam or hacked account - reason: ${reason}`);
+        await member.ban({
+            deleteMessageSeconds: 86400, // Deletes messages from the last 24 hours
+            reason: `Suspected spam or hacked account - reason: ${reason}`
+        });
+        await member.guild.bans.remove(member.id, "Instant unban for hacked user");
+
         await logs.logMessage(`👋 Spam kicked ${member} - Reason: ${reason}.`);
         return true;
     } catch (error) {
