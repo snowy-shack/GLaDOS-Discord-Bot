@@ -1,9 +1,4 @@
-import {
-    ChatInputCommandInteraction,
-    HexColorString,
-    PermissionFlagsBits,
-    SlashCommandBuilder
-} from "discord.js";
+import {ChatInputCommandInteraction, HexColorString, SlashCommandBuilder} from "discord.js";
 import {
     all_fields,
     getUserData,
@@ -73,7 +68,7 @@ export function init() {
 
 const storageEmbedConfig = {
     footer: "flags",
-    title: "Phanty's Home User data",
+    title: "Snowy Shack User data",
     color: colors.Primary as HexColorString
 };
 

@@ -1,4 +1,4 @@
-import {GatewayIntentBits, Partials, Client, ActivityType} from "discord.js";
+import {ActivityType, Client, GatewayIntentBits, Partials} from "discord.js";
 import chalk from "chalk";
 
 let client: Client;
@@ -23,8 +23,8 @@ async function init() {
             status: "idle",
             activities: [{
                 type: ActivityType.Watching,
-                name: "Phanty's Home",
-                state: "Looking over Phanty's Home"
+                name: "Snowy Shack",
+                state: "Looking over Snowy Shack"
             }]
         }
     });

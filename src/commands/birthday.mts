@@ -1,17 +1,29 @@
 import {
-    ActionRowBuilder, SlashCommandBuilder, ModalBuilder,
-    TextInputBuilder, TextInputStyle, ChatInputCommandInteraction, ModalSubmitInteraction, MessageFlags,
+    ActionRowBuilder,
+    ChatInputCommandInteraction,
+    ModalBuilder,
+    ModalSubmitInteraction,
+    SlashCommandBuilder,
+    TextInputBuilder,
+    TextInputStyle,
 } from "discord.js";
 
 import * as logs from "#src/core/logs.mts";
 import colors from "#src/consts/colors.mts";
-import { getMember } from "#src/core/discord.mts";
+import {getMember} from "#src/core/discord.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import {string, templateString} from "#src/modules/localizedStrings.mts";
-import {userFields, getFieldForAllUsers, getUserField, setUserField} from "#src/modules/localStorage.mts";
-import { dateIsToday, formatDate, isValidDate, sortDatesUpcoming, trimString, daysUntilBirthday } from "#src/core/util.mts";
-import { toError } from "#src/core/try-catch.mts";
-import { icons } from "#src/consts/icons.mts";
+import {getFieldForAllUsers, getUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
+import {
+    dateIsToday,
+    daysUntilBirthday,
+    formatDate,
+    isValidDate,
+    sortDatesUpcoming,
+    trimString
+} from "#src/core/util.mts";
+import {toError} from "#src/core/try-catch.mts";
+import {icons} from "#src/consts/icons.mts";
 
 export const name = 'birthday';
 
@@ -38,9 +50,9 @@ export function init() {
                 .setMinValue(1).setMaxValue(10)));
 }
 
-const title = "Phanty's Home Birthdays";
+const title = "Snowy Shack Birthdays";
 const formTitle = {
-    name: "Phanty's Home Birthdays",
+    name: "Snowy Shack Birthdays",
     iconURL: icons.home
 };
 

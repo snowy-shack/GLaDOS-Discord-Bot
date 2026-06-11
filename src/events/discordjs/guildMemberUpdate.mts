@@ -4,8 +4,8 @@ import {spamKick} from "#src/actions/spamKick.mts";
 import * as logs from "#src/core/logs.mts";
 import {getChannel} from "#src/core/discord.mts";
 import {templateEmbed} from "#src/formatting/styledEmbed.mts";
-import { toError } from "#src/core/try-catch.mts";
-import { string } from "#src/modules/localizedStrings.mts";
+import {toError} from "#src/core/try-catch.mts";
+import {string} from "#src/modules/localizedStrings.mts";
 
 export function init(client: Client): void {
     client.on(Events.GuildMemberUpdate, async (oldMember, member) => {
@@ -63,7 +63,7 @@ async function welcomeUser(oldMember: GuildMember|PartialGuildMember, member: Gu
             const welcome_message = templateEmbed({
                 body: await string("server.message.exclusive.welcome"),
                 footer: "messages.welcome",
-                title: "Phanty's Home exclusive chat"
+                title: "Snowy Shack exclusive chat"
             });
 
             channel.send({ embeds: [welcome_message], content: `<@${member.user.id}>` });

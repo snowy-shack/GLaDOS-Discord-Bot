@@ -1,13 +1,13 @@
 import {GuildMember, MessageCreateOptions, TextChannel} from "discord.js";
-import {userFields, getUserField, setUserField} from "#src/modules/localStorage.mts";
+import {getUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
 import {DAY_IN_MS} from "#src/core/util.mts";
 import logs from "#src/core/logs.mts";
 import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import * as localizedStrings from "#src/modules/localizedStrings.mts";
 import colors from "#src/consts/colors.mts";
-import { getChannel } from "#src/core/discord.mts";
-import { toError } from "#src/core/try-catch.mts";
+import {getChannel} from "#src/core/discord.mts";
+import {toError} from "#src/core/try-catch.mts";
 
 export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
     try {
@@ -26,7 +26,7 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
         await dmUser(member.user, embedMessage({
             body: await localizedStrings.string("server.notification.locked_up"),
             footer: "spam",
-            title: "Phanty's Home Spam prevention",
+            title: "Snowy Shack Spam prevention",
             color: colors.Error
         }));
 
@@ -42,7 +42,7 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
                         message ?? "  * unknown *  "
                     ]),
                     footer: "spam",
-                    title: "Phanty's Home Spam prevention",
+                    title: "Snowy Shack Spam prevention",
                     color: colors.Error
                 })
             });

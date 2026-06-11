@@ -1,5 +1,5 @@
 # GLaDOS discord.mts bot
-Management and quality of life bot for **PortalMod** and **Phanty's Home**
+Management and quality of life bot for **PortalMod** and **Snowy Shack**
 
 # Install
 ```bash

@@ -14,7 +14,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
     const body = ""
         + "> Management and quality \n"
         + "> of life bot for **PortalMod** \n"
-        + "> and **Phanty's Home** \n"
+        + "> and **Snowy Shack** \n"
 
         + "════════════════\n"
         + "> ### Commands: \n"

@@ -9,7 +9,7 @@ export async function spamKick(member: GuildMember, reason: string) {
     await dmUser(member.user, embedMessage({
         body: await localizedStrings.string("server.notification.spam_kicked"),
         footer: "spam",
-        title: "Phanty's Home Spam prevention",
+        title: "Snowy Shack Spam prevention",
         color: colors.Error
     }));
 
