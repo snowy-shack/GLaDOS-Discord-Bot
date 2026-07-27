@@ -1,5 +1,7 @@
-import {GuildMember, MessageCreateOptions, TextChannel} from "discord.js";
+import {ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, GuildMember, MessageCreateOptions, TextChannel} from "discord.js";
 import {getUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
+import {spamKick} from "#src/actions/spamKick.mts";
+import {greenlightDomain} from "#src/modules/spamAllowlist.mts";
 import {DAY_IN_MS} from "#src/core/util.mts";
 import logs from "#src/core/logs.mts";
 import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
@@ -47,7 +49,29 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
                 })
             });
             if (flaggedLink && mod_chat?.isSendable()) {
-                await mod_chat.send(`The link that was flagged:\n> ${flaggedLink}`);
+                const domain = flaggedLink.replace(/(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
+
+                const greenlight = new ButtonBuilder()
+                    .setCustomId(`actions.userLockup#greenlight:${member.user.id}:${domain}`)
+                    .setLabel('Greenlight link')
+                    .setStyle(ButtonStyle.Success);
+
+                const unlock = new ButtonBuilder()
+                    .setCustomId(`actions.userLockup#unlock:${member.user.id}:${domain}`)
+                    .setLabel('Unlock user')
+                    .setStyle(ButtonStyle.Secondary);
+
+                const kick = new ButtonBuilder()
+                    .setCustomId(`actions.userLockup#kick:${member.user.id}:${domain}`)
+                    .setLabel('Spam-kick user')
+                    .setStyle(ButtonStyle.Danger);
+
+                const row = new ActionRowBuilder<ButtonBuilder>().addComponents(greenlight, unlock, kick);
+
+                await mod_chat.send({
+                    content: `The link that was flagged:\n> ${flaggedLink}`,
+                    components: [row],
+                });
             }
         }
 
@@ -58,4 +82,33 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
 
 export async function userUnlock(member: GuildMember) {
     await setUserField(member.user.id, userFields.Security.LockedUp, "false");
+}
+
+export async function buttonPressed(buttonID: string, interaction: ButtonInteraction) {
+    const [action, userId, domain] = buttonID.split(':');
+
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.message.edit({ components: [] });
+
+    switch (action) {
+        case 'greenlight': {
+            await greenlightDomain(domain);
+            await interaction.editReply(`✅ Domain \`${domain}\` greenlisted — it won't be flagged again.`);
+            break;
+        }
+        case 'unlock': {
+            const member = await interaction.guild?.members.fetch(userId).catch(() => null);
+            if (!member) { await interaction.editReply('❌ Could not find user.'); break; }
+            await userUnlock(member);
+            await interaction.editReply(`✅ Unlocked <@${userId}>.`);
+            break;
+        }
+        case 'kick': {
+            const member = await interaction.guild?.members.fetch(userId).catch(() => null);
+            if (!member) { await interaction.editReply('❌ Could not find user — they may have already left.'); break; }
+            const success = await spamKick(member, 'Moderator action via button');
+            await interaction.editReply(success ? `✅ Spam-kicked <@${userId}>.` : `❌ Could not kick <@${userId}>.`);
+            break;
+        }
+    }
 }

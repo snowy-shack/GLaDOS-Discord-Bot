@@ -2,10 +2,12 @@ import logs from "#src/core/logs.mts";
 import {Message, TextChannel} from "discord.js";
 import {userLockup} from "#src/actions/userLockup.mts";
 import {userFields, getUserField} from "#src/modules/localStorage.mts";
+import * as spamAllowlist from "#src/modules/spamAllowlist.mts";
 
 let scamLinks: Set<string> = new Set();
 
 async function refreshScamURLs() {
+    await spamAllowlist.init();
     const linksResponse = await fetch("https://raw.githubusercontent.com/Discord-AntiScam/scam-links/refs/heads/main/list.json");
     const json: string[] = await linksResponse.json();
 
@@ -26,7 +28,7 @@ async function checkMessage(message: Message) {
 
     for (const match of linkMatches) {
         const domain = match.replace(/(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
-        if (scamLinks.has(domain) && message.member && message.channel instanceof TextChannel) {
+        if (scamLinks.has(domain) && !spamAllowlist.isAllowed(domain) && message.member && message.channel instanceof TextChannel) {
             await userLockup(message.member, message.channel, message.content, match);
             try {
                 await message.delete(); // Try to delete the message
