@@ -22,7 +22,9 @@ export async function react(message: Message): Promise<void> {
 
         message.attachments.forEach((attachment => {
             let contentType = attachment.contentType || null;
-            if (contentType && ['image','video'].includes(contentType.split('/')[0])) hasImage = true;
+            const mediaType = contentType?.split('/')[0];
+            if (mediaType && ['image', 'video'].includes(mediaType)) hasImage = true;
+            if (mediaType === 'audio' && !attachment.waveform) hasImage = true;
         }));
 
         if (hasImage) {
