@@ -9,7 +9,7 @@ import colors from "#src/consts/colors.mts";
 import {getChannel} from "#src/core/discord.mts";
 import {toError} from "#src/core/try-catch.mts";
 
-export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null) {
+export async function userLockup(member: GuildMember, channel: TextChannel|null, message: string|null = null, flaggedLink: string|null = null) {
     try {
         const alreadyLockedUp = getUserField(member.user.id, userFields.Security.LockedUp);
         if (alreadyLockedUp) return;
@@ -46,6 +46,9 @@ export async function userLockup(member: GuildMember, channel: TextChannel|null,
                     color: colors.Error
                 })
             });
+            if (flaggedLink && mod_chat?.isSendable()) {
+                await mod_chat.send(`The link that was flagged:\n> ${flaggedLink}`);
+            }
         }
 
     } catch (error: unknown) {

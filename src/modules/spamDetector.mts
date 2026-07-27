@@ -27,7 +27,7 @@ async function checkMessage(message: Message) {
     for (const match of linkMatches) {
         const domain = match.replace(/(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
         if (scamLinks.has(domain) && message.member && message.channel instanceof TextChannel) {
-            await userLockup(message.member, message.channel, message.content);
+            await userLockup(message.member, message.channel, message.content, match);
             try {
                 await message.delete(); // Try to delete the message
             } catch (e) {
