@@ -11,6 +11,29 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.08.4 - July 28th 2026
+### Changes
+- Audio file attachments (ogg, mp4, m4a, etc.) in the art channel now receive a heart reaction, excluding Discord voice recordings
+
+## Release 3.08.3 - July 28th 2026
+### Changes
+- Spam allowlist is now persistent across restarts
+- Moderator spam notification now includes action buttons: Greenlight link, Unlock user, Spam-kick user
+### Fixes
+- Fixed circular dependency between spam detector and user lockup modules
+
+## Release 3.08.2 - July 28th 2026
+### Changes
+- Moderator spam notification now shows the exact flagged link
+
+## Release 3.08.1 - July 28th 2026
+### Changes
+- Rebrand
+- Improved GLaDOS prompt to reduce character breaks and produce more varied responses
+- Spam-kicked users now have their messages deleted
+### Fixes
+- Fixed retry button in skin form
+
 ## Release 3.08.0 - May 11th 2026
 ### Changes
 - Now uses a smarter model and system to respond to messages
