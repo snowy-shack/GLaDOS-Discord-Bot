@@ -46,9 +46,24 @@ export async function react(interaction: ChatInputCommandInteraction) {
         } break;
 
         case "test": {
-            const text = interaction.options.getString("input");
-            const a = await h(text ?? "");
-            await interaction.reply(a);
+            const text = interaction.options.getString("input", true);
+            switch (text) {
+                case "exception":
+                    await interaction.reply("💥 Throwing uncaught exception...");
+                    setTimeout(() => { throw new Error("Test uncaught exception"); }, 0);
+                    break;
+                case "rejection":
+                    await interaction.reply("💥 Throwing unhandled rejection...");
+                    Promise.reject(new Error("Test unhandled rejection"));
+                    break;
+                case "exit":
+                    await interaction.reply("💥 Calling process.exit(1)...");
+                    process.exit(1);
+                default: {
+                    const a = await h(text);
+                    await interaction.reply(a);
+                }
+            }
         }
     }
 }

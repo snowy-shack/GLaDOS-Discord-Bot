@@ -11,6 +11,12 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.09.0-exp - July 28th 2026
+### Experimental
+- Canvas (jumpsuit command) now runs in a sandboxed child process — a native crash no longer takes down the bot
+- Crash logs are now sent to the webhook on uncaught exceptions, unhandled rejections, and unexpected process exits
+- Added `npm run monitor` to run the bot with crash monitoring enabled
+
 ## Release 3.08.4 - July 28th 2026
 ### Changes
 - Audio file attachments (ogg, mp4, m4a, etc.) in the art channel now receive a heart reaction, excluding Discord voice recordings

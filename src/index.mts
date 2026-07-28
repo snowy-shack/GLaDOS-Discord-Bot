@@ -61,12 +61,22 @@ async function init() {
     ])
 }
 
-process.on('uncaughtException', (error) => { // Error logging
+process.on('uncaughtException', (error) => {
     try {
         void logs.logError("running (uncaught)", error);
     } catch (caught) {
         void webhook.logError("running (uncaught)", error);
         console.error("Uncaught exception could not be logged in Discord channel:", caught);
+    }
+});
+
+process.on('unhandledRejection', (reason) => {
+    const error = reason instanceof Error ? reason : new Error(String(reason));
+    try {
+        void logs.logError("running (unhandled rejection)", error);
+    } catch (caught) {
+        void webhook.logError("running (unhandled rejection)", error);
+        console.error("Unhandled rejection could not be logged in Discord channel:", caught);
     }
 });
 
