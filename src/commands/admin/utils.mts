@@ -1,4 +1,5 @@
-import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
+import {ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder} from "discord.js";
+import {networkInterfaces} from "node:os";
 import boosterHandler from "#src/modules/boosterTracker.mts";
 import * as logs from "#src/core/logs.mts";
 import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
@@ -29,6 +30,11 @@ export function init() {
                         .setRequired(true)
                 )
         )
+
+        .addSubcommand(subcommand =>
+            subcommand.setName("ip")
+                .setDescription("Show local and public IP addresses")
+        )
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
@@ -43,6 +49,22 @@ export async function react(interaction: ChatInputCommandInteraction) {
         case "daily_birthday": {
             await checkBirthdays();
             void interaction.reply(logs.formatMessage("🍰 Reevaluated daily birthdays"));
+        } break;
+
+        case "ip": {
+            const nets = networkInterfaces();
+            const localIPs = Object.values(nets)
+                .flat()
+                .filter(n => n && n.family === 'IPv4' && !n.internal)
+                .map(n => n!.address);
+
+            const publicRes = await fetch('https://api.ipify.org?format=json').catch(() => null);
+            const publicIP = publicRes?.ok ? (await publicRes.json() as any).ip : 'unavailable';
+
+            await interaction.reply({
+                content: `**Local:** \`${localIPs.join(', ') || 'none'}\`\n**Public:** \`${publicIP}\``,
+                flags: MessageFlags.Ephemeral,
+            });
         } break;
 
         case "test": {

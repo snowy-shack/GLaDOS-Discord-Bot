@@ -11,6 +11,10 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.09.1-exp - July 28th 2026
+### Changes
+- Added `/utils ip` subcommand to ephemerally display local and public IP addresses
+
 ## Release 3.09.0-exp - July 28th 2026
 ### Experimental
 - Canvas (jumpsuit command) now runs in a sandboxed child process — a native crash no longer takes down the bot
