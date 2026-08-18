@@ -64,7 +64,7 @@ export async function replyToDM(message: Message) {
             return;
         }
 
-        await database.addGunSkin(uuidGot, skinID);
+        await database.addGunSkin(message.author.id, uuidGot, skinID);
         await logs.logMessage(`💎 Added ${skinType} skin to uuid '${uuidGot}' ${await getMember(message.author.id)}.`);
     }
 

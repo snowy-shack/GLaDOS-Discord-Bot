@@ -1,56 +1,25 @@
-import pg from "pg";
 import * as logs from "#src/core/logs.mts";
-import {delayInMilliseconds} from "#src/core/util.mts";
 
-let pgClient: pg.Client;
+export async function addGunSkin(userID: string, minecraftUuid: string, skinUUID: string) {
+    const response = await fetch(`https://api.portalmod.net/v1/players/${minecraftUuid}/skins`, {
+        method: "post",
+        headers: {
+            "Authorization": `Bearer ${process.env.PM_API_BEARER}`
+        },
+        body: JSON.stringify({
+            "skin_id": skinUUID
+        }),
+    });
 
-const RETRIES: number = 5;
+    const errorLog = `❌ Failed to apply skin \`${skinUUID}\` to <@${userID}> \`${minecraftUuid}\`: ${response.status}`;
 
-let initialized = false;
-await ensureDBConnection();
-initialized = true;
-
-/* private */ async function ensureDBConnection(retries = RETRIES, delay = 1000) {
-    while (retries--) {
-        try {
-            await pgClient.query('SELECT 1');
-
-            if (initialized) await logs.logMessage("✅ Database connection successful.");
-            return;
-        } catch {
-            if (retries < RETRIES - 1) {
-                console.warn(`Reconnecting to DB... (${5 - retries}/5)`);
-            } else {
-                if (initialized) await logs.logWarning("❌ Attempting Database reconnection.");
-            }
-
-            pgClient?.end().catch(() => {});
-
-            pgClient = new pg.Client({
-                host:        process.env.DBHOST,
-                port: Number(process.env.DBPORT),
-                database:    process.env.DBNAME,
-                user:        process.env.DBUSER,
-                password:    process.env.DBPASS,
-            });
-
-            await pgClient.connect();
-        }
-        await delayInMilliseconds(delay *= 2);
+    if(response.status == 400 || response.status == 401) {
+        await logs.logMessage(`${errorLog} ${(await response.json()).error}`);
+        throw new Error();
     }
-    throw new Error('Database reconnection failed');
-}
 
-export async function addGunSkin(minecraftUuid: string, skinUUID: string) {
-    await ensureDBConnection();
-
-    await pgClient.query(`
-            INSERT INTO players_skins (minecraft_id, skin_id)
-            SELECT $1, $2
-            WHERE NOT EXISTS (
-                SELECT 1 FROM players_skins 
-                WHERE minecraft_id = $1 AND skin_id = $2
-            );
-        `,
-        [ minecraftUuid, skinUUID ]);
+    if(response.status != 201) {
+        await logs.logMessage(`${errorLog} ${response.body}`);
+        throw new Error();
+    }
 }
