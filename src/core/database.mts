@@ -1,7 +1,7 @@
 import * as logs from "#src/core/logs.mts";
 
 export async function addGunSkin(userID: string, minecraftUuid: string, skinUUID: string) {
-    const response = await fetch(`https://api.portalmod.net/v1/players/${minecraftUuid}/skins`, {
+    const response = await fetch(`https://api.portalmod.net/v1/player/${minecraftUuid}/skins`, {
         method: "post",
         headers: {
             "Authorization": `Bearer ${process.env.PM_API_BEARER}`
