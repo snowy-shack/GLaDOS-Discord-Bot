@@ -61,7 +61,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 return;
             }
 
-            const kicked = await spamKick(member, reason ?? "None provided");
+            const kicked = await spamKick(member, reason ?? "None provided", interaction.member as GuildMember);
 
             await interaction.editReply(logs.formatMessage(kicked ? "👋 Kicked user." : "❌ Failed to kick user."))
         } break;
