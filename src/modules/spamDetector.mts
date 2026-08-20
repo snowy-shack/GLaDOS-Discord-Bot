@@ -1,4 +1,5 @@
 import logs from "#src/core/logs.mts";
+import { toError } from "#src/core/try-catch.mts";
 import {Message, TextChannel} from "discord.js";
 import {userLockup} from "#src/actions/userLockup.mts";
 import {userFields, getUserField} from "#src/modules/localStorage.mts";
@@ -7,15 +8,19 @@ import * as spamAllowlist from "#src/modules/spamAllowlist.mts";
 let scamLinks: Set<string> = new Set();
 
 async function refreshScamURLs() {
-    await spamAllowlist.init();
-    const linksResponse = await fetch("https://raw.githubusercontent.com/Discord-AntiScam/scam-links/refs/heads/main/list.json");
-    const json: string[] = await linksResponse.json();
+    try {
+        await spamAllowlist.init();
+        const linksResponse = await fetch("https://raw.githubusercontent.com/Discord-AntiScam/scam-links/refs/heads/main/list.json");
+        const json: string[] = await linksResponse.json();
 
-    json.push("discord.gg"); // Include Discord invites
+        json.push("discord.gg"); // Include Discord invites
 
-    scamLinks = new Set(json);
+        scamLinks = new Set(json);
 
-    await logs.logMessage(`⚔️ Scam URLs refreshed. ${scamLinks.size} links found.`);
+        await logs.logMessage(`⚔️ Scam URLs refreshed. ${scamLinks.size} links found.`);
+    } catch (error) {
+        await logs.logError("refreshing scam URLs", toError(error));
+    }
 }
 
 async function checkMessage(message: Message) {
