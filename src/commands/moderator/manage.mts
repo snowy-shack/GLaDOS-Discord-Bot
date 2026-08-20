@@ -56,7 +56,10 @@ export async function react(interaction: ChatInputCommandInteraction) {
             let member: GuildMember | undefined = await getMember(interaction.options.getUser("user")?.id ?? "");
             let reason = interaction.options.getString("reason");
 
-            if (!member) return;
+            if (!member) {
+                await interaction.editReply(logs.formatMessage("❌ User not found — they may not be in the server. Cannot kick or clean up messages."));
+                return;
+            }
 
             const kicked = await spamKick(member, reason ?? "None provided");
 
