@@ -11,6 +11,28 @@ type Sender = {
     getSender: () => Promise<TextChannel | WebhookClient>,
 }
 
+const pendingLogs: Array<() => Promise<void>> = [];
+let draining = false;
+
+function enqueue(fn: () => Promise<void>): void {
+    pendingLogs.push(fn);
+    void drain();
+}
+
+async function drain(): Promise<void> {
+    if (draining) return;
+    draining = true;
+    while (pendingLogs.length > 0) {
+        try {
+            await pendingLogs[0]();
+            pendingLogs.shift();
+        } catch {
+            await new Promise(r => setTimeout(r, 3000));
+        }
+    }
+    draining = false;
+}
+
 export function formatMessage<T>(message: string): T {
     return embedMessage({
         body: `**${message}**`,
@@ -23,33 +45,39 @@ export function formatMessage<T>(message: string): T {
 const warningLogger = (s: Sender) => async (msg: string) => {
     if (isSilent) return;
     console.log(chalk.red(`[WARN]: ${msg}`));
-    const target = await s.getSender();
-    await target.send({
-        username: s.name,
-        content: rolesMarkDown.Developer,
-        ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: colors.Warning })
+    enqueue(async () => {
+        const target = await s.getSender();
+        await target.send({
+            username: s.name,
+            content: rolesMarkDown.Developer,
+            ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: colors.Warning })
+        });
     });
 };
 
 const messageLogger = (s: Sender) => async (msg: string) => {
     if (isSilent) return;
     console.log(chalk.blueBright(`[LOGS]: ${msg}`));
-    const target = await s.getSender();
-    await target.send({
-        username: s.name,
-        ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: s.name === "GLaDOS" ? colors.Success : colors.Inactive })
+    enqueue(async () => {
+        const target = await s.getSender();
+        await target.send({
+            username: s.name,
+            ...embedMessage<MessageCreateOptions>({ body: `**${msg}**`, color: s.name === "GLaDOS" ? colors.Success : colors.Inactive })
+        });
     });
 };
 
 const errorLogger = (s: Sender) => async (loc: string, err: Error) => {
     if (isSilent) return;
     console.error(chalk.red(`Error @ ${loc}: ${err.message}`));
-    const target = await s.getSender();
-    const body = `Error @ ${loc} - **\`${err.message}\`**\n\`\`\`\n${err.stack || "No stack"}\n\`\`\``;
-    await target.send({
-        username: s.name,
-        content: rolesMarkDown.Developer,
-        ...embedMessage<MessageCreateOptions>({ title: "An error occurred", body, color: colors.Error })
+    enqueue(async () => {
+        const target = await s.getSender();
+        const body = `Error @ ${loc} - **\`${err.message}\`**\n\`\`\`\n${err.stack || "No stack"}\n\`\`\``;
+        await target.send({
+            username: s.name,
+            content: rolesMarkDown.Developer,
+            ...embedMessage<MessageCreateOptions>({ title: "An error occurred", body, color: colors.Error })
+        });
     });
 };
 
