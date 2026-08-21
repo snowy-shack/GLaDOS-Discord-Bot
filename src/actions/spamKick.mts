@@ -3,7 +3,7 @@ import colors from "#src/consts/colors.mts";
 import * as localizedStrings from "#src/modules/localizedStrings.mts";
 import {GuildMember, MessageCreateOptions} from "discord.js";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
-import {channels, dmUser, rolesMarkDown} from "#src/core/phantys_home.mts";
+import {channels, dmUser} from "#src/core/phantys_home.mts";
 import {getChannel} from "#src/core/discord.mts";
 
 export async function spamKick(member: GuildMember, reason: string, initiator?: GuildMember) {
@@ -23,16 +23,13 @@ export async function spamKick(member: GuildMember, reason: string, initiator?: 
 
         const mod_chat = await getChannel(channels.ModeratorChat);
         if (mod_chat?.isSendable()) {
-            const who = initiator ? `${initiator} (\`${initiator.id}\`)` : "GLaDOS";
-            await mod_chat.send({
-                content: rolesMarkDown.Moderator,
-                ...embedMessage<MessageCreateOptions>({
-                    body: `${who} spam-kicked ${member} (\`${member.id}\`)\nReason: \`${reason}\``,
-                    footer: "spam",
-                    title: "Snowy Shack Spam prevention",
-                    color: colors.Error
-                })
-            });
+            const who = initiator ? `${initiator}` : "GLaDOS";
+            await mod_chat.send(embedMessage<MessageCreateOptions>({
+                body: `👢 ${who} spam-kicked ${member} — \`${reason}\``,
+                footer: "spam",
+                title: "",
+                color: colors.Error
+            }));
         }
 
         await logs.logMessage(`👋 Spam kicked ${member} - Reason: ${reason}.`);
