@@ -50,21 +50,14 @@ function factorial(message: Message) {
 
 const COOLDOWN_MS = 1000 * 60 * 5;
 let lastAIResponse = 0;
+let requestInFlight = false; // Reserves the cooldown slot immediately, closing the race between the check and the eventual lastAIResponse update
 async function glados(message: Message) {
-    if (Date.now() - lastAIResponse < COOLDOWN_MS && !isAdmin(message)) return undefined;
+    const bypassLimits = isAdmin(message);
+
+    if (!bypassLimits && (requestInFlight || Date.now() - lastAIResponse < COOLDOWN_MS)) return undefined;
 
     if (hasWord("glados", message.content) || message.mentions.has(getClient().user ?? '') ) {
-        const isReply = !!message.reference?.messageId;
-
-        const scanMessages = isReply
-                ? [ await message.fetchReference(), message ]
-                : Array.from((await message.channel.messages.fetch({ limit: 10 })).reverse().values());
-
-        const recentMessages = scanMessages.map(m => ({
-            glados: getAuthorName(m) === "GLaDOS",
-            username: getAuthorName(m),
-            content: trimString(sanitize(m.content), 75, true)
-        } as llm.ContextMessage));
+        if (!bypassLimits) requestInFlight = true;
 
         let typingInterval: NodeJS.Timeout | undefined;
         const sendTyping = () => { // GLaDOS is typing...
@@ -74,6 +67,18 @@ async function glados(message: Message) {
         };
 
         try {
+            const isReply = !!message.reference?.messageId;
+
+            const scanMessages = isReply
+                    ? [ await message.fetchReference(), message ]
+                    : Array.from((await message.channel.messages.fetch({ limit: 10 })).reverse().values());
+
+            const recentMessages = scanMessages.map(m => ({
+                glados: getAuthorName(m) === "GLaDOS",
+                username: getAuthorName(m),
+                content: trimString(sanitize(m.content), 75, true)
+            } as llm.ContextMessage));
+
             const responsePromise = llm.getResponse([{ glados: false, content: message.content, username: getAuthorName(message) }]);
             const isUnsafe = await llm.isUnsafe([{ glados: false, content: message.content, username: getAuthorName(message) }]);
 
@@ -96,9 +101,8 @@ async function glados(message: Message) {
                 return trimString(response, 1900, false);
             }
         } finally {
-            if (typingInterval) {
-                clearInterval(typingInterval);
-            }
+            if (typingInterval) clearInterval(typingInterval);
+            if (!bypassLimits) requestInFlight = false;
         }
     }
 }
