@@ -4,7 +4,7 @@ const openai = new OpenAI({
     // baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.APIKEY,
 });
-const MODEL = "gpt-5-mini";
+const MODEL = "gpt-5.6-luna";
 
 export type ContextMessage = { glados: boolean, username?: string, content: string };
 
