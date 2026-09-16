@@ -56,7 +56,7 @@ async function glados(message: Message) {
 
     if (!bypassLimits && (requestInFlight || Date.now() - lastAIResponse < COOLDOWN_MS)) return undefined;
 
-    if (hasWord("glados", message.content) || message.mentions.has(getClient().user ?? '') ) {
+    if (hasWord("glados", message.content) || message.mentions.has(getClient().user ?? '') || Math.random() < 0.001) {
         if (!bypassLimits) requestInFlight = true;
 
         let typingInterval: NodeJS.Timeout | undefined;
@@ -71,7 +71,7 @@ async function glados(message: Message) {
 
             const scanMessages = isReply
                     ? [ await message.fetchReference(), message ]
-                    : Array.from((await message.channel.messages.fetch({ limit: 10 })).reverse().values());
+                    : Array.from((await message.channel.messages.fetch({ limit: 3 })).reverse().values());
 
             const recentMessages = scanMessages.map(m => ({
                 glados: getAuthorName(m) === "GLaDOS",
@@ -79,8 +79,8 @@ async function glados(message: Message) {
                 content: trimString(sanitize(m.content), 75, true)
             } as llm.ContextMessage));
 
-            const responsePromise = llm.getResponse([{ glados: false, content: message.content, username: getAuthorName(message) }]);
-            const isUnsafe = await llm.isUnsafe([{ glados: false, content: message.content, username: getAuthorName(message) }]);
+            const responsePromise = llm.getResponse(recentMessages);
+            const isUnsafe = await llm.isUnsafe(recentMessages);
 
             if (isUnsafe) {
                 void logMessage("Not replying to possibly inappropriate message.");
