@@ -27,6 +27,18 @@ const sanitize = (str: string) => {
         .trim();
 };
 
+// Swaps raw <@id> mentions for display names, using the mentions Discord.js already attached to the message
+const resolveMentions = (message: Message) => {
+    const botId = getClient().user?.id;
+
+    return message.content.replace(/<@!?(\d+)>/g, (match, id) => {
+        if (id === botId) return '@GLaDOS';
+
+        const name = message.mentions.members?.get(id)?.displayName ?? message.mentions.users.get(id)?.username;
+        return name ? `@${name}` : match;
+    });
+};
+
 function isAdmin(message: Message) {
     const member = message.member;
     if (!member || message.channel.isDMBased()) return false;
@@ -76,7 +88,7 @@ async function glados(message: Message) {
             const recentMessages = scanMessages.map(m => ({
                 glados: getAuthorName(m) === "GLaDOS",
                 username: getAuthorName(m),
-                content: trimString(sanitize(m.content), 75, true)
+                content: trimString(sanitize(resolveMentions(m)), 75, true)
             } as llm.ContextMessage));
 
             const responsePromise = llm.getResponse(recentMessages);
