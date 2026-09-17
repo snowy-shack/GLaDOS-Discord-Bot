@@ -40,6 +40,7 @@ export const userFields = {
     Wordle: {
         Streak:       "wordle.streak",
         LastPlayed:   "wordle.last_played",
+        FirstPlayed:  "wordle.first_played",
         LastScore:    "wordle.last_score",
         Solves1:      "wordle.solves_1",
         Solves2:      "wordle.solves_2",

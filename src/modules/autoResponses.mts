@@ -1,7 +1,8 @@
 import {factorials} from "#src/consts/miscellaneous.mts";
 import {Message, PermissionFlagsBits} from "discord.js";
 import * as llm from "#src/modules/openAIHandler.mts";
-import {dateToString, daysSince, getAuthorName, trimString} from "#src/core/util.mts";
+import {DAY_IN_MS, dateToString, daysSince, getAuthorName, trimString} from "#src/core/util.mts";
+import {dateString} from "#src/core/types.mts";
 import {getClient} from "#src/core/client.mts";
 import {
     getGlobalField,
@@ -206,6 +207,14 @@ function marco(message: Message) {
 export const WORDLE_APP_ID = "1211781489931452447";
 type wordleKeys = keyof typeof userFields.Wordle;
 
+// Launch day of wordle tracking, used to backfill FirstPlayed for veterans who predate that field
+const WORDLE_PARTICIPATION_EPOCH = "05-01-2026" as dateString;
+
+const WORDLE_SOLVE_FIELDS = [
+    userFields.Wordle.Solves1, userFields.Wordle.Solves2, userFields.Wordle.Solves3,
+    userFields.Wordle.Solves4, userFields.Wordle.Solves5, userFields.Wordle.Solves6, userFields.Wordle.SolvesX,
+];
+
 function trackWordle(message: Message) {
     if (message.author.id != WORDLE_APP_ID) return undefined;
 
@@ -254,6 +263,12 @@ function maybeCount(message: Message) {
 // Not really a reaction, but still here for ease of use
 async function incrementWordleScores(id: string, field: userField, lastScore: number) {
     let data = getUserData(id);
+
+    if (!data[userFields.Wordle.FirstPlayed]) {
+        const hasPriorPlays = WORDLE_SOLVE_FIELDS.some(f => (data[f] ?? 0) > 0);
+        const firstPlayed = hasPriorPlays ? WORDLE_PARTICIPATION_EPOCH : dateToString(new Date(Date.now() - DAY_IN_MS)); // New players backdate to yesterday, existing ones anchor to launch day
+        await setUserField(id, userFields.Wordle.FirstPlayed, firstPlayed);
+    }
 
     let value = data[field] ?? 0;
     await setUserField(id, field, value + 1);

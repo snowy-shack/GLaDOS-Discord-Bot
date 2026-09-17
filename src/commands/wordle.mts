@@ -1,7 +1,8 @@
 import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord.js";
-import {userFields, getUserField, getUserData, getGlobalField, globalFields} from "#src/modules/localStorage.mts";
+import {userFields, getUserField, getUserData} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
+import {daysSince} from "#src/core/util.mts";
 
 export const name = 'wordle';
 
@@ -39,7 +40,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
             const streak = getUserField(userID, userFields.Wordle.Streak) ?? 0;
             const lastScore = getUserField(userID, userFields.Wordle.LastScore) ?? NaN;
-            const globalTotal = getGlobalField(globalFields.Wordle.GamesTracked) ?? 0;
+            const firstPlayed = getUserField(userID, userFields.Wordle.FirstPlayed);
 
             const totalGames = Object.values(solves).reduce((acc, val) => acc + Number(val), 0);
             const successfulGames = totalGames - solves[0];
@@ -48,7 +49,8 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 .reduce((acc, [score, count]) => acc + (Number(score) * Number(count)), 0);
 
             const average = successfulGames > 0 ? (weightedSum / successfulGames).toFixed(2) : 0;
-            const participation = globalTotal > 0 ? ((totalGames / globalTotal) * 100).toFixed(1) : 0;
+            const daysTracked = firstPlayed ? daysSince(firstPlayed) : 0;
+            const participation = daysTracked > 0 ? ((totalGames / daysTracked) * 100).toFixed(1) : 0;
 
             const pronouns = user ? [user, "Their", "their"] : ["You", "Your", "your"];
             const body = `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
