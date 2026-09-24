@@ -7,6 +7,7 @@ import * as messageReactionAdd from "#src/events/discordjs/messageReactionAdd.mt
 import * as guildMemberAdd     from "#src/events/discordjs/guildMemberAdd.mts";
 import cron from "node-cron";
 import daily from "#src/events/daily.mts";
+import githubIssueWatcher from "#src/modules/githubIssueWatcher.mts";
 import {getClient} from "#src/core/client.mts";
 import chalk from "chalk";
 import {Client} from "discord.js";
@@ -29,6 +30,13 @@ export async function init(client: Client): Promise<void> {
 cron.schedule(
     "00 00 10 * * 0-6",
     () => { void daily.run(); },
+    { timezone: "Europe/Amsterdam" }
+);
+
+// Check InfinityButtons issue #10 every day at 12 noon Amsterdam Time
+cron.schedule(
+    "00 00 12 * * 0-6",
+    () => { void githubIssueWatcher.checkInfinityButtonsIssue10(); },
     { timezone: "Europe/Amsterdam" }
 );
 

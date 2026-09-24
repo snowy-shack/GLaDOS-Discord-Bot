@@ -58,6 +58,9 @@ export const globalFields = {
     },
     Security: {
         AllowedDomains: "security.allowedDomains"
+    },
+    Github: {
+        InfinityButtonsIssue10Notified: "github.infinityButtonsIssue10Notified"
     }
 } as const;
 
