@@ -57,7 +57,8 @@ export const globalFields = {
         GamesTracked:  "wordle.games_tracked"
     },
     Security: {
-        AllowedDomains: "security.allowedDomains"
+        AllowedDomains: "security.allowedDomains",
+        UsedTestingCodes: "security.usedTestingCodes"
     },
     Github: {
         InfinityButtonsIssue10Notified: "github.infinityButtonsIssue10Notified"
