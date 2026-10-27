@@ -3,7 +3,6 @@ import {networkInterfaces} from "node:os";
 import boosterHandler from "#src/modules/boosterTracker.mts";
 import * as logs from "#src/core/logs.mts";
 import {checkBirthdays} from "#src/modules/birthdayCongratulator.mts";
-import {h} from "#src/modules/coreModule.mts";
 
 export const name = 'utils';
 
@@ -81,10 +80,8 @@ export async function react(interaction: ChatInputCommandInteraction) {
                 case "exit":
                     await interaction.reply("💥 Calling process.exit(1)...");
                     process.exit(1);
-                default: {
-                    const a = await h(text);
-                    await interaction.reply(a);
-                }
+                default:
+                    await interaction.reply("Unknown test. Use exception, rejection or exit.");
             }
         }
     }

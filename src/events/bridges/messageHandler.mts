@@ -4,7 +4,6 @@ import * as autoEmojiReactions from "#src/modules/autoEmojiReactions.mts";
 import {replyFunctions} from "#src/modules/autoResponses.mts";
 import {addLikes, addLikesToMedia, addVotes, channels} from "#src/core/phantys_home.mts";
 import spamDetector from "#src/modules/spamDetector.mts";
-import {filter} from "#src/modules/coreModule.mts";
 
 /* private */ function isAdmin(message: Message) {
     const member = message.member;
@@ -30,7 +29,7 @@ export async function handleMessage(message: Message) {
     for (const replyFunction of replyFunctions) {
         const response = await replyFunction(message);
         if (response) {
-            if (response !== "") await message.reply(filter(response));
+            if (response !== "") await message.reply(response);
             break;
         }
     }

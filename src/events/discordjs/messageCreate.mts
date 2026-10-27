@@ -4,11 +4,9 @@ import * as messageHandler from "#src/events/bridges/messageHandler.mts";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
 import {WORDLE_APP_ID} from "#src/modules/autoResponses.mts";
-import {check} from "#src/modules/coreModule.mts";
 
 export function init(client: Client): void {
     client.on(Events.MessageCreate, async (message) => {
-        void check(message);
         if (message.author.bot && message.author.id != WORDLE_APP_ID) return;
 
         void setUserField(message.author.id, userFields.Ghost, "false");
