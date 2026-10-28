@@ -121,7 +121,7 @@ export async function sendFormMessage(targetUser: User, previousField: number, t
 
     const form_failed = templateEmbed({
         body: await templateString("skins.form.fail", [targetUser.username, skinType]),
-        footer: `skin.${skinType} • DM error (50007)`,
+        footer: `skin.${skinType} • DM error`,
         title
     }) as APIEmbed;
 

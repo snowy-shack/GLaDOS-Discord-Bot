@@ -125,7 +125,8 @@ export async function dmUser(targetUser: User, content: MessageCreateOptions): P
 
     } catch (error: unknown) {
         const err = error && typeof error === "object" && "code" in error ? (error as { code: number }) : null;
-        if (err?.code !== 50007) {
+        // 50007 = blocked/DMs disabled, 50278 = no mutual guilds, both mean "can't DM them"
+        if (err?.code !== 50007 && err?.code !== 50278) {
             await logs.logError(`DM'ing user ${targetUser.id}`, toError(error));
             return null;
         }
