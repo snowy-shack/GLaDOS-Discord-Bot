@@ -10,9 +10,10 @@ import * as faq from "#src/commands/faq.mts";
 import * as rule from "#src/commands/rule.mts";
 import * as wordle from "#src/commands/wordle.mts";
 import * as tooltips from "#src/commands/tooltips.mts";
+import * as skin from "#src/commands/skins.mts";
 
 import * as babble from "#src/commands/developer/babble.mts";
-import * as skins from "#src/commands/developer/skins.mts";
+import * as skins from "#src/commands/developer/skin.mts";
 
 import * as manage from "#src/commands/moderator/manage.mts";
 import * as storage from "#src/commands/moderator/storage.mts";
@@ -38,7 +39,8 @@ export const commandRegistry: Record<commandCategory, { [key: string]: CommandMo
         faq: faq,
         rule: rule,
         wordle: wordle,
-        tooltips: tooltips
+        tooltips: tooltips,
+        skin: skin,
     },
     moderator: {
         manage: manage,

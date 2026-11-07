@@ -1,11 +1,20 @@
-import { tryCatch } from "#src/core/try-catch.mts";
+import {tryCatch} from "#src/core/try-catch.mts";
 import logs from "#src/core/logs.mts";
 
-type Skin = {
+export type Skin = {
     skin_id: string;
     name: string;
     description: string;
-    artist?: string;
+    artist?: string | null;
+    /** Frames per second of the animated texture, 0 if not animated. */
+    framerate?: number;
+    /** Whether the player can pick the color. */
+    tintable?: boolean;
+    checksum?: string | null;
+    checksum_anim?: string | null;
+    created_at: string;
+    hint?: string | null;
+    unlocks?: number;
 };
 
 export const KNOWN_SKINS: { [key: string]: string } = {

@@ -38,7 +38,7 @@ export async function createResponseEmbed(previousField: number | null, fieldVal
         }
 
         case 1: {
-            const minecraftUser = await minecraft.getAccount(fieldValue);
+            const minecraftUser = await minecraft.getMinecraftPlayer(fieldValue);
             const uuid = minecraftUser.uuid;
             const username = minecraftUser.username;
 
