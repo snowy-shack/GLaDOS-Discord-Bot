@@ -1,8 +1,4 @@
-import {
-    SlashCommandBuilder,
-    PermissionFlagsBits,
-    ChatInputCommandInteraction, InteractionReplyOptions, User
-} from "discord.js";
+import {ChatInputCommandInteraction, SlashCommandBuilder, User} from "discord.js";
 import * as skinForm from "#src/modules/skinFormHandler.mts";
 import * as logs from "#src/core/logs.mts";
 import {getAllSkins} from "#src/modules/portalGunSkinLoader.mts";
@@ -10,12 +6,12 @@ import {errorEmbedMessage} from "#src/formatting/styledEmbed.mts";
 import {getRoleUsers} from "#src/core/discord.mts";
 import {getUserField, userField} from "#src/modules/localStorage.mts";
 
-export const name = 'skins';
+export const name = 'skin';
 
 export async function init() {
     const skins = await getAllSkins();
 
-    return new SlashCommandBuilder().setName("skins")
+    return new SlashCommandBuilder().setName("skin")
         .setDescription("Portal Gun skin management")
         .addSubcommand(subCommand =>
             subCommand.setName("form")
