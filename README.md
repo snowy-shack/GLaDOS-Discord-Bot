@@ -11,6 +11,10 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.10.0 - November 12th 2026
+### Changes
+- New `/skins get` command to show the Portal Gun skins a player has
+
 ## Release 3.09.1-exp - July 28th 2026
 ### Changes
 - Added `/utils ip` subcommand to ephemerally display local and public IP addresses
