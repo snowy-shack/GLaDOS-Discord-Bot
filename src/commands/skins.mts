@@ -27,7 +27,7 @@ import {getMinecraftPlayer, getPlayerSkins, MinecraftPlayer, PlayerSkins} from "
 export const name = 'skins';
 
 const MC_USERNAME_MATCH = /^[A-Za-z0-9_]{3,16}$/;
-const skinImage = (skinId: string) => `https://cdn.portalmod.net/renders/skins/${skinId}`;
+const skinImage = (skinId: string) => `https://cdn.portalmod.net/renders/skins/${skinId}?v=3`;
 const accentColor = parseInt(colors.Primary.slice(1), 16);
 
 // A Components V2 message holds at most 40 components. The container, header and separator use 3,
@@ -80,12 +80,12 @@ export async function react(interaction: ChatInputCommandInteraction) {
 
             if (error) {
                 await logs.logError(`fetching skins for Minecraft player ${username}`, toError(error));
-                await interaction.editReply(errorEmbedMessage("Couldn't reach the PortalMod API. Please try again later."));
+                await interaction.editReply(errorEmbedMessage("Couldn't fetch user skins. Please check the username and try again"));
                 return;
             }
 
             if (!data) {
-                await interaction.editReply(errorEmbedMessage(`There's no Minecraft player called **${escapeMarkdown(username)}**.`));
+                await interaction.editReply(errorEmbedMessage(`Couldn't find a Minecraft user called **${escapeMarkdown(username)}**.`));
                 return;
             }
 
@@ -117,7 +117,7 @@ async function playerSkinsCard(player: MinecraftPlayer, playerSkins: PlayerSkins
     const container = new ContainerBuilder()
         .setAccentColor(accentColor)
         .addTextDisplayComponents(new TextDisplayBuilder().setContent(
-            `## \`${escapeMarkdown(player.username)}\`'s Portal Gun skins\n` +
+            `## \`${player.username}\`'s Portal Gun skins\n` +
             `-# ${count === 0 ? "No skins unlocked yet" : `${count} skin${count === 1 ? "" : "s"} unlocked`}`
         ));
 

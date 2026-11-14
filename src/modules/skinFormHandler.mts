@@ -39,8 +39,8 @@ export async function createResponseEmbed(previousField: number | null, fieldVal
 
         case 1: {
             const minecraftUser = await minecraft.getMinecraftPlayer(fieldValue);
-            const uuid = minecraftUser.uuid;
-            const username = minecraftUser.username;
+            const uuid = minecraftUser?.uuid;
+            const username = minecraftUser?.username;
 
             if (!(/^[\w-]+$/.test(fieldValue)) || fieldValue.length <= 2 || fieldValue.length >= 17) {
                 return [

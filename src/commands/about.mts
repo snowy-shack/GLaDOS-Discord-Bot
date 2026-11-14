@@ -19,6 +19,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
         + "════════════════\n"
         + "> ### Commands: \n"
         + "> - `/about`\n"
+        + "> - `/skins`\n"
         + "> - `/birthday`\n"
         + "> - `/faq`\n"
         + "> - `/rule`\n"
