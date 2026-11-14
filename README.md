@@ -11,6 +11,11 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.10.1 - November 14th 2026
+### Fixes
+- Portal Gun skin form now adds the skin when `confirm` is sent with any capitalization or surrounding spaces (previously only exact lowercase worked, while still claiming success)
+- Skin is only marked as unlocked locally after the API has stored it
+
 ## Release 3.10.0 - November 12th 2026
 ### Changes
 - New `/skins get` command to show the Portal Gun skins a player has

@@ -1,6 +1,6 @@
 {
     "name": "glados-discord-bot",
-    "version": "3.10.0",
+    "version": "3.10.1",
     "type": "module",
     "scripts": {
         "changelog:recent": "git log --format=\"- **%ad** — %s\" --date=short ac06faf..HEAD",
