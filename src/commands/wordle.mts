@@ -1,5 +1,5 @@
-import {ChatInputCommandInteraction, Message, SlashCommandBuilder} from "discord.js";
-import {userFields, getUserField, getUserData} from "#src/modules/localStorage.mts";
+import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
+import {getUserField, userFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {daysSince} from "#src/core/util.mts";
@@ -21,6 +21,35 @@ export function init() {
 }
 
 export type wordleKeys = keyof typeof userFields.Wordle;
+
+export function getWordleStats(userID: string) {
+    const solves: Record<number, number> = {
+        1: getUserField(userID, userFields.Wordle.Solves1) ?? 0,
+        2: getUserField(userID, userFields.Wordle.Solves2) ?? 0,
+        3: getUserField(userID, userFields.Wordle.Solves3) ?? 0,
+        4: getUserField(userID, userFields.Wordle.Solves4) ?? 0,
+        5: getUserField(userID, userFields.Wordle.Solves5) ?? 0,
+        6: getUserField(userID, userFields.Wordle.Solves6) ?? 0,
+        0: getUserField(userID, userFields.Wordle.SolvesX) ?? 0,
+    };
+
+    const streak = getUserField(userID, userFields.Wordle.Streak) ?? 0;
+    const lastScore = getUserField(userID, userFields.Wordle.LastScore) ?? NaN;
+    const firstPlayed = getUserField(userID, userFields.Wordle.FirstPlayed);
+
+    const totalGames = Object.values(solves).reduce((acc, val) => acc + Number(val), 0);
+    const successfulGames = totalGames - solves[0];
+    const weightedSum = Object.entries(solves)
+        .filter(([score]) => score !== "0")
+        .reduce((acc, [score, count]) => acc + (Number(score) * Number(count)), 0);
+
+    const average = successfulGames > 0 ? (weightedSum / successfulGames).toFixed(2) : "0";
+    const daysTracked = firstPlayed ? daysSince(firstPlayed) : 0;
+    const participation = daysTracked > 0 ? ((totalGames / daysTracked) * 100).toFixed(1) : "0";
+
+    return {solves, streak, lastScore, firstPlayed, totalGames, average, participation};
+}
+
 export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
 
@@ -28,29 +57,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             const user = interaction.options.getUser('user');
             const userID = user?.id ?? interaction.user.id;
 
-            const solves: Record<number, number> = {
-                1: getUserField(userID, userFields.Wordle.Solves1) ?? 0,
-                2: getUserField(userID, userFields.Wordle.Solves2) ?? 0,
-                3: getUserField(userID, userFields.Wordle.Solves3) ?? 0,
-                4: getUserField(userID, userFields.Wordle.Solves4) ?? 0,
-                5: getUserField(userID, userFields.Wordle.Solves5) ?? 0,
-                6: getUserField(userID, userFields.Wordle.Solves6) ?? 0,
-                0: getUserField(userID, userFields.Wordle.SolvesX) ?? 0,
-            };
-
-            const streak = getUserField(userID, userFields.Wordle.Streak) ?? 0;
-            const lastScore = getUserField(userID, userFields.Wordle.LastScore) ?? NaN;
-            const firstPlayed = getUserField(userID, userFields.Wordle.FirstPlayed);
-
-            const totalGames = Object.values(solves).reduce((acc, val) => acc + Number(val), 0);
-            const successfulGames = totalGames - solves[0];
-            const weightedSum = Object.entries(solves)
-                .filter(([score]) => score !== "0")
-                .reduce((acc, [score, count]) => acc + (Number(score) * Number(count)), 0);
-
-            const average = successfulGames > 0 ? (weightedSum / successfulGames).toFixed(2) : 0;
-            const daysTracked = firstPlayed ? daysSince(firstPlayed) : 0;
-            const participation = daysTracked > 0 ? ((totalGames / daysTracked) * 100).toFixed(1) : 0;
+            const {solves, streak, lastScore, totalGames, average, participation} = getWordleStats(userID);
 
             const pronouns = user ? [user, "Their", "their"] : ["You", "Your", "your"];
             const body = `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
@@ -75,7 +82,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
 const FULL_BLOCK = "█";
 const WIDTH = 18;
 
-function renderBarGraph( solves_x: Record<number, number>, lastScore: number ): string {
+export function renderBarGraph( solves_x: Record<number, number>, lastScore: number ): string {
     const values = Object.values(solves_x);
     const max = Math.max(...values);
 

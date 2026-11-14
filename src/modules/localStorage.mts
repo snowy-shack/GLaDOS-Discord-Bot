@@ -54,7 +54,9 @@ export const userFields = {
 
 export const globalFields = {
     Wordle: {
-        GamesTracked:  "wordle.games_tracked"
+        GamesTracked:    "wordle.games_tracked",
+        ServerStreak:    "wordle.server_streak",
+        ServerLastPlayed: "wordle.server_last_played",
     },
     Security: {
         AllowedDomains: "security.allowedDomains",

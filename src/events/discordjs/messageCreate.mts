@@ -3,13 +3,12 @@ import {setUserField, userFields} from "#src/modules/localStorage.mts";
 import * as messageHandler from "#src/events/bridges/messageHandler.mts";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
-import {WORDLE_APP_ID} from "#src/modules/autoResponses.mts";
 import {handleArgSkin} from "#src/modules/argSkinHandler.mts";
 
 export function init(client: Client): void {
     client.on(Events.MessageCreate, async (message) => {
         void handleArgSkin(message);
-        if (message.author.bot && message.author.id != WORDLE_APP_ID) return;
+        if (message.author.bot) return;
 
         void setUserField(message.author.id, userFields.Ghost, "false");
 

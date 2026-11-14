@@ -11,6 +11,7 @@ import discordModule from "#src/core/discord.mts";
 import commandRegistryModule from "#src/commandRegistry.mts";
 import eventInitModule from "#src/events/eventInit.mts";
 import localStorageModule from "#src/modules/localStorage.mts";
+import wordleBridgeModule from "#src/modules/wordleBridge.mts";
 
 const t0 = { start: 0 };
 function ms() { return Date.now() - t0.start; }
@@ -52,12 +53,14 @@ async function init() {
     const commandRegistryPromise = load(commandRegistryModule, clientPromise);
     const discordModulePromise = load(discordModule, clientPromise);
     const eventInitPromise = load(eventInitModule, clientPromise);
+    const wordleBridgePromise = load(wordleBridgeModule, localStoragePromise);
 
     await Promise.all([
         localStoragePromise,
         commandRegistryPromise,
         discordModulePromise,
         eventInitPromise,
+        wordleBridgePromise,
     ])
 }
 

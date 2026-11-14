@@ -1,5 +1,6 @@
 import {ChatInputCommandInteraction, Client, PermissionFlagsBits, REST, Routes, SharedSlashCommand} from "discord.js";
 import {guildID} from "#src/core/phantys_home.mts";
+import {wordleEntryPointCommand} from "#src/core/wordleEntryPoint.mts";
 import chalk from "chalk";
 // Command imports
 import * as ping from "#src/commands/ping.mts";
@@ -113,10 +114,11 @@ export async function init(client: Client) {
         { body: commandsToRegister }
     );
 
+    // Discord rejects a bulk update that drops the app's Entry Point command, so it has to be kept in this list
     await rest.put(
         Routes.applicationCommands(appID),
-        { body: [] }
-    ); // Clear global commands
+        { body: [wordleEntryPointCommand] }
+    );
 
     if (Array.isArray(guildCommandData)) {
         console.log(chalk.gray(`Successfully refreshed ${guildCommandData.length} slash commands.`));

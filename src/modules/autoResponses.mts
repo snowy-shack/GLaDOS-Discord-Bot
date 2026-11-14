@@ -1,22 +1,12 @@
 import {factorials} from "#src/consts/miscellaneous.mts";
 import {Message, PermissionFlagsBits} from "discord.js";
 import * as llm from "#src/modules/openAIHandler.mts";
-import {DAY_IN_MS, dateToString, daysSince, getAuthorName, trimString} from "#src/core/util.mts";
-import {dateString} from "#src/core/types.mts";
+import {getAuthorName, trimString} from "#src/core/util.mts";
 import {getClient} from "#src/core/client.mts";
-import {
-    getGlobalField,
-    getUserData,
-    globalFields,
-    setGlobalField,
-    setUserField,
-    userField,
-    userFields
-} from "#src/modules/localStorage.mts";
 import {logMessage} from "#src/core/logs.mts";
 import {channels} from "#src/core/phantys_home.mts";
 
-export const replyFunctions: ((message: Message) => string | Promise<string | undefined> | undefined)[] = [maybeCount, factorial, glados, calc, jork, loss, milkshake, marco, trackWordle];
+export const replyFunctions: ((message: Message) => string | Promise<string | undefined> | undefined)[] = [maybeCount, factorial, glados, calc, jork, loss, milkshake, marco];
 
 /* UTILITY STUFF */
 
@@ -204,47 +194,6 @@ function marco(message: Message) {
     }
 }
 
-export const WORDLE_APP_ID = "1211781489931452447";
-type wordleKeys = keyof typeof userFields.Wordle;
-
-// Launch day of wordle tracking, used to backfill FirstPlayed for veterans who predate that field
-const WORDLE_PARTICIPATION_EPOCH = "05-01-2026" as dateString;
-
-const WORDLE_SOLVE_FIELDS = [
-    userFields.Wordle.Solves1, userFields.Wordle.Solves2, userFields.Wordle.Solves3,
-    userFields.Wordle.Solves4, userFields.Wordle.Solves5, userFields.Wordle.Solves6, userFields.Wordle.SolvesX,
-];
-
-function trackWordle(message: Message) {
-    if (message.author.id != WORDLE_APP_ID) return undefined;
-
-    const lines = message.content.split('\n');
-    let players = 0;
-
-    for (const line of lines) {
-        // Match digits or 'X' before the slash
-        const lineMatch = line.match(/^\D*([\dX])\s*\/\s*\d+:\s*(.+)$/i);
-        if (!lineMatch) continue;
-
-        const score = lineMatch[1].toUpperCase();
-        const rest = lineMatch[2];
-
-        const userMatches = rest.matchAll(/<@(\d+)>/g);
-        for (const match of userMatches) {
-            players++;
-            const id = match[1];
-            // 'SolvesX' or 'Solves1'-'Solves6'
-            void incrementWordleScores(id, userFields.Wordle[(`Solves${score}`) as wordleKeys], Number(score));
-        }
-    }
-
-    if (players > 0) {
-        const before = getGlobalField(globalFields.Wordle.GamesTracked);
-        void setGlobalField(globalFields.Wordle.GamesTracked, before + 1);
-        void logMessage(`🪵 Tracked wordle stats of ${players} participating players today.`);
-    }
-}
-
 function maybeCount(message: Message) {
     if (message.channelId !== channels.Counting) return;
 
@@ -258,28 +207,6 @@ function maybeCount(message: Message) {
             return "";
         }
     }
-}
-
-// Not really a reaction, but still here for ease of use
-async function incrementWordleScores(id: string, field: userField, lastScore: number) {
-    let data = getUserData(id);
-
-    if (!data[userFields.Wordle.FirstPlayed]) {
-        const hasPriorPlays = WORDLE_SOLVE_FIELDS.some(f => (data[f] ?? 0) > 0);
-        const firstPlayed = hasPriorPlays ? WORDLE_PARTICIPATION_EPOCH : dateToString(new Date(Date.now() - DAY_IN_MS)); // New players backdate to yesterday, existing ones anchor to launch day
-        await setUserField(id, userFields.Wordle.FirstPlayed, firstPlayed);
-    }
-
-    let value = data[field] ?? 0;
-    await setUserField(id, field, value + 1);
-    await setUserField(id, userFields.Wordle.LastScore, lastScore);
-
-    const streak = data[userFields.Wordle.Streak] ?? 0;
-    const lastPlayed = data[userFields.Wordle.LastPlayed];
-
-    // If played yesterday, increase streak, otherwise reset.
-    await setUserField(id, userFields.Wordle.Streak, daysSince(lastPlayed) <= 2 ? streak + 1 : 1 );
-    await setUserField(id, userFields.Wordle.LastPlayed, dateToString(new Date()));
 }
 
 /**
