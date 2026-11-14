@@ -47,15 +47,14 @@ export async function replyToDM(message: Message) {
         }
     }
 
-    if (lastFormIndex === 2 && message.content === "confirm") {
+    const response = message.content.trim().toLowerCase();
+
+    if (lastFormIndex === 2 && response === "confirm") {
         const skinType = skinTypeFromFooter(lastMessage);
         if (!skinType) {
             await logs.logError("processing 'confirm' of skin form", new Error("No skin type found in footer"));
             return;
         }
-
-        void setUserField(message.author.id, `${skinType}.unlocked` as userField, "true");
-        void setUserField(message.author.id, userFields.MinecraftUUID, uuidGot);
 
         let skinID = (await getGunSkin(skinType))?.skin_id;
 
@@ -65,10 +64,14 @@ export async function replyToDM(message: Message) {
         }
 
         await database.addGunSkin(message.author.id, uuidGot, skinID);
+
+        // Only mark as unlocked once the API has actually stored the skin
+        void setUserField(message.author.id, `${skinType}.unlocked` as userField, "true");
+        void setUserField(message.author.id, userFields.MinecraftUUID, uuidGot);
         await logs.logMessage(`💎 Added ${skinType} skin to uuid '${uuidGot}' ${await getMember(message.author.id)}.`);
     }
 
-    let embeds = await skinForm.createResponseEmbed(lastFormIndex, message.content.toLowerCase(), skinTypeFromFooter(lastMessage));
+    let embeds = await skinForm.createResponseEmbed(lastFormIndex, response, skinTypeFromFooter(lastMessage));
 
     if (embeds) {
         await message.author.send({ embeds: embeds } );
