@@ -21,6 +21,7 @@ export const KNOWN_SKINS: { [key: string]: string } = {
     Birthday: "birthday",
     Booster: "booster",
     Redacted: "redacted",
+    Fruit: "fruit",
 }
 
 let gun_skins: Record<string, Skin> = {};

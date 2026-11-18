@@ -59,8 +59,7 @@ export function init() {
             )
             .addStringOption(option => option
                 .setName('key')
-                .setDescription("The ID of the field")
-                .addChoices(...all_fields)
+                .setDescription("The key of the field (any string)")
                 .setRequired(true)
             )
         )

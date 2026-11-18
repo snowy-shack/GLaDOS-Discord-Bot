@@ -3,11 +3,11 @@ import {setUserField, userFields} from "#src/modules/localStorage.mts";
 import * as messageHandler from "#src/events/bridges/messageHandler.mts";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
-import {handleArgSkin} from "#src/modules/argSkinHandler.mts";
+import {handleSkinCode} from "#src/modules/skinCodeHandler.mts";
 
 export function init(client: Client): void {
     client.on(Events.MessageCreate, async (message) => {
-        void handleArgSkin(message);
+        void handleSkinCode(message);
         if (message.author.bot) return;
 
         void setUserField(message.author.id, userFields.Ghost, "false");
