@@ -1,4 +1,4 @@
-import {ChatInputCommandInteraction, SlashCommandBuilder} from "discord.js";
+import {ChatInputCommandInteraction, InteractionResponseType, Routes, SlashCommandBuilder} from "discord.js";
 import {getUserField, userFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
@@ -10,6 +10,10 @@ export function init() {
     return new SlashCommandBuilder()
         .setName("wordle")
         .setDescription("Do wordle-related things")
+        .addSubcommand(subcommand => subcommand
+            .setName('play')
+            .setDescription("Launch today's Wordle")
+        )
         .addSubcommand(subcommand => subcommand
             .setName('stats')
             .setDescription("View your tracked wordle stats")
@@ -52,6 +56,15 @@ export function getWordleStats(userID: string) {
 
 export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
+
+        case "play": {
+            // Normal commands don't get a reply() helper for this - Discord's client opens the
+            // Activity itself once it sees this response type, no message needs sending.
+            await interaction.client.rest.post(
+                Routes.interactionCallback(interaction.id, interaction.token),
+                {body: {type: InteractionResponseType.LaunchActivity}, auth: false}
+            );
+        } break;
 
         case "stats": {
             const user = interaction.options.getUser('user');
