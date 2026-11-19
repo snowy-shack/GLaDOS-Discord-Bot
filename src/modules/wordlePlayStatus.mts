@@ -11,9 +11,11 @@ import {getUserField, userFields} from "#src/modules/localStorage.mts";
 
 const PLAYER_IMAGE_NAME = "wordle-player.png";
 
-// Memory-only - the "is playing" message to turn into "was playing" once they finish. Lost on
+// Memory-only - one play status message per player per day. Entries stay until the midnight clear, so
+// a player gets at most one "is playing" post a day, edited into "was playing" exactly once. Lost on
 // restart, in which case finishing just posts a fresh "was playing" message instead of editing one.
-const activeGames = new Map<string, Message>();
+type PlayStatusEntry = { message: Promise<Message | null>; finished: boolean };
+const activeGames = new Map<string, PlayStatusEntry>();
 
 // No `flags` field, unlike MessageCreateOptions/MessageEditOptions - so this satisfies both .send() and .edit()
 type PlayStatusPayload = {
@@ -55,46 +57,55 @@ function buildPayload(discordId: string, member: GuildMember | undefined, verb: 
     };
 }
 
+async function sendToArcade(payload: PlayStatusPayload): Promise<Message | null> {
+    const channel = await getChannel(channels.Arcade);
+    if (!channel || !("send" in channel)) return null;
+    return channel.send(payload);
+}
+
 // A fresh game almost certainly has no record yet, so this image usually comes back the fallback-avatar empty board
-async function announceStarted(discordId: string) {
+function announceStarted(discordId: string) {
     if (activeGames.has(discordId)) return;
 
-    try {
-        const channel = await getChannel(channels.Arcade);
-        if (!channel || !("send" in channel)) return;
-
+    // Registered synchronously so a second /wordle play while this one is still sending can't post a duplicate
+    const message = (async () => {
         const member = await getMember(discordId);
         const image = await imageFor(discordId, member);
-        const message = await channel.send(buildPayload(discordId, member, "is", image));
-        activeGames.set(discordId, message);
-    } catch (error) {
+        return sendToArcade(buildPayload(discordId, member, "is", image));
+    })().catch(async (error: unknown) => {
         await logs.logError("announcing wordle game started", toError(error));
-    }
+        return null;
+    });
+
+    activeGames.set(discordId, {message, finished: false});
 }
 
 async function announceFinished(discordId: string) {
+    const entry = activeGames.get(discordId);
+    if (entry?.finished) return;
+
+    const message = entry?.message ?? Promise.resolve(null);
+    // Kept in the map (not deleted) so neither a new "is playing" nor another "was playing" goes out today
+    activeGames.set(discordId, {message, finished: true});
+
     try {
         const member = await getMember(discordId);
         const image = await imageFor(discordId, member);
         const payload = buildPayload(discordId, member, "was", image);
 
-        const existing = activeGames.get(discordId);
-        activeGames.delete(discordId);
-
+        const existing = await message;
         if (existing) {
             await existing.edit({...payload, attachments: []});
             return;
         }
 
-        const channel = await getChannel(channels.Arcade);
-        if (channel && "send" in channel) await channel.send(payload);
+        await sendToArcade(payload);
     } catch (error) {
         await logs.logError("announcing wordle game finished", toError(error));
     }
 }
 
-// Abandoned games (closed without finishing) would otherwise sit in here forever, blocking
-// future "is playing" posts for that user - clear the slate once a day instead of tracking TTLs
+// Reset at the Wordle day boundary, so each player can get a new play status message for the new day
 function clearActiveGames() {
     activeGames.clear();
 }

@@ -11,6 +11,13 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.12.2 - November 19th 2026
+### Changes
+- Messages from the official Wordle app are now deleted automatically, since GLaDOS has its own Wordle system
+- Each player gets at most one Wordle play status message per day: `/wordle play` only posts "is playing" the first time that day, and finishing edits it into "was playing" once. Games closed without finishing now block new "is playing" posts until the next Wordle day (midnight UTC), replacing the 3.12.0 behavior
+### Fixes
+- Running `/wordle play` twice in quick succession no longer posts two "is playing" messages
+
 ## Release 3.12.1 - November 19th 2026
 ### Changes
 - `/wordle reminder on` now shows the reminder time as a Discord timestamp, so everyone sees 10 AM Amsterdam time in their own timezone and format

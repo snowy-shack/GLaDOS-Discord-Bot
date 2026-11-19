@@ -5,8 +5,18 @@ import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
 import {handleSkinCode} from "#src/modules/skinCodeHandler.mts";
 
+// The official Wordle app - replaced by GLaDOS' own Wordle system, but it keeps posting in the server
+const WORDLE_APP_ID = "1211781489931452447";
+
 export function init(client: Client): void {
     client.on(Events.MessageCreate, async (message) => {
+        if (message.author.id === WORDLE_APP_ID || message.applicationId === WORDLE_APP_ID) {
+            message.delete().catch(async (error: unknown) => {
+                await logs.logError("deleting official Wordle app message", toError(error));
+            });
+            return;
+        }
+
         void handleSkinCode(message);
         if (message.author.bot) return;
 
