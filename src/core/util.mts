@@ -206,3 +206,33 @@ export function getAuthorName(message: Message) {
 
     return message.member?.nickname ?? message.member?.displayName ?? "unknown";
 }
+/* private */ function zonedParts(date: Date, timeZone: string): Record<string, string> {
+    return Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+        timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+    }).formatToParts(date).map(part => [part.type, part.value]));
+}
+
+/* private */ function zoneOffsetMs(date: Date, timeZone: string): number {
+    const p = zonedParts(date, timeZone);
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - Math.floor(date.getTime() / 1000) * 1000;
+}
+
+/**
+ * Discord timestamp for a wall-clock time of day in the given timezone (today's date, so the current DST offset applies).
+ * Discord renders it in each viewer's own timezone and locale, e.g. 10:00 Amsterdam shows as "4:00 AM" in New York.
+ *
+ * @param hour - Hour of day (0-23) in the given timezone
+ * @param minute - Minute of the hour
+ * @param timeZone - IANA timezone, e.g. "Europe/Amsterdam"
+ * @return A `<t:unix:t>` short-time Discord timestamp
+ */
+export function discordTimeOfDay(hour: number, minute: number, timeZone: string): string {
+    const now = new Date();
+    const p = zonedParts(now, timeZone);
+    const wallClock = Date.UTC(+p.year, +p.month - 1, +p.day, hour, minute);
+    // Re-check the offset at the target itself, in case a DST switch falls between now and then
+    const guess = wallClock - zoneOffsetMs(now, timeZone);
+    const unix = Math.round((wallClock - zoneOffsetMs(new Date(guess), timeZone)) / 1000);
+    return `<t:${unix}:t>`;
+}

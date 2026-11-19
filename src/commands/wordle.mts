@@ -12,7 +12,7 @@ import {
 import {getUserField, removeUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
-import {daysSince} from "#src/core/util.mts";
+import {daysSince, discordTimeOfDay} from "#src/core/util.mts";
 import {channels} from "#src/core/phantys_home.mts";
 import wordlePlayStatus from "#src/modules/wordlePlayStatus.mts";
 
@@ -173,7 +173,7 @@ export async function react(interaction: ChatInputCommandInteraction) {
             await interaction.reply(
                 embedMessage({
                     body: state === "on"
-                        ? "You'll now be pinged daily at **10 AM** to play that day's Wordle."
+                        ? `You'll now be pinged daily at **${discordTimeOfDay(10, 0, "Europe/Amsterdam")}** to play that day's Wordle.` // Matches the daily cron in eventInit.mts
                         : "You won't be pinged for Wordle reminders anymore.",
                     color: colors.Primary,
                     ephemeral: true,

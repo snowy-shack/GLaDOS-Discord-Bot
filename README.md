@@ -11,6 +11,32 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.12.1 - November 19th 2026
+### Changes
+- `/wordle reminder on` now shows the reminder time as a Discord timestamp, so everyone sees 10 AM Amsterdam time in their own timezone and format
+
+## Release 3.12.0 - November 19th 2026
+### Changes
+- New `/wordle reminder on|off`: subscribers get the Wordle reminder role and a daily 10 AM ping with yesterday's results image and a Play button, plus a 10 PM warning when their streak is at risk. Solving the day's Wordle removes the role until the next day
+- `/wordle play` now posts a "is playing" message in Arcade, which is edited into "was playing" with a rendered image of the final board once the game ends (replaces the emoji-grid solve announcement)
+- Wordle images show the player's server avatar, falling back to their global avatar, even before they've played that day
+- "View stats" button next to every Wordle "Play!" button
+- Skin codes are now a shared system: alongside `argskin` codes, the new `fruitskin` codes (ISBN-10) unlock the Fruit Portal Gun skin
+- `/moderator storage` accepts any field key instead of a fixed list
+### Fixes
+- Mentions inside embeds in the Wordle solve announcement didn't actually ping
+- The reminder role and pending list now reset at midnight UTC, the same moment the Wordle day flips, instead of midnight Amsterdam time
+- Games closed without finishing no longer block future "is playing" posts for that player
+
+## Release 3.11.1 - November 18th 2026
+### Changes
+- New `/wordle play` to launch the Wordle Activity from the slash command picker
+- The Activity's App Launcher entry is now called "Wordle"
+
+## Release 3.11.0 - November 14th 2026
+### Changes
+- New Wordle system: GLaDOS connects to the Wordle Activity server (wordle.portalmod.net) to track per-player solves, streaks and a server-wide streak, replacing the old Wordle bot message parsing
+
 ## Release 3.10.1 - November 14th 2026
 ### Fixes
 - Portal Gun skin form now adds the skin when `confirm` is sent with any capitalization or surrounding spaces (previously only exact lowercase worked, while still claiming success)
