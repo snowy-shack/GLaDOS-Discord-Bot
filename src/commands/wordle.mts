@@ -1,8 +1,34 @@
-import {ButtonInteraction, ChatInputCommandInteraction, InteractionResponseType, Routes, SlashCommandBuilder} from "discord.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    InteractionResponseType,
+    MessageFlags,
+    Routes,
+    SlashCommandBuilder
+} from "discord.js";
 import {getUserField, removeUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {daysSince} from "#src/core/util.mts";
+import {channels} from "#src/core/phantys_home.mts";
+import wordlePlayStatus from "#src/modules/wordlePlayStatus.mts";
+
+// Discord doesn't support custom button colors - Secondary (gray) is the closest to "dark"
+export function playButtonRow() {
+    return new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+            .setCustomId("commands.wordle#play")
+            .setLabel("Play!")
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId("commands.wordle#stats")
+            .setLabel("View stats")
+            .setStyle(ButtonStyle.Secondary)
+    );
+}
 
 export const name = 'wordle';
 
@@ -67,6 +93,16 @@ export function getWordleStats(userID: string) {
     return {solves, streak, lastScore, firstPlayed, totalGames, average, participation};
 }
 
+function buildStatsBody(userID: string, pronouns: readonly [unknown, string, string]) {
+    const {solves, streak, lastScore, totalGames, average, participation} = getWordleStats(userID);
+
+    return `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
+        + `\n### ${pronouns[1]} average score is **${average}**.`
+        + `\nBelow is ${pronouns[2]} solve graph.`
+        + '\n' + renderBarGraph(solves, lastScore)
+        + `\n-# This information may not be entirely accurate.`;
+}
+
 // Normal commands don't get a reply() helper for this - Discord's client opens the
 // Activity itself once it sees this response type, no message needs sending.
 async function launchActivity(interaction: ChatInputCommandInteraction | ButtonInteraction) {
@@ -74,35 +110,49 @@ async function launchActivity(interaction: ChatInputCommandInteraction | ButtonI
         Routes.interactionCallback(interaction.id, interaction.token),
         {body: {type: InteractionResponseType.LaunchActivity}, auth: false}
     );
+
+    void wordlePlayStatus.announceStarted(interaction.user.id);
 }
 
 export async function buttonPressed(buttonID: string, interaction: ButtonInteraction) {
     if (buttonID === "play") await launchActivity(interaction);
+
+    if (buttonID === "stats") {
+        await interaction.reply(
+            embedMessage({
+                body: buildStatsBody(interaction.user.id, ["You", "Your", "your"] as const),
+                footer: "wordle stats",
+                title: "Wordle game stats",
+                color: colors.Primary,
+                ephemeral: true,
+            })
+        );
+    }
 }
 
 export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
 
         case "play": {
+            if (interaction.channelId !== channels.Arcade) {
+                await interaction.reply({
+                    content: `Please play in <#${channels.Arcade}> instead!`,
+                    flags: MessageFlags.Ephemeral,
+                });
+                break;
+            }
+
             await launchActivity(interaction);
         } break;
 
         case "stats": {
             const user = interaction.options.getUser('user');
             const userID = user?.id ?? interaction.user.id;
-
-            const {solves, streak, lastScore, totalGames, average, participation} = getWordleStats(userID);
-
-            const pronouns = user ? [user, "Their", "their"] : ["You", "Your", "your"];
-            const body = `${pronouns[0]} played **${totalGames} games** (**${participation}% participation**), with a streak of **${streak} days**.`
-                + `\n### ${pronouns[1]} average score is **${average}**.`
-                + `\nBelow is ${pronouns[2]} solve graph.`
-                + '\n' + renderBarGraph(solves, lastScore)
-                + `\n-# This information may not be entirely accurate.`;
+            const pronouns = user ? [user, "Their", "their"] as const : ["You", "Your", "your"] as const;
 
             await interaction.reply(
                 embedMessage({
-                    body: body,
+                    body: buildStatsBody(userID, pronouns),
                     footer: "wordle stats",
                     title: "Wordle game stats",
                     color: colors.Primary,

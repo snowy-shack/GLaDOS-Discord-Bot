@@ -1,4 +1,3 @@
-import {MessageCreateOptions} from "discord.js";
 import {env} from "#src/core/env.mts";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
@@ -13,11 +12,8 @@ import {
     userField,
     userFields
 } from "#src/modules/localStorage.mts";
-import {getChannel, getMember} from "#src/core/discord.mts";
-import {embedMessage} from "#src/formatting/styledEmbed.mts";
-import colors from "#src/consts/colors.mts";
-import {channels} from "#src/core/phantys_home.mts";
 import wordleReminder from "#src/modules/wordleReminder.mts";
+import wordlePlayStatus from "#src/modules/wordlePlayStatus.mts";
 
 type Envelope = { id: string, type: string, payload: any };
 
@@ -53,10 +49,10 @@ async function handleMessage(raw: string) {
         } break;
 
         case "game_finished": {
-            const {discordId, guesses, finished, rows} = envelope.payload;
-            const {streak} = await recordGameFinished(discordId, guesses, finished);
+            const {discordId, guesses, finished} = envelope.payload;
+            await recordGameFinished(discordId, guesses, finished);
             send({id: envelope.id, type: "ack", payload: {}});
-            await announceGameFinished(discordId, guesses, finished, rows, streak);
+            await wordlePlayStatus.announceFinished(discordId);
         } break;
     }
 }
@@ -107,46 +103,6 @@ async function recordGameFinished(discordId: string, guesses: number, finished: 
 
     const before = getGlobalField(globalFields.Wordle.GamesTracked) ?? 0;
     await setGlobalField(globalFields.Wordle.GamesTracked, before + 1);
-
-    return {streak};
-}
-
-const SQUARES: Record<string, string> = {correct: "🟩", present: "🟨", absent: "⬛"};
-
-function renderGrid(rows: unknown): string {
-    const lines: string[] = [];
-    for (let r = 0; r < 6; r++) {
-        const row = Array.isArray(rows) ? rows[r] : undefined;
-        lines.push(
-            Array.isArray(row) && row.length > 0
-                ? row.map((state: string) => SQUARES[state] ?? "⬛").join("")
-                : "⬛⬛⬛⬛⬛"
-        );
-    }
-    return lines.join("\n");
-}
-
-async function announceGameFinished(discordId: string, guesses: number, finished: boolean, rows: unknown, streak: number) {
-    try {
-        const headline = finished ? `Solved **${guesses}/6** - Streak: **${streak}**` : `Failed **X/6** - Streak: **${streak}**`;
-        const body = `${headline}\n\n${renderGrid(rows)}`;
-
-        const member = await getMember(discordId);
-        const channel = await getChannel(channels.Arcade);
-        if (channel && "send" in channel) {
-            // The content mention is what actually pings them - mentions inside an embed don't
-            await channel.send({
-                content: `<@${discordId}>`,
-                ...embedMessage<MessageCreateOptions>({
-                    body,
-                    color: colors.Primary,
-                    thumbnail: member?.displayAvatarURL() ?? null,
-                }),
-            });
-        }
-    } catch (error) {
-        await logs.logError("announcing wordle result", toError(error));
-    }
 }
 
 function connect() {

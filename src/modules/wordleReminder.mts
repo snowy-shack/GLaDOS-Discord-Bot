@@ -1,15 +1,15 @@
-import {ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, MessageCreateOptions} from "discord.js";
+import {MessageCreateOptions} from "discord.js";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
 import {daysSince} from "#src/core/util.mts";
-import {env} from "#src/core/env.mts";
 import {getChannel, getMember} from "#src/core/discord.mts";
-import {channels, roles, rolesMarkDown} from "#src/core/phantys_home.mts";
+import {channels, guildID, roles, rolesMarkDown} from "#src/core/phantys_home.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {getFieldForAllUsers, getGlobalField, getUserField, globalFields, userFields} from "#src/modules/localStorage.mts";
+import {fetchResultsImage} from "#src/modules/wordleImages.mts";
+import {playButtonRow} from "#src/commands/wordle.mts";
 
-const WORDLE_IMAGE_BASE = "https://wordle.portalmod.net";
 const RESULTS_IMAGE_NAME = "wordle-results.png";
 
 // Memory-only, never persisted - who currently still needs a reminder today. We're the one adding
@@ -17,38 +17,8 @@ const RESULTS_IMAGE_NAME = "wordle-results.png";
 // especially on prod's ~9k-member guild, where that'd mean paging through everyone just to answer "anyone left?"
 const pendingReminders = new Set<string>();
 
-// Results image render takes ~2-3s and the API is allowed to fail - a missing image shouldn't block the ping
-async function fetchResultsImage(date?: string): Promise<AttachmentBuilder | null> {
-    try {
-        const url = date
-            ? `${WORDLE_IMAGE_BASE}/api/results-image?date=${date}`
-            : `${WORDLE_IMAGE_BASE}/api/results-image`;
-
-        // Beta gets its own image-only token so it can't take over the /ws/bot bridge from prod - falls back to the shared one for prod
-        const token = env.WORDLE_IMAGE_TOKEN ?? env.WORDLE_WS_TOKEN;
-        const res = await fetch(url, {headers: {Authorization: `Bearer ${token}`}});
-        if (!res.ok) throw new Error(`Wordle results image ${url} -> ${res.status}`);
-
-        const buffer = Buffer.from(await res.arrayBuffer());
-        return new AttachmentBuilder(buffer, {name: RESULTS_IMAGE_NAME});
-    } catch (error) {
-        await logs.logError("fetching wordle results image", toError(error));
-        return null;
-    }
-}
-
 function yesterdayIsoDate(): string {
     return new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-}
-
-// Discord doesn't support custom button colors - Secondary (gray) is the closest to "dark"
-function playButtonRow() {
-    return new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-            .setCustomId("commands.wordle#play")
-            .setLabel("Play!")
-            .setStyle(ButtonStyle.Secondary)
-    );
 }
 
 function subscriberIds(): string[] {
@@ -114,7 +84,7 @@ async function sendDailyReminder() {
 
         const streak = getGlobalField(globalFields.Wordle.ServerStreak) ?? 0;
         const resultLines = buildResultLines();
-        const image = await fetchResultsImage(yesterdayIsoDate());
+        const image = await fetchResultsImage(guildID, yesterdayIsoDate());
 
         const body = `## Current server streak: \`${streak} 🔥\`\n**Yesterday's results:**\n${resultLines}`;
 
@@ -149,8 +119,10 @@ async function sendStreakWarning() {
         if (atRisk.length === 0) return;
 
         const lines = atRisk.map(({user, streak}) => `<@${user}> ${streak} day streak`);
-        const body = "## Last chance to refresh wordle streaks!\n" + lines.join("\n");
-        const image = await fetchResultsImage();
+        const body = "## Last chance to refresh wordle streaks!\n" + lines.join("\n"
+                + "\n-# Use `/wordle reminder on|off` to change your reminder preferences");
+
+        const image = await fetchResultsImage(guildID);
 
         const channel = await getChannel(channels.Arcade);
         if (channel && "send" in channel) {
