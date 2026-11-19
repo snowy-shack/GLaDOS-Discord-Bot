@@ -11,6 +11,11 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.12.4 - November 19th 2026
+### Fixes
+- The daily Wordle reminder's "Yesterday's results" list now comes from the Wordle server, the same records the results image is drawn from. Players who had already played today before the reminder went out were missing from it, and the day boundary now matches the Wordle day (UTC)
+- If the Wordle server can't be reached, the reminder says the results couldn't be loaded instead of "Nobody played yesterday"
+
 ## Release 3.12.3 - November 19th 2026
 ### Changes
 - The Wordle reminder role and pending list are now synced on boot, instead of only at midnight UTC. Subscribers who already played today are skipped and lose a leftover reminder role

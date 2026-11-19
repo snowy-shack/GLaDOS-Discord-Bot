@@ -7,7 +7,7 @@ import {channels, guildID, roles, rolesMarkDown} from "#src/core/phantys_home.mt
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {getFieldForAllUsers, getGlobalField, getUserField, globalFields, userFields} from "#src/modules/localStorage.mts";
-import {fetchResultsImage} from "#src/modules/wordleImages.mts";
+import {fetchResults, fetchResultsImage} from "#src/modules/wordleImages.mts";
 import {playButtonRow} from "#src/commands/wordle.mts";
 
 const RESULTS_IMAGE_NAME = "wordle-results.png";
@@ -68,15 +68,16 @@ function getPendingReminderIds(): string[] {
     return [...pendingReminders];
 }
 
-// Everyone who solved yesterday, bucketed by attempt count - mentions here don't actually ping, embeds never do
-function buildResultLines(): string {
+// Everyone who solved on the given UTC day, bucketed by attempt count, straight from the Wordle server -
+// GLaDOS only keeps each player's latest game, which is already today's for anyone who played before the reminder.
+// Mentions here don't actually ping, embeds never do
+async function buildResultLines(date: string): Promise<string> {
+    const results = await fetchResults(date);
+    if (!results) return "Couldn't load yesterday's results.";
+
     const buckets: Record<number, string[]> = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
-
-    for (const {user, value: lastPlayed} of getFieldForAllUsers(userFields.Wordle.LastPlayed)) {
-        if (daysSince(lastPlayed) !== 1) continue;
-
-        const score = getUserField(user, userFields.Wordle.LastScore);
-        if (score >= 1 && score <= 6) buckets[score].push(`<@${user}>`);
+    for (const {discordId, guesses, won} of results) {
+        if (won && guesses >= 1 && guesses <= 6) buckets[guesses].push(`<@${discordId}>`);
     }
 
     const lines = Object.entries(buckets)
@@ -91,8 +92,8 @@ async function sendDailyReminder() {
         if (pendingReminders.size === 0) return;
 
         const streak = getGlobalField(globalFields.Wordle.ServerStreak) ?? 0;
-        const resultLines = buildResultLines();
-        const image = await fetchResultsImage(guildID, yesterdayIsoDate());
+        const yesterday = yesterdayIsoDate();
+        const [resultLines, image] = await Promise.all([buildResultLines(yesterday), fetchResultsImage(guildID, yesterday)]);
 
         const body = `## Current server streak: \`${streak} 🔥\`\n**Yesterday's results:**\n${resultLines}`;
 

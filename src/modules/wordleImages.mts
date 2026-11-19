@@ -22,6 +22,30 @@ async function fetchImage(path: string, query: URLSearchParams, name: string): P
     }
 }
 
+export type WordleDayResult = {
+    discordId: string;
+    displayName: string | null;
+    guesses: number;
+    gameOver: boolean;
+    won: boolean;
+};
+
+// The Wordle server's records for one UTC day (YYYY-MM-DD), the same data the results image is drawn from.
+// Null when the server can't be reached, so callers can tell "nobody played" apart from "couldn't check"
+export async function fetchResults(date: string): Promise<WordleDayResult[] | null> {
+    try {
+        const token = env.WORDLE_IMAGE_TOKEN ?? env.WORDLE_WS_TOKEN;
+        const res = await fetch(`${WORDLE_IMAGE_BASE}/api/results?${new URLSearchParams({date})}`, {headers: {Authorization: `Bearer ${token}`}});
+        if (!res.ok) throw new Error(`Wordle results -> ${res.status}`);
+
+        const body = await res.json() as {players: WordleDayResult[]};
+        return body.players;
+    } catch (error) {
+        await logs.logError("fetching wordle results", toError(error));
+        return null;
+    }
+}
+
 // guildId makes stored per-server avatars render on the results board too
 export function fetchResultsImage(guildId: string, date?: string, name = "wordle-results.png") {
     const query = new URLSearchParams({guildId});
