@@ -17,6 +17,7 @@ import {icons} from "#src/consts/icons.mts";
  * @param opts.title Title text of the embed.
  * @param opts.color Embed color (`colors.Primary` by default).
  * @param opts.thumbnail Thumbnail image URL.
+ * @param opts.image Large image URL (e.g. `attachment://file.png` for an attached file).
  * @param opts.fields Array of embed fields.
  * @param opts.icon Icon URL for the embed author section.
  *
@@ -28,6 +29,7 @@ export function templateEmbed(opts: {
     title?: string;
     color?: ColorResolvable;
     thumbnail?: string | null;
+    image?: string | null;
     fields?: APIEmbedField[];
     icon?: string;
 }) {
@@ -37,6 +39,7 @@ export function templateEmbed(opts: {
         title = "",
         color = colors.Primary,
         thumbnail = null,
+        image = null,
         fields = [],
         icon
     } = opts;
@@ -57,6 +60,7 @@ export function templateEmbed(opts: {
     }
 
     if (thumbnail) embed.setThumbnail(thumbnail);
+    if (image) embed.setImage(image);
     if (fields.length > 0) embed.addFields(...fields);
 
     return embed;
@@ -74,6 +78,7 @@ export function templateEmbed(opts: {
  * @param opts.ephemeral Whether the message should only be visible to the user (`false` by default).
  * @param opts.fields Array of embed fields.
  * @param opts.thumbnail Thumbnail image URL.
+ * @param opts.image Large image URL (e.g. `attachment://file.png` for an attached file).
  * @param opts.icon Icon URL for the embed author section.
  *
  * @returns A message object that can be used directly with `.send` or `.reply`.
@@ -85,6 +90,7 @@ export function embedMessage<T>(opts: {
     color?: ColorResolvable;
     ephemeral?: boolean;
     thumbnail?: string | null;
+    image?: string | null;
     fields?: APIEmbedField[];
     icon?: string;
 }): T {
@@ -95,12 +101,13 @@ export function embedMessage<T>(opts: {
         color = colors.Primary,
         ephemeral = false,
         thumbnail = null,
+        image = null,
         fields = [],
         icon
     } = opts;
 
     return {
-        embeds: [templateEmbed({ body, footer, title, color, thumbnail, fields, icon })],
+        embeds: [templateEmbed({ body, footer, title, color, thumbnail, image, fields, icon })],
         ...(ephemeral && { flags: MessageFlags.Ephemeral })
     } as T;
 }

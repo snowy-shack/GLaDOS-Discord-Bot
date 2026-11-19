@@ -18,6 +18,7 @@ export const env = {
 
     WORDLE_WS_URL: process.env.WORDLE_WS_URL,
     WORDLE_WS_TOKEN: process.env.WORDLE_WS_TOKEN,
+    WORDLE_IMAGE_TOKEN: process.env.WORDLE_IMAGE_TOKEN,
 } as const;
 
 export function requireDatabaseEnv(): { host: string; port: number; database: string; user: string; password: string } {

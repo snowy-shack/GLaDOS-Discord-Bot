@@ -1,3 +1,4 @@
+import {MessageCreateOptions} from "discord.js";
 import {env} from "#src/core/env.mts";
 import * as logs from "#src/core/logs.mts";
 import {toError} from "#src/core/try-catch.mts";
@@ -16,6 +17,7 @@ import {getChannel, getMember} from "#src/core/discord.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {channels} from "#src/core/phantys_home.mts";
+import wordleReminder from "#src/modules/wordleReminder.mts";
 
 type Envelope = { id: string, type: string, payload: any };
 
@@ -92,6 +94,8 @@ async function recordGameFinished(discordId: string, guesses: number, finished: 
     await setUserField(discordId, userFields.Wordle.Streak, streak);
     await setUserField(discordId, userFields.Wordle.LastPlayed, dateToString(new Date()));
 
+    void wordleReminder.handleSolved(discordId);
+
     // Server streak advances once per calendar day, not once per game.
     const serverLastPlayed = getGlobalField(globalFields.Wordle.ServerLastPlayed);
     const serverDaysSince = serverLastPlayed ? daysSince(serverLastPlayed) : Infinity;
@@ -125,16 +129,20 @@ function renderGrid(rows: unknown): string {
 async function announceGameFinished(discordId: string, guesses: number, finished: boolean, rows: unknown, streak: number) {
     try {
         const headline = finished ? `Solved **${guesses}/6** - Streak: **${streak}**` : `Failed **X/6** - Streak: **${streak}**`;
-        const body = `<@${discordId}>\n${headline}\n\n${renderGrid(rows)}`;
+        const body = `${headline}\n\n${renderGrid(rows)}`;
 
         const member = await getMember(discordId);
         const channel = await getChannel(channels.Arcade);
         if (channel && "send" in channel) {
-            await channel.send(embedMessage({
-                body,
-                color: colors.Primary,
-                thumbnail: member?.displayAvatarURL() ?? null,
-            }));
+            // The content mention is what actually pings them - mentions inside an embed don't
+            await channel.send({
+                content: `<@${discordId}>`,
+                ...embedMessage<MessageCreateOptions>({
+                    body,
+                    color: colors.Primary,
+                    thumbnail: member?.displayAvatarURL() ?? null,
+                }),
+            });
         }
     } catch (error) {
         await logs.logError("announcing wordle result", toError(error));

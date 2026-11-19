@@ -1,5 +1,5 @@
-import {ChatInputCommandInteraction, InteractionResponseType, Routes, SlashCommandBuilder} from "discord.js";
-import {getUserField, userFields} from "#src/modules/localStorage.mts";
+import {ButtonInteraction, ChatInputCommandInteraction, InteractionResponseType, Routes, SlashCommandBuilder} from "discord.js";
+import {getUserField, removeUserField, setUserField, userFields} from "#src/modules/localStorage.mts";
 import {embedMessage} from "#src/formatting/styledEmbed.mts";
 import colors from "#src/consts/colors.mts";
 import {daysSince} from "#src/core/util.mts";
@@ -20,6 +20,19 @@ export function init() {
             .addUserOption(option =>
                 option.setName("user")
                     .setDescription("User to view the wordle stats of (optional)")
+            )
+        )
+        .addSubcommand(subcommand => subcommand
+            .setName('reminder')
+            .setDescription("Get pinged daily at 10 AM to play that day's Wordle")
+            .addStringOption(option =>
+                option.setName("state")
+                    .setDescription("Turn daily reminders on or off")
+                    .setRequired(true)
+                    .addChoices(
+                        {name: "on", value: "on"},
+                        {name: "off", value: "off"},
+                    )
             )
         );
 }
@@ -54,16 +67,24 @@ export function getWordleStats(userID: string) {
     return {solves, streak, lastScore, firstPlayed, totalGames, average, participation};
 }
 
+// Normal commands don't get a reply() helper for this - Discord's client opens the
+// Activity itself once it sees this response type, no message needs sending.
+async function launchActivity(interaction: ChatInputCommandInteraction | ButtonInteraction) {
+    await interaction.client.rest.post(
+        Routes.interactionCallback(interaction.id, interaction.token),
+        {body: {type: InteractionResponseType.LaunchActivity}, auth: false}
+    );
+}
+
+export async function buttonPressed(buttonID: string, interaction: ButtonInteraction) {
+    if (buttonID === "play") await launchActivity(interaction);
+}
+
 export async function react(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
 
         case "play": {
-            // Normal commands don't get a reply() helper for this - Discord's client opens the
-            // Activity itself once it sees this response type, no message needs sending.
-            await interaction.client.rest.post(
-                Routes.interactionCallback(interaction.id, interaction.token),
-                {body: {type: InteractionResponseType.LaunchActivity}, auth: false}
-            );
+            await launchActivity(interaction);
         } break;
 
         case "stats": {
@@ -86,6 +107,26 @@ export async function react(interaction: ChatInputCommandInteraction) {
                     title: "Wordle game stats",
                     color: colors.Primary,
                     ephemeral: false,
+                })
+            );
+        } break;
+
+        case "reminder": {
+            const state = interaction.options.getString("state", true);
+
+            if (state === "on") {
+                await setUserField(interaction.user.id, userFields.Wordle.ReminderEnabled);
+            } else {
+                await removeUserField(interaction.user.id, userFields.Wordle.ReminderEnabled);
+            }
+
+            await interaction.reply(
+                embedMessage({
+                    body: state === "on"
+                        ? "You'll now be pinged daily at **10 AM** to play that day's Wordle."
+                        : "You won't be pinged for Wordle reminders anymore.",
+                    color: colors.Primary,
+                    ephemeral: true,
                 })
             );
         } break;

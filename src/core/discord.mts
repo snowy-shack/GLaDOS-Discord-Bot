@@ -46,10 +46,19 @@ export async function getChannel(id: string) {
 }
 
 export async function getRoleUsers(id: string): Promise<GuildMember[] | null> {
-    await phantys_home.members.fetch(); // Ensure all members are cached (#3)
     const role = await phantys_home.roles.fetch(id);
-
     if (!role) return null;
+
+    // REST paging instead of the gateway member-chunk fetch (#3) - the latter has been seen to
+    // silently hang for a full 2 minutes before timing out, REST has been reliable in comparison
+    let after: string | undefined;
+    for (;;) {
+        const page = await phantys_home.members.list({limit: 1000, after});
+        if (page.size === 0) break;
+
+        after = page.lastKey();
+        if (page.size < 1000) break;
+    }
 
     return role.members.map(member => member);
 }

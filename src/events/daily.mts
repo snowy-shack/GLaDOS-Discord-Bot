@@ -4,6 +4,7 @@ import boosterTracker from "#src/modules/boosterTracker.mts";
 import birthdayCongratulator from "#src/modules/birthdayCongratulator.mts";
 import spamDetector from "#src/modules/spamDetector.mts";
 import portalGunSkinLoader from "#src/modules/portalGunSkinLoader.mts";
+import wordleReminder from "#src/modules/wordleReminder.mts";
 
 async function run() {
     try {
@@ -11,6 +12,7 @@ async function run() {
         void birthdayCongratulator.checkBirthdays();
         void spamDetector.refreshScamURLs();
         void portalGunSkinLoader.fetchSkins();
+        void wordleReminder.sendDailyReminder();
     } catch (error: unknown) {
         await logs.logError("running daily events", toError(error));
     }

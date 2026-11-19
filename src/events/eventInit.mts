@@ -8,6 +8,7 @@ import * as guildMemberAdd     from "#src/events/discordjs/guildMemberAdd.mts";
 import cron from "node-cron";
 import daily from "#src/events/daily.mts";
 import githubIssueWatcher from "#src/modules/githubIssueWatcher.mts";
+import wordleReminder from "#src/modules/wordleReminder.mts";
 import {getClient} from "#src/core/client.mts";
 import chalk from "chalk";
 import {Client} from "discord.js";
@@ -68,6 +69,20 @@ cron.schedule(
 cron.schedule(
     "00 00 12 * * 0-6",
     () => { void storageReady.then(() => githubIssueWatcher.checkInfinityButtonsIssue10()); },
+    { timezone: "Europe/Amsterdam" }
+);
+
+// Warn about at-risk wordle streaks every day at 10 PM Amsterdam Time
+cron.schedule(
+    "00 00 22 * * 0-6",
+    () => { void storageReady.then(() => wordleReminder.sendStreakWarning()); },
+    { timezone: "Europe/Amsterdam" }
+);
+
+// Hand out the wordle reminder role to subscribers every day at midnight Amsterdam Time
+cron.schedule(
+    "00 00 00 * * 0-6",
+    () => { void storageReady.then(() => wordleReminder.addReminderRoleToSubscribers()); },
     { timezone: "Europe/Amsterdam" }
 );
 

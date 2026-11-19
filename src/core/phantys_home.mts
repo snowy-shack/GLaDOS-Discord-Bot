@@ -26,12 +26,13 @@ export const channels: {[key: string]: string} = { // BETA : PRODUCTION
 }
 
 export const roles: {[key: string]: string} = { // BETA : PRODUCTION
-    Booster:   isBeta ? "1221614507466686574" : "852838462469308428",
-    Donator:   isBeta ? "1350808190400335935" : "925025905166938162",
-    SpamBot:   isBeta ? "1344660484984410132" : "1332249541705207901",
-    Silly:     isBeta ? "1372130773435416687" : "1115577781632368772",
-    Developer: isBeta ? "1235592306682364027" : "1116375124866777118",
-    Moderator: isBeta ? "1372255587592831026" : "833291576687460362",
+    Booster:         isBeta ? "1221614507466686574" : "852838462469308428",
+    Donator:         isBeta ? "1350808190400335935" : "925025905166938162",
+    SpamBot:         isBeta ? "1344660484984410132" : "1332249541705207901",
+    Silly:           isBeta ? "1372130773435416687" : "1115577781632368772",
+    Developer:       isBeta ? "1235592306682364027" : "1116375124866777118",
+    Moderator:       isBeta ? "1372255587592831026" : "833291576687460362",
+    WordleReminders: isBeta ? "1572760402130116648" : "1572760193316683966",
 }
 
 // Roles in MarkDown form
