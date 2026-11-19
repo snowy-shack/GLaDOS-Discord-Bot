@@ -11,6 +11,12 @@ npm run debug # Uses beta.env
 
 # Changelog
 
+## Release 3.12.3 - November 19th 2026
+### Changes
+- The Wordle reminder role and pending list are now synced on boot, instead of only at midnight UTC. Subscribers who already played today are skipped and lose a leftover reminder role
+### Fixes
+- After a restart, the 10 PM streak warning and the reminder role no longer forget who still has to play that day
+
 ## Release 3.12.2 - November 19th 2026
 ### Changes
 - Messages from the official Wordle app are now deleted automatically, since GLaDOS has its own Wordle system

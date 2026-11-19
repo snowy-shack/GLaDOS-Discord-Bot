@@ -27,13 +27,21 @@ function subscriberIds(): string[] {
         .map(entry => entry.user);
 }
 
-// Hands the reminder role to every subscriber and resets who's still pending for the new day - solving removes them from both
-async function addReminderRoleToSubscribers() {
+// Hands the reminder role to every subscriber and resets who's still pending for the new day - solving removes them from both.
+// On boot (skipSolvedToday) the day is already underway, so whoever already played today is left out and loses a stale role instead
+async function addReminderRoleToSubscribers(skipSolvedToday = false) {
     try {
         pendingReminders.clear();
         for (const id of subscriberIds()) {
-            pendingReminders.add(id);
             const member = await getMember(id);
+            const solvedToday = skipSolvedToday && daysSince(getUserField(id, userFields.Wordle.LastPlayed)) === 0;
+
+            if (solvedToday) {
+                if (member?.roles.cache.has(roles.WordleReminders)) await member.roles.remove(roles.WordleReminders);
+                continue;
+            }
+
+            pendingReminders.add(id);
             if (member && !member.roles.cache.has(roles.WordleReminders)) {
                 await member.roles.add(roles.WordleReminders);
             }
