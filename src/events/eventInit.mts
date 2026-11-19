@@ -9,6 +9,7 @@ import cron from "node-cron";
 import daily from "#src/events/daily.mts";
 import githubIssueWatcher from "#src/modules/githubIssueWatcher.mts";
 import wordleReminder from "#src/modules/wordleReminder.mts";
+import wordlePlayStatus from "#src/modules/wordlePlayStatus.mts";
 import {getClient} from "#src/core/client.mts";
 import chalk from "chalk";
 import {Client} from "discord.js";
@@ -79,11 +80,17 @@ cron.schedule(
     { timezone: "Europe/Amsterdam" }
 );
 
-// Hand out the wordle reminder role to subscribers every day at midnight Amsterdam Time
+// Hand out the wordle reminder role to subscribers at midnight UTC - matches the Wordle API's own
+// day boundary (it flips at 01:00 CET, i.e. UTC midnight), not Amsterdam midnight which runs ahead during DST
 cron.schedule(
     "00 00 00 * * 0-6",
-    () => { void storageReady.then(() => wordleReminder.addReminderRoleToSubscribers()); },
-    { timezone: "Europe/Amsterdam" }
+    () => {
+        void storageReady.then(() => {
+            void wordleReminder.addReminderRoleToSubscribers();
+            wordlePlayStatus.clearActiveGames();
+        });
+    },
+    { timezone: "UTC" }
 );
 
 export default { init, name: () => "eventInit" }

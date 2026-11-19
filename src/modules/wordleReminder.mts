@@ -119,8 +119,8 @@ async function sendStreakWarning() {
         if (atRisk.length === 0) return;
 
         const lines = atRisk.map(({user, streak}) => `<@${user}> ${streak} day streak`);
-        const body = "## Last chance to refresh wordle streaks!\n" + lines.join("\n"
-                + "\n-# Use `/wordle reminder on|off` to change your reminder preferences");
+        const body = "## Last chance to refresh wordle streaks!\n" + lines.join("\n")
+            + "\n-# Use `/wordle reminder on|off` to change your reminder preferences";
 
         const image = await fetchResultsImage(guildID);
 

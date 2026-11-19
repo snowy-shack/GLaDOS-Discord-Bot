@@ -93,4 +93,10 @@ async function announceFinished(discordId: string) {
     }
 }
 
-export default {announceStarted, announceFinished};
+// Abandoned games (closed without finishing) would otherwise sit in here forever, blocking
+// future "is playing" posts for that user - clear the slate once a day instead of tracking TTLs
+function clearActiveGames() {
+    activeGames.clear();
+}
+
+export default {announceStarted, announceFinished, clearActiveGames};
